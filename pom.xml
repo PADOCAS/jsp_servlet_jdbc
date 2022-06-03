@@ -5,7 +5,7 @@
     <artifactId>mod22-curso-jsp</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>war</packaging>
-    <name>mod22-curso-jsp-1.0-SNAPSHOT</name>
+    <name>curso-jsp</name>
     
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -25,7 +25,7 @@
         </dependency>
     </dependencies>
     
-     <build>
+    <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -39,12 +39,15 @@
                     </compilerArguments>
                 </configuration>
             </plugin>
+            <!--  Colocar sempre essa versao do maven se não não compila -->
+            <!--  Colocar o warname para mudar o nome que fará o deploy -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>3.3.1</version>
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
+                    <warName>curso-jsp</warName>
                 </configuration>
             </plugin>
             <plugin>
