@@ -1,0 +1,84 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
+ */
+package servlets;
+
+import java.io.IOException;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import model.Login;
+
+/**
+ *
+ * @author lucia
+ */
+//O chamado Controller são as servlets ou ServletLoginController
+//Mapeamento de URL que vem da tela (/principal/ServletLogin e /ServletLogin)
+@WebServlet(name = "ServletLogin", urlPatterns = {"/principal/ServletLogin", "/ServletLogin"})
+public class ServletLogin extends HttpServlet {
+
+    //Recebe os dados pela URL em parametros
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        //Request é o que vem da tela
+        //Response é o que você vai mandar como resposta
+
+    }
+
+    //Recebe os dados enviados por um formulário
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        //Request é o que vem da tela
+        //Response é o que você vai mandar como resposta
+        String login = request.getParameter("login");
+        String senha = request.getParameter("senha");
+        String url = request.getParameter("url");
+
+        //Validações de login e senha antes de avançar:
+        if (login == null
+                || login.isEmpty()) {
+            //Direcionar para mesma tela, pois faltou informar os dados:
+            RequestDispatcher redirecionar = request.getRequestDispatcher("/index.jsp");
+            request.setAttribute("msg", "Informe o Login!");
+            redirecionar.forward(request, response);
+        } else if (senha == null
+                || senha.isEmpty()) {
+            //Direcionar para mesma tela, pois faltou informar os dados:
+            RequestDispatcher redirecionar = request.getRequestDispatcher("/index.jsp");
+            request.setAttribute("msg", "Informe a senha!");
+            redirecionar.forward(request, response);
+        } else {
+            Login newLogin = new Login();
+            newLogin.setLogin(login);
+            newLogin.setSenha(senha);
+
+            //Simulação de login (admin / admin)
+            if (newLogin.getLogin().equals("admin")
+                    && newLogin.getSenha().equals("admin")) {
+                //Colocar o objeto Login como atributo de sessão para acessar durante o uso do sistema pelo usuário
+                request.getSession().setAttribute("usuario", newLogin);
+
+                if (url == null
+                        || url.isEmpty()
+                        || url.equals("null")) {
+                    url = "principal/principal.jsp";
+                }
+                
+                RequestDispatcher redirecionar = request.getRequestDispatcher(url);
+                redirecionar.forward(request, response);
+            } else {
+                //Direcionar para mesma tela, pois não informou usuario/senha valido
+                RequestDispatcher redirecionar = request.getRequestDispatcher("/index.jsp");
+                request.setAttribute("msg", "Usuário e/ou Senha inválido.");
+                redirecionar.forward(request, response);
+            }
+        }
+    }
+}
