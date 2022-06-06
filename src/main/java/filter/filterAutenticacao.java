@@ -78,6 +78,10 @@ public class filterAutenticacao implements Filter {
                     ex1.printStackTrace();
                 }
             }
+            //Redirecionar para uma tela de erro (erro.jsp)
+            RequestDispatcher redirecionar = request.getRequestDispatcher("/erro.jsp");
+            request.setAttribute("msg", ex.getMessage());
+            redirecionar.forward(request, response);
         }
     }
 
