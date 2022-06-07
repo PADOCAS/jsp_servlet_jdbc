@@ -31,7 +31,22 @@ public class ServletLogin extends HttpServlet {
             throws ServletException, IOException {
         //Request é o que vem da tela
         //Response é o que você vai mandar como resposta
-        doPost(request, response);
+
+        //Caso veio do Logout:
+        String acao = request.getParameter("acao");
+
+        if (acao != null
+                && !acao.isEmpty()
+                && acao.equals("logout")) {
+            //Invalida a sessão, apaga todos os atributos da sessão, como o filtro já trabalha com o atributo usuário, ele vai trabalhar no filtro para reenviar para a tela de login
+            request.getSession().invalidate();
+
+            //Redireciona:
+            RequestDispatcher redirecionar = request.getRequestDispatcher("/index.jsp");
+            redirecionar.forward(request, response);
+        } else {
+            doPost(request, response);
+        }
     }
 
     //Recebe os dados enviados por um formulário
