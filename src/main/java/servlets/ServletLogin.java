@@ -31,7 +31,7 @@ public class ServletLogin extends HttpServlet {
             throws ServletException, IOException {
         //Request é o que vem da tela
         //Response é o que você vai mandar como resposta
-
+        doPost(request, response);
     }
 
     //Recebe os dados enviados por um formulário

@@ -60,7 +60,7 @@ public class filterAutenticacao implements Filter {
                     //Guardar a URL que ele estava tentando acessar antes, assim que logar novamente jogá ele para a nova URL.
                     //Passando ?url= voce ta mandando um novo parametro com a URL dentro para ser usada no Servlet redirecionamento após logar
                     RequestDispatcher redirecionar = request.getRequestDispatcher("/index.jsp?url=" + urlParaAutenticar);
-                    request.setAttribute("msg", "Por favor realize o LOGIN! Foi perdido o Login pelo tempo parado.");
+                    request.setAttribute("msg", "Por favor realize o LOGIN!");
                     redirecionar.forward(request, response);
                     return;
                 }
