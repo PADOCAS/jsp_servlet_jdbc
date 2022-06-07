@@ -11,7 +11,7 @@
     <div class="pcoded-inner-navbar main-menu">
         <div class="">
             <div class="main-menu-header">
-                <img class="img-80 img-radius" src="assets/images/avatar-4.jpg" alt="User-Profile-Image">
+                <img class="img-80 img-radius" src="<%= request.getContextPath() %>/assets/images/avatar-4.jpg" alt="User-Profile-Image">
                 <div class="user-details">
                     <span id="more-details">${usuario.login}<i class="fa fa-caret-down"></i></span>
                 </div>
@@ -53,9 +53,9 @@
                 </a>
                 <ul class="pcoded-submenu">
                     <li class=" ">
-                        <a href="accordion.html" class="waves-effect waves-dark">
+                        <a href="principal/usuario.jsp" class="waves-effect waves-dark">
                             <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                            <span class="pcoded-mtext" data-i18n="nav.basic-components.alert">Accordion</span>
+                            <span class="pcoded-mtext" data-i18n="nav.basic-components.alert">Usuário</span>
                             <span class="pcoded-mcaret"></span>
                         </a>
                     </li>
