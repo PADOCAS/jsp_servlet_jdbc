@@ -19,6 +19,9 @@ public class Login implements Serializable {
 
     private String senha;
 
+    //Transient
+    private String confirmSenha;
+
     private String nome;
 
     private String email;
@@ -56,6 +59,14 @@ public class Login implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getConfirmSenha() {
+        return confirmSenha;
+    }
+
+    public void setConfirmSenha(String confirmSenha) {
+        this.confirmSenha = confirmSenha;
     }
 
     @Override
