@@ -19,6 +19,10 @@ public class Login implements Serializable {
 
     private String senha;
 
+    private String nome;
+
+    private String email;
+
     public Login() {
     }
 
@@ -36,6 +40,22 @@ public class Login implements Serializable {
 
     public void setSenha(String senha) {
         this.senha = senha;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     @Override
@@ -62,6 +82,7 @@ public class Login implements Serializable {
 
     @Override
     public String toString() {
-        return "Login{" + "login=" + login + ", senha=" + senha + '}';
+        return "Login{" + "login=" + login + ", senha=" + senha + ", nome=" + nome + ", email=" + email + '}';
     }
+
 }

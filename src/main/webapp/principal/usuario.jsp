@@ -36,8 +36,47 @@
                                         <div class="page-wrapper">
                                             <!-- Page-body start -->
                                             <div class="page-body">
+
                                                 <div class="row">
-                                                    <h1>Cadastro de Usuário</h1>
+                                                    <div class="col-sm-12">
+                                                        <!-- Basic Form Inputs card start -->
+                                                        <div class="card">
+                                                            <div class="card-block">
+                                                                <h4 class="sub-title">Cadastro de Usuário</h4>
+
+                                                                <form class="form-material" action="<%= request.getContextPath()%>/ServletUsuarioController" method="post">
+                                                                <div class="form-group form-default form-static-label">
+                                                                    <input type="text" name="login" id="login" class="form-control" placeholder="Informe o Login" required="required" maxlength="20" autocomplete="off">
+                                                                    <span class="form-bar"></span>
+                                                                    <label class="float-label">Login</label>
+                                                                </div>                                                                    
+                                                                <div class="form-group form-default form-static-label">
+                                                                    <input type="password" name="senha" id="senha" class="form-control" placeholder="Informe a Senha" required="required" maxlength="20" autocomplete="off">
+                                                                    <span class="form-bar"></span>
+                                                                    <label class="float-label">Senha</label>
+                                                                </div>
+                                                                <div class="form-group form-default form-static-label">
+                                                                    <input type="password" name="confirmSenha" id="confirmSenha" class="form-control" placeholder="Confirmação da Senha" required="required" maxlength="20" autocomplete="off">
+                                                                    <span class="form-bar"></span>
+                                                                    <label class="float-label">Confirmação da Senha</label>
+                                                                </div>
+                                                                <div class="form-group form-default form-static-label">
+                                                                    <input type="text" name="nome" id="nome" class="form-control" placeholder="Informe o Nome" required="required" maxlength="100" autocomplete="off">
+                                                                    <span class="form-bar"></span>
+                                                                    <label class="float-label">Nome</label>
+                                                                </div>                                                                    
+                                                                <div class="form-group form-default form-static-label">
+                                                                    <input type="email" name="email" id="email" class="form-control" placeholder="Informe o Email" required="required" maxlength="100" autocomplete="off">
+                                                                    <span class="form-bar"></span>
+                                                                    <label class="float-label">Email</label>
+                                                                </div>
+
+                                                                <button class="btn btn-primary waves-effect waves-light">Salvar</button>
+                                                                <button class="btn btn-success waves-effect waves-light">Salvar/Novo</button>
+                                                                <button class="btn btn-danger waves-effect waves-light">Excluir</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <!-- Page-body end -->
@@ -52,7 +91,7 @@
             </div>
 
             <!-- Required Jquery -->
-        <jsp:include page="template/javascript-file.jsp" ></jsp:include>
+            <jsp:include page="template/javascript-file.jsp" ></jsp:include>
     </body>
 
 </html>
