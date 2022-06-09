@@ -41,14 +41,12 @@
                                                     <div class="col-sm-12">
                                                         <!-- Basic Form Inputs card start -->
                                                         <div class="card">
-                                                            <div class="card-header">
-                                                                <span><code style="${msg == null or empty msg ? 'display: none;' : ''}">${msg}</code></span>
-                                                        </div>
+                                                            <div class="card-block">
+                                                                <h4 class="sub-title">Cadastro de Usuário</h4>
 
-                                                        <div class="card-block">
-                                                            <h4 class="sub-title">Cadastro de Usuário</h4>
+                                                                <form class="form-material" action="<%= request.getContextPath()%>/ServletUsuarioController" method="post" id="formUser">
+                                                                <input type="hidden" name="acao" id="acao" value="" />
 
-                                                            <form class="form-material" action="<%= request.getContextPath()%>/ServletUsuarioController" method="post">
                                                                 <div class="form-group form-default form-static-label">
                                                                     <input type="text" name="login" id="login" class="form-control" placeholder="Informe o Login" required="required" maxlength="20" autocomplete="off" value="${modelLogin.login}">
                                                                     <span class="form-bar"></span>
@@ -75,10 +73,15 @@
                                                                     <label class="float-label">Email</label>
                                                                 </div>
 
-                                                                <button class="btn btn-primary waves-effect waves-light">Salvar</button>
-                                                                <button class="btn btn-success waves-effect waves-light">Salvar/Novo</button>
-                                                                <button class="btn btn-danger waves-effect waves-light">Excluir</button>
+                                                                <button type="submit" class="btn btn-primary waves-effect waves-light">Salvar</button>
+                                                                <button type="submit" class="btn btn-success waves-effect waves-light">Salvar/Novo</button>
+                                                                <button type="button" class="btn btn-danger waves-effect waves-light" onclick="deletarComAjax();">Excluir</button>
+                                                                <button type="button" class="btn btn-inverse waves-effect waves-light" onclick="limpar();">Limpar</button>
                                                             </form>
+                                                        </div>
+
+                                                        <div class="card-footer">
+                                                            <span><code id="msg" style="${msg == null or empty msg ? 'display: none;' : ''}">${msg}</code></span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -96,6 +99,54 @@
 
             <!-- Required Jquery -->
             <jsp:include page="template/javascript-file.jsp" ></jsp:include>
+
+            <script type="text/javascript" >
+                function limpar() {
+                    var elementos = document.getElementById("formUser").elements; //Retorno os elementos HTML  dentro do form
+
+                    for (p = 0; p < elementos.length; p++) {
+                        elementos[p].value = '';
+                    }
+                }
+
+                function deletar() {
+                    //Aparecer um dialog para o usuario confirmar a exclusao
+                    if (confirm('Deseja realmente excluir o usuário ?')) {
+                        //Trocar para o method get o formulário:
+                        document.getElementById("formUser").method = 'get';
+                        //Atributo acao recebe o valor 'deletar' para trabalhar com ele no metodo doGet dentro do Servlet
+                        document.getElementById("acao").value = 'deletar';
+                        //Envia o formulário
+                        document.getElementById("formUser").submit();
+                    }
+                }
+
+                function deletarComAjax() {
+                    //Aparecer um dialog para o usuario confirmar a exclusao
+                    if (confirm('Deseja realmente excluir o usuário ?')) {
+                        //Pega a URLAction do formulário para cair no doGet (servlet utilizado)
+                        var urlAction = document.getElementById("formUser").action;
+                        var idLogin = document.getElementById("login").value;
+
+                        $.ajax({
+                            method: "get",
+                            url: urlAction,
+                            //Parametros fica no data
+                            data: "login=" + idLogin + "&acao=deletarajax",
+                            success: function (response) {
+                                //roda o limpar formulario se tudo ok:
+                                limpar();
+                                //Adicionando a resposta dentro do componente msg (das mensagens)
+                                document.getElementById("msg").textContent = response;
+//                                alert(response);
+                            }
+                        }).fail(function (xhr, status, errorThrow) {
+                            document.getElementById("msg").textContent = xhr.responseText;
+//                            alert("Erro ao deletar usuário!\n" + xhr.responseText);
+                        });
+                    }
+                }
+            </script>
     </body>
 
 </html>

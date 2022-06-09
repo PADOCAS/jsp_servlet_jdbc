@@ -35,7 +35,85 @@ public class ServletUsuarioController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        try {
+            String acao = request.getParameter("acao");
 
+            if (acao != null
+                    && !acao.isEmpty()
+                    && acao.equals("deletar")) {
+                String login = request.getParameter("login");
+                String senha = request.getParameter("senha");
+                String confirmSenha = request.getParameter("confirmSenha");
+                String nome = request.getParameter("nome");
+                String email = request.getParameter("email");
+
+                if (login != null
+                        && !login.isEmpty()) {
+                    Login newLogin = new Login();
+                    newLogin.setLogin(login);
+                    newLogin.setSenha(senha);
+                    newLogin.setConfirmSenha(confirmSenha);
+                    newLogin.setNome(nome);
+                    newLogin.setEmail(email);
+
+                    Login consultaLogin = daoUsuarioRepository.consultarUsuario(login);
+
+                    if (consultaLogin != null) {
+                        daoUsuarioRepository.deletarUsuario(login);
+
+                        request.setAttribute("msg", "Usuário excluído com sucesso!");
+
+                        //Redireciona
+                        RequestDispatcher redirecionar = request.getRequestDispatcher("/principal/usuario.jsp");
+                        //Passa um novo objeto como parâmetro para tela de volta:
+                        request.setAttribute("modelLogin", new Login());
+                        redirecionar.forward(request, response);
+                    } else {
+                        request.setAttribute("msg", "Usuário não existe ainda para ser deletado!");
+
+                        //Redireciona
+                        RequestDispatcher redirecionar = request.getRequestDispatcher("/principal/usuario.jsp");
+                        //Passa o próprio objeto como parâmetro para tela de volta:
+                        request.setAttribute("modelLogin", newLogin);
+                        redirecionar.forward(request, response);
+                    }
+                }
+            } else if (acao != null
+                    && !acao.isEmpty()
+                    && acao.equals("deletarajax")) {
+                //Ajax não atualizar o formulário... nao tem redirecionamento!
+                String login = request.getParameter("login");
+
+                if (login != null
+                        && !login.isEmpty()) {
+                    Login consultaLogin = daoUsuarioRepository.consultarUsuario(login);
+
+                    if (consultaLogin != null) {
+                        daoUsuarioRepository.deletarUsuario(login);
+
+                        //Resposta para o Ajax:
+                        response.setContentType("text/html; charset=UTF-8");
+                        response.setCharacterEncoding("UTF-8");
+                        response.getWriter().write("Usuário excluído com sucesso!");
+                    } else {
+                        //Resposta para o Ajax:
+                        response.setContentType("text/html; charset=UTF-8");
+                        response.setCharacterEncoding("UTF-8");
+                        response.getWriter().write("Usuário não existe ainda para ser deletado!");
+                    }
+                }
+            } else {
+                //Não é delete nada continua o fluxo normal:
+                RequestDispatcher redirecionar = request.getRequestDispatcher("/principal/usuario.jsp");
+                redirecionar.forward(request, response);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            //Redirecionar para uma tela de erro (erro.jsp)
+            RequestDispatcher redirecionar = request.getRequestDispatcher("/erro.jsp");
+            request.setAttribute("msg", ex.getMessage());
+            redirecionar.forward(request, response);
+        }
     }
 
     /**

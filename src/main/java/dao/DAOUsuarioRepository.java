@@ -129,4 +129,32 @@ public class DAOUsuarioRepository {
 
         return modelLogin;
     }
+    
+    public void deletarUsuario(String login) throws Exception {
+        StringBuilder sql = new StringBuilder();
+        sql.append("DELETE FROM public.login WHERE login = ?;");
+        
+        if (login != null) {
+            try (PreparedStatement pstaDel = connection.prepareStatement(sql.toString());) {
+                pstaDel.setString(1, login);
+                
+                pstaDel.executeUpdate();
+                connection.commit();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+
+                if (connection != null) {
+                    try {
+                        connection.rollback();
+                    } catch (SQLException ex1) {
+                        ex1.printStackTrace();
+                    }
+                }
+
+                throw new Exception(ex.getMessage());
+            }
+        } else {
+            throw new Exception("Informe um Login para ser deletado!");
+        }
+    }
 }
