@@ -77,6 +77,7 @@
                                                                 <button type="submit" class="btn btn-success waves-effect waves-light">Salvar/Novo</button>
                                                                 <button type="button" class="btn btn-danger waves-effect waves-light" onclick="deletarComAjax();">Excluir</button>
                                                                 <button type="button" class="btn btn-inverse waves-effect waves-light" onclick="limpar();">Limpar</button>
+                                                                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modalPesquisaUsuario" onclick="limpaCamposPesquisa();">Pesquisar</button>
                                                             </form>
                                                         </div>
 
@@ -100,6 +101,49 @@
             <!-- Required Jquery -->
             <jsp:include page="template/javascript-file.jsp" ></jsp:include>
 
+            <!--Modal para pesquisa de usuario:-->
+            <!-- Modal -->
+            <div class="modal fade" id="modalPesquisaUsuario" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document" style="max-width: 800px;">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Pesquisa de Usuário</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="input-group mb-3">
+                                <input type="text" id="nomePesquisa" class="form-control" placeholder="Nome do Usuário" aria-label="Nome" aria-describedby="basic-addon2">
+                                <div class="input-group-append">
+                                    <button class="btn btn-success" type="button" onclick="buscarUsuario();">Pesquisar</button>
+                                </div>
+                            </div>
+                            <div style="height: 300px; overflow: scroll;">
+                                <table class="table" id="tabelaUsuarioPesquisa">
+                                    <thead class="thead-dark">
+                                        <tr>
+                                            <th scope="col">Login</th>
+                                            <th scope="col">Nome</th>
+                                            <th scope="col">Email</th>
+                                            <th scope="col">Selecionar</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!--Sera preenchido pelo javascript na mão sempre as linhas e colunas-->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <span id="totalResPesquisa" style="color: black; font-weight: bold;"></span>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
             <script type="text/javascript" >
                 function limpar() {
                     var elementos = document.getElementById("formUser").elements; //Retorno os elementos HTML  dentro do form
@@ -107,6 +151,14 @@
                     for (p = 0; p < elementos.length; p++) {
                         elementos[p].value = '';
                     }
+                }
+
+                function limpaCamposPesquisa() {
+                    document.getElementById("nomePesquisa").value = "";
+                    document.getElementById("totalResPesquisa").textContent = "Total de Registros: 0";
+                    //Remove todos os resultados da tabela (pesquisa anteriores)
+                    $('#tabelaUsuarioPesquisa > tbody > td').remove();
+                    $('#tabelaUsuarioPesquisa > tbody > tr').remove();
                 }
 
                 function deletar() {
@@ -143,6 +195,54 @@
                         }).fail(function (xhr, status, errorThrow) {
                             document.getElementById("msg").textContent = xhr.responseText;
 //                            alert("Erro ao deletar usuário!\n" + xhr.responseText);
+                        });
+                    }
+                }
+
+                function buscarUsuario() {
+                    var nomePesquisa = document.getElementById("nomePesquisa").value;
+
+                    if (nomePesquisa !== null
+                            && nomePesquisa !== ""
+                            && nomePesquisa.trim() !== "") {
+                        //Pega a URLAction do formulário para cair no doGet (servlet utilizado)
+                        var urlAction = document.getElementById("formUser").action;
+
+                        $.ajax({
+                            method: "get",
+                            url: urlAction,
+                            //Parametros fica no data
+                            data: "nomePesquisa=" + nomePesquisa + "&acao=consultarajax",
+                            success: function (response) {
+                                //Remove todos os resultados da tabela (pesquisa anteriores)
+                                $('#tabelaUsuarioPesquisa > tbody > td').remove();
+                                $('#tabelaUsuarioPesquisa > tbody > tr').remove();
+
+                                if (response !== null
+                                        && response !== "") {
+                                    var json = JSON.parse(response);
+
+                                    console.info(json);
+
+                                    for (var i = 0; i < json.length; i++) {
+                                        $('#tabelaUsuarioPesquisa > tbody').append("<tr>");
+                                        $('#tabelaUsuarioPesquisa > tbody').append("<td>" + json[i].login + "</td>");
+                                        $('#tabelaUsuarioPesquisa > tbody').append("<td>" + json[i].nome + "</td>");
+                                        $('#tabelaUsuarioPesquisa > tbody').append("<td>" + json[i].email + "</td>");
+                                        $('#tabelaUsuarioPesquisa > tbody').append("<td><button type=\"button\" class=\"btn btn-info\">Selecionar</button></td>");
+                                        $('#tabelaUsuarioPesquisa > tbody').append("</tr>");
+                                    }
+
+                                    document.getElementById("totalResPesquisa").textContent = "Total de Registros: " + json.length;
+                                }
+                            }
+                        }).fail(function (xhr, status, errorThrow) {
+                            document.getElementById("totalResPesquisa").textContent = "Total de Registros: 0";
+                            //Remove todos os resultados da tabela (pesquisa anteriores)
+                            $('#tabelaUsuarioPesquisa > tbody > td').remove();
+                            $('#tabelaUsuarioPesquisa > tbody > tr').remove();
+                            
+                            alert("Erro ao pesquisar usuário!\n" + xhr.responseText);
                         });
                     }
                 }

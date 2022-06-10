@@ -9,8 +9,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.ArrayList;
+import java.util.List;
 import model.Login;
 
 /**
@@ -129,15 +129,58 @@ public class DAOUsuarioRepository {
 
         return modelLogin;
     }
-    
+
+    public List<Login> consultarUsuarioPorNome(String nome) throws Exception {
+        List<Login> listModelLogin = new ArrayList<>();
+
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT * FROM public.login WHERE nome LIKE ?;");
+
+        if (nome != null
+                && !nome.isEmpty()) {
+            try (PreparedStatement pstaSel = connection.prepareStatement(sql.toString());) {
+                pstaSel.setString(1, nome + "%");
+
+                try (ResultSet rsSel = pstaSel.executeQuery();) {
+                    while (rsSel.next()) {
+                        Login modelLogin = new Login();
+                        modelLogin.setLogin(rsSel.getString("login"));
+                        modelLogin.setSenha(rsSel.getString("senha"));
+                        modelLogin.setConfirmSenha(rsSel.getString("senha"));
+                        modelLogin.setEmail(rsSel.getString("email"));
+                        modelLogin.setNome(rsSel.getString("nome"));
+
+                        listModelLogin.add(modelLogin);
+                    }
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+
+                if (connection != null) {
+                    try {
+                        connection.rollback();
+                    } catch (SQLException ex1) {
+                        ex1.printStackTrace();
+                    }
+                }
+
+                throw new Exception(ex.getMessage());
+            }
+        } else {
+            throw new Exception("Informe um Nome para ser consultado!");
+        }
+
+        return listModelLogin;
+    }
+
     public void deletarUsuario(String login) throws Exception {
         StringBuilder sql = new StringBuilder();
         sql.append("DELETE FROM public.login WHERE login = ?;");
-        
+
         if (login != null) {
             try (PreparedStatement pstaDel = connection.prepareStatement(sql.toString());) {
                 pstaDel.setString(1, login);
-                
+
                 pstaDel.executeUpdate();
                 connection.commit();
             } catch (SQLException ex) {

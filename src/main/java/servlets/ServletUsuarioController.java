@@ -4,8 +4,10 @@
  */
 package servlets;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dao.DAOUsuarioRepository;
 import java.io.IOException;
+import java.util.List;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -100,6 +102,33 @@ public class ServletUsuarioController extends HttpServlet {
                         response.setContentType("text/html; charset=UTF-8");
                         response.setCharacterEncoding("UTF-8");
                         response.getWriter().write("Usuário não existe ainda para ser deletado!");
+                    }
+                }
+            } else if (acao != null
+                    && !acao.isEmpty()
+                    && acao.equals("consultarajax")) {
+                //Consultar Ajax:
+                //Ajax não atualizar o formulário... nao tem redirecionamento!
+                String nomePesquisa = request.getParameter("nomePesquisa");
+
+                if (nomePesquisa != null
+                        && !nomePesquisa.isEmpty()) {
+                    List<Login> listLogin = daoUsuarioRepository.consultarUsuarioPorNome(nomePesquisa);
+
+                    if (listLogin != null
+                            && !listLogin.isEmpty()) {
+                        //Resposta para o Ajax em json (Transforma lista em String json):
+                        ObjectMapper mapper = new ObjectMapper();
+                        String jsonResposta = mapper.writeValueAsString(listLogin);
+
+                        response.setContentType("text/html; charset=UTF-8");
+                        response.setCharacterEncoding("UTF-8");
+                        response.getWriter().write(jsonResposta);
+                    } else {
+                        //Resposta para o Ajax:
+                        response.setContentType("text/html; charset=UTF-8");
+                        response.setCharacterEncoding("UTF-8");
+                        response.getWriter().write("Nenhum Usuário encontrado!");
                     }
                 }
             } else {
