@@ -131,6 +131,25 @@ public class ServletUsuarioController extends HttpServlet {
                         response.getWriter().write("Nenhum Usuário encontrado!");
                     }
                 }
+            } else if (acao != null
+                    && !acao.isEmpty()
+                    && acao.equals("selecionarUsuario")) {
+                String loginSel = request.getParameter("loginSel");
+
+                if (loginSel != null
+                        && !loginSel.isEmpty()) {
+                    Login consultaLogin = daoUsuarioRepository.consultarUsuario(loginSel);
+
+                    if (consultaLogin != null) {
+                        //Passa o objeto como parâmetro para tela de volta:
+                        request.setAttribute("modelLogin", consultaLogin);
+                        request.setAttribute("msg", "Alteração de Usuário");
+
+                        //Redireciona
+                        RequestDispatcher redirecionar = request.getRequestDispatcher("/principal/usuario.jsp");
+                        redirecionar.forward(request, response);
+                    }
+                }
             } else {
                 //Não é delete nada continua o fluxo normal:
                 RequestDispatcher redirecionar = request.getRequestDispatcher("/principal/usuario.jsp");

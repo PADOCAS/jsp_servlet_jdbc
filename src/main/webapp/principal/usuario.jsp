@@ -220,20 +220,30 @@
 
                                 if (response !== null
                                         && response !== "") {
-                                    var json = JSON.parse(response);
+                                    try {
+                                        var json = JSON.parse(response);
 
-                                    console.info(json);
+                                        console.info(json);
 
-                                    for (var i = 0; i < json.length; i++) {
-                                        $('#tabelaUsuarioPesquisa > tbody').append("<tr>");
-                                        $('#tabelaUsuarioPesquisa > tbody').append("<td>" + json[i].login + "</td>");
-                                        $('#tabelaUsuarioPesquisa > tbody').append("<td>" + json[i].nome + "</td>");
-                                        $('#tabelaUsuarioPesquisa > tbody').append("<td>" + json[i].email + "</td>");
-                                        $('#tabelaUsuarioPesquisa > tbody').append("<td><button type=\"button\" class=\"btn btn-info\">Selecionar</button></td>");
-                                        $('#tabelaUsuarioPesquisa > tbody').append("</tr>");
+                                        for (var i = 0; i < json.length; i++) {
+                                            $('#tabelaUsuarioPesquisa > tbody').append("<tr>");
+                                            $('#tabelaUsuarioPesquisa > tbody').append("<td>" + json[i].login + "</td>");
+                                            $('#tabelaUsuarioPesquisa > tbody').append("<td>" + json[i].nome + "</td>");
+                                            $('#tabelaUsuarioPesquisa > tbody').append("<td>" + json[i].email + "</td>");
+                                            //Na String do button, para passar aspas duplas e não dar pal na string, colocar assim \' com isso funciona normalmente…
+                                            $('#tabelaUsuarioPesquisa > tbody').append('<td><button type="button" onclick="selEditar(\'' + json[i].login + '\');" class="btn btn-info">Selecionar</button></td>');
+                                            $('#tabelaUsuarioPesquisa > tbody').append("</tr>");
+                                        }
+
+                                        document.getElementById("totalResPesquisa").textContent = "Total de Registros: " + json.length;
+                                    } catch (e) {
+                                        document.getElementById("totalResPesquisa").textContent = "Total de Registros: 0";
+                                        //Remove todos os resultados da tabela (pesquisa anteriores)
+                                        $('#tabelaUsuarioPesquisa > tbody > td').remove();
+                                        $('#tabelaUsuarioPesquisa > tbody > tr').remove();
+
+                                        alert(response);
                                     }
-
-                                    document.getElementById("totalResPesquisa").textContent = "Total de Registros: " + json.length;
                                 }
                             }
                         }).fail(function (xhr, status, errorThrow) {
@@ -241,10 +251,20 @@
                             //Remove todos os resultados da tabela (pesquisa anteriores)
                             $('#tabelaUsuarioPesquisa > tbody > td').remove();
                             $('#tabelaUsuarioPesquisa > tbody > tr').remove();
-                            
+
                             alert("Erro ao pesquisar usuário!\n" + xhr.responseText);
                         });
+                    } else {
+                        alert("Digite alguma informação para habilitar a pesquisa!");
                     }
+                }
+
+                function selEditar(loginSel) {
+                    //Pega a URLAction do formulário para cair no doGet (servlet utilizado)
+                    var urlAction = document.getElementById("formUser").action;
+
+                    //Redirecionar com ajax:
+                    window.location.href = urlAction + "?acao=selecionarUsuario&loginSel=" + loginSel;
                 }
             </script>
     </body>
