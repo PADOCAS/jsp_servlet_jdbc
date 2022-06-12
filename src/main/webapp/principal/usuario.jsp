@@ -86,6 +86,36 @@
                                                         <div class="card-footer">
                                                             <span><code id="msg" style="${msg == null or empty msg ? 'display: none;' : ''}">${msg}</code></span>
                                                         </div>
+
+                                                        <div class="card-footer">
+                                                            <span><code id="msgListaUser" style="${msgListaUser == null or empty msgListaUser ? 'display: none;' : ''}">${msgListaUser}</code></span>
+                                                        </div>
+
+                                                        <!--<div style="height: 500px; overflow: scroll;">-->
+                                                        <table class="table" id="tabelaListarUsuarios">
+                                                            <thead class="thead-dark">
+                                                                <tr>
+                                                                    <th scope="col">Login</th>
+                                                                    <th scope="col">Nome</th>
+                                                                    <th scope="col">Email</th>
+                                                                    <th scope="col">Editar</th>
+                                                                    <th scope="col">Excluir</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <c:forEach items="${listModelLogin}" var="modelLoginAux">
+                                                                    <tr>
+                                                                        <td><c:out value="${modelLoginAux.login}"></c:out></td>
+                                                                        <td><c:out value="${modelLoginAux.nome}"></c:out></td>
+                                                                        <td><c:out value="${modelLoginAux.email}"></c:out></td>
+                                                                        <td><button type="button" class="btn btn-info" onclick="selEditar('${modelLoginAux.login}');">Editar</button></td>
+                                                                        <td><button type="button" class="btn btn-danger" onclick="deletarComAjaxDiretoLista('${modelLoginAux.login}');">Excluir</button></td>
+                                                                    </tr>
+                                                                </c:forEach>
+                                                            </tbody>
+                                                        </table>
+                                                        <span id="totalResListaUsuario" style="color: black; font-weight: bold;">${totalResListaUsuario}</span>
+                                                        <!--</div>-->
                                                     </div>
                                                 </div>
                                             </div>
@@ -185,6 +215,7 @@
                         $.ajax({
                             method: "get",
                             url: urlAction,
+                            contentType: "application/x-www-form-urlencoded;charset=utf-8",
                             //Parametros fica no data
                             data: "login=" + idLogin + "&acao=deletarajax",
                             success: function (response) {
@@ -193,10 +224,47 @@
                                 //Adicionando a resposta dentro do componente msg (das mensagens)
                                 document.getElementById("msg").textContent = response;
 //                                alert(response);
+//                                
+                                //Redirecionar com ajax carregando a listas de usuarios:
+                                window.location.href = urlAction + "?acao=listarUsuarios&msgAuxiliar=" + response;
                             }
                         }).fail(function (xhr, status, errorThrow) {
                             document.getElementById("msg").textContent = xhr.responseText;
 //                            alert("Erro ao deletar usuário!\n" + xhr.responseText);
+                        });
+                    }
+                }
+
+                function deletarComAjaxDiretoLista(loginSel) {
+                    //Aparecer um dialog para o usuario confirmar a exclusao
+                    if (confirm('Deseja realmente excluir o usuário ?')) {
+                        //Pega a URLAction do formulário para cair no doGet (servlet utilizado)
+                        var urlAction = document.getElementById("formUser").action;
+
+                        $.ajax({
+                            method: "get",
+                            url: urlAction,
+                            contentType: "application/x-www-form-urlencoded;charset=utf-8",
+                            //Parametros fica no data
+                            data: "login=" + loginSel + "&acao=deletarajax",
+                            success: function (response) {
+                                //roda o limpar formulario se tudo ok:
+                                limpar();
+                                
+                                document.getElementById("msg").textContent = response;
+
+                                if (response !== null
+                                        && response !== "") {
+                                    document.getElementById("msg").style.display = 'block';
+                                } else {
+                                    document.getElementById("msg").style.display = 'none';
+                                }
+//                                
+                                //Redirecionar com ajax carregando a listas de usuarios:
+                                window.location.href = urlAction + "?acao=listarUsuarios&msgAuxiliar=" + response;
+                            }
+                        }).fail(function (xhr, status, errorThrow) {
+                            document.getElementById("msg").textContent = xhr.responseText;
                         });
                     }
                 }
@@ -213,6 +281,7 @@
                         $.ajax({
                             method: "get",
                             url: urlAction,
+                            contentType: "application/x-www-form-urlencoded;charset=utf-8",
                             //Parametros fica no data
                             data: "nomePesquisa=" + nomePesquisa + "&acao=consultarajax",
                             success: function (response) {
@@ -257,6 +326,11 @@
                             alert("Erro ao pesquisar usuário!\n" + xhr.responseText);
                         });
                     } else {
+                        document.getElementById("totalResPesquisa").textContent = "Total de Registros: 0";
+                        //Remove todos os resultados da tabela (pesquisa anteriores)
+                        $('#tabelaUsuarioPesquisa > tbody > td').remove();
+                        $('#tabelaUsuarioPesquisa > tbody > tr').remove();
+
                         alert("Digite alguma informação para habilitar a pesquisa!");
                     }
                 }

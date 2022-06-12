@@ -39,10 +39,24 @@ public class ServletUsuarioController extends HttpServlet {
             throws ServletException, IOException {
         try {
             String acao = request.getParameter("acao");
+            String msgAuxiliar = request.getParameter("msgAuxiliar");
 
             if (acao != null
                     && !acao.isEmpty()
                     && acao.equals("deletar")) {
+                //Rotina para carregar Lista de Usuarios sempre que abrir a tela de usuario:
+                List<Login> listModelLogin = daoUsuarioRepository.consultarTodosUsuarios();
+                //Passa o objeto como parâmetro para tela de volta:
+                request.setAttribute("listModelLogin", listModelLogin);
+                request.setAttribute("totalResListaUsuario", "Total de Registros: " + (listModelLogin == null ? "0" : listModelLogin.size()));
+
+                if (listModelLogin != null
+                        && !listModelLogin.isEmpty()) {
+                    request.setAttribute("msgListaUser", "Listagem de Usuários");
+                } else {
+                    request.setAttribute("msgListaUser", "Nenhum usuário cadastrado");
+                }
+
                 String login = request.getParameter("login");
                 String senha = request.getParameter("senha");
                 String confirmSenha = request.getParameter("confirmSenha");
@@ -96,12 +110,12 @@ public class ServletUsuarioController extends HttpServlet {
                         //Resposta para o Ajax:
                         response.setContentType("text/html; charset=UTF-8");
                         response.setCharacterEncoding("UTF-8");
-                        response.getWriter().write("Usuário excluído com sucesso!");
+                        response.getWriter().write("Usuário " + login + " excluído com sucesso!");
                     } else {
                         //Resposta para o Ajax:
                         response.setContentType("text/html; charset=UTF-8");
                         response.setCharacterEncoding("UTF-8");
-                        response.getWriter().write("Usuário não existe ainda para ser deletado!");
+                        response.getWriter().write("Usuário " + login + " não existe ainda para ser deletado!");
                     }
                 }
             } else if (acao != null
@@ -138,6 +152,19 @@ public class ServletUsuarioController extends HttpServlet {
 
                 if (loginSel != null
                         && !loginSel.isEmpty()) {
+                    //Rotina para carregar Lista de Usuarios sempre que abrir a tela de usuario:
+                    List<Login> listModelLogin = daoUsuarioRepository.consultarTodosUsuarios();
+                    //Passa o objeto como parâmetro para tela de volta:
+                    request.setAttribute("listModelLogin", listModelLogin);
+                    request.setAttribute("totalResListaUsuario", "Total de Registros: " + (listModelLogin == null ? "0" : listModelLogin.size()));
+
+                    if (listModelLogin != null
+                            && !listModelLogin.isEmpty()) {
+                        request.setAttribute("msgListaUser", "Listagem de Usuários");
+                    } else {
+                        request.setAttribute("msgListaUser", "Nenhum usuário cadastrado");
+                    }
+
                     Login consultaLogin = daoUsuarioRepository.consultarUsuario(loginSel);
 
                     if (consultaLogin != null) {
@@ -150,7 +177,44 @@ public class ServletUsuarioController extends HttpServlet {
                         redirecionar.forward(request, response);
                     }
                 }
+            } else if (acao != null
+                    && !acao.isEmpty()
+                    && acao.equals("listarUsuarios")) {
+                //Rotina para carregar Lista de Usuarios sempre que abrir a tela de usuario:
+                List<Login> listModelLogin = daoUsuarioRepository.consultarTodosUsuarios();
+                //Passa o objeto como parâmetro para tela de volta:
+                request.setAttribute("listModelLogin", listModelLogin);
+                request.setAttribute("totalResListaUsuario", "Total de Registros: " + (listModelLogin == null ? "0" : listModelLogin.size()));
+
+                if (listModelLogin != null
+                        && !listModelLogin.isEmpty()) {
+                    request.setAttribute("msgListaUser", "Listagem de Usuários");
+                } else {
+                    request.setAttribute("msgListaUser", "Nenhum usuário cadastrado");
+                }
+
+                if (msgAuxiliar != null
+                        && !msgAuxiliar.isEmpty()) {
+                    request.setAttribute("msg", msgAuxiliar);
+                }
+
+                //Redireciona
+                RequestDispatcher redirecionar = request.getRequestDispatcher("/principal/usuario.jsp");
+                redirecionar.forward(request, response);
             } else {
+                //Rotina para carregar Lista de Usuarios sempre que abrir a tela de usuario:
+                List<Login> listModelLogin = daoUsuarioRepository.consultarTodosUsuarios();
+                //Passa o objeto como parâmetro para tela de volta:
+                request.setAttribute("listModelLogin", listModelLogin);
+                request.setAttribute("totalResListaUsuario", "Total de Registros: " + (listModelLogin == null ? "0" : listModelLogin.size()));
+
+                if (listModelLogin != null
+                        && !listModelLogin.isEmpty()) {
+                    request.setAttribute("msgListaUser", "Listagem de Usuários");
+                } else {
+                    request.setAttribute("msgListaUser", "Nenhum usuário cadastrado");
+                }
+
                 //Não é delete nada continua o fluxo normal:
                 RequestDispatcher redirecionar = request.getRequestDispatcher("/principal/usuario.jsp");
                 redirecionar.forward(request, response);
@@ -214,6 +278,19 @@ public class ServletUsuarioController extends HttpServlet {
                     //Login Novo >> Insert:
                     daoUsuarioRepository.salvarUsuario(newLogin, false);
                     request.setAttribute("msg", "Usuário Incluído com sucesso!");
+                }
+
+                //Rotina para carregar Lista de Usuarios sempre que abrir a tela de usuario:
+                List<Login> listModelLogin = daoUsuarioRepository.consultarTodosUsuarios();
+                //Passa o objeto como parâmetro para tela de volta:
+                request.setAttribute("listModelLogin", listModelLogin);
+                request.setAttribute("totalResListaUsuario", "Total de Registros: " + (listModelLogin == null ? "0" : listModelLogin.size()));
+
+                if (listModelLogin != null
+                        && !listModelLogin.isEmpty()) {
+                    request.setAttribute("msgListaUser", "Listagem de Usuários");
+                } else {
+                    request.setAttribute("msgListaUser", "Nenhum usuário cadastrado");
                 }
 
                 //Redireciona

@@ -173,6 +173,42 @@ public class DAOUsuarioRepository {
         return listModelLogin;
     }
 
+    public List<Login> consultarTodosUsuarios() throws Exception {
+        List<Login> listModelLogin = new ArrayList<>();
+
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT * FROM public.login;");
+
+        try (PreparedStatement pstaSel = connection.prepareStatement(sql.toString());) {
+            try (ResultSet rsSel = pstaSel.executeQuery();) {
+                while (rsSel.next()) {
+                    Login modelLogin = new Login();
+                    modelLogin.setLogin(rsSel.getString("login"));
+                    modelLogin.setSenha(rsSel.getString("senha"));
+                    modelLogin.setConfirmSenha(rsSel.getString("senha"));
+                    modelLogin.setEmail(rsSel.getString("email"));
+                    modelLogin.setNome(rsSel.getString("nome"));
+
+                    listModelLogin.add(modelLogin);
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+
+            if (connection != null) {
+                try {
+                    connection.rollback();
+                } catch (SQLException ex1) {
+                    ex1.printStackTrace();
+                }
+            }
+
+            throw new Exception(ex.getMessage());
+        }
+
+        return listModelLogin;
+    }
+
     public void deletarUsuario(String login) throws Exception {
         StringBuilder sql = new StringBuilder();
         sql.append("DELETE FROM public.login WHERE login = ?;");
