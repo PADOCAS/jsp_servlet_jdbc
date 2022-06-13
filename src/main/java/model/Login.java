@@ -26,6 +26,10 @@ public class Login implements Serializable {
 
     private String email;
 
+    private Boolean admin;
+
+    private String usuarioLogin;
+
     public Login() {
     }
 
@@ -69,6 +73,22 @@ public class Login implements Serializable {
         this.confirmSenha = confirmSenha;
     }
 
+    public Boolean getAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(Boolean admin) {
+        this.admin = admin;
+    }
+
+    public String getUsuarioLogin() {
+        return usuarioLogin;
+    }
+
+    public void setUsuarioLogin(String usuarioLogin) {
+        this.usuarioLogin = usuarioLogin;
+    }
+
     @Override
     public int hashCode() {
         int hash = 7;
@@ -93,7 +113,7 @@ public class Login implements Serializable {
 
     @Override
     public String toString() {
-        return "Login{" + "login=" + login + ", senha=" + senha + ", nome=" + nome + ", email=" + email + '}';
+        return "Login{" + "login=" + login + ", senha=" + senha + ", nome=" + nome + ", email=" + email + ", admin=" + admin + ", usuarioLogin=" + usuarioLogin + '}';
     }
 
 }

@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import model.Login;
+import servlets.util.ServletUtil;
 
 /**
  *
@@ -24,6 +25,8 @@ import model.Login;
 public class ServletUsuarioController extends HttpServlet {
 
     DAOUsuarioRepository daoUsuarioRepository = new DAOUsuarioRepository();
+    
+    ServletUtil servletUtil = new ServletUtil();
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
@@ -45,7 +48,7 @@ public class ServletUsuarioController extends HttpServlet {
                     && !acao.isEmpty()
                     && acao.equals("deletar")) {
                 //Rotina para carregar Lista de Usuarios sempre que abrir a tela de usuario:
-                List<Login> listModelLogin = daoUsuarioRepository.consultarTodosUsuarios();
+                List<Login> listModelLogin = daoUsuarioRepository.consultarTodosUsuarios(servletUtil.getUsuarioLogado(request));
                 //Passa o objeto como parâmetro para tela de volta:
                 request.setAttribute("listModelLogin", listModelLogin);
                 request.setAttribute("totalResListaUsuario", "Total de Registros: " + (listModelLogin == null ? "0" : listModelLogin.size()));
@@ -70,9 +73,9 @@ public class ServletUsuarioController extends HttpServlet {
                     newLogin.setSenha(senha);
                     newLogin.setConfirmSenha(confirmSenha);
                     newLogin.setNome(nome);
-                    newLogin.setEmail(email);
+                    newLogin.setEmail(email);                                        
 
-                    Login consultaLogin = daoUsuarioRepository.consultarUsuario(login);
+                    Login consultaLogin = daoUsuarioRepository.consultarUsuario(login, servletUtil.getUsuarioLogado(request));
 
                     if (consultaLogin != null) {
                         daoUsuarioRepository.deletarUsuario(login);
@@ -102,7 +105,7 @@ public class ServletUsuarioController extends HttpServlet {
 
                 if (login != null
                         && !login.isEmpty()) {
-                    Login consultaLogin = daoUsuarioRepository.consultarUsuario(login);
+                    Login consultaLogin = daoUsuarioRepository.consultarUsuario(login, servletUtil.getUsuarioLogado(request));
 
                     if (consultaLogin != null) {
                         daoUsuarioRepository.deletarUsuario(login);
@@ -127,7 +130,7 @@ public class ServletUsuarioController extends HttpServlet {
 
                 if (nomePesquisa != null
                         && !nomePesquisa.isEmpty()) {
-                    List<Login> listLogin = daoUsuarioRepository.consultarUsuarioPorNome(nomePesquisa);
+                    List<Login> listLogin = daoUsuarioRepository.consultarUsuarioPorNome(nomePesquisa, servletUtil.getUsuarioLogado(request));
 
                     if (listLogin != null
                             && !listLogin.isEmpty()) {
@@ -153,7 +156,7 @@ public class ServletUsuarioController extends HttpServlet {
                 if (loginSel != null
                         && !loginSel.isEmpty()) {
                     //Rotina para carregar Lista de Usuarios sempre que abrir a tela de usuario:
-                    List<Login> listModelLogin = daoUsuarioRepository.consultarTodosUsuarios();
+                    List<Login> listModelLogin = daoUsuarioRepository.consultarTodosUsuarios(servletUtil.getUsuarioLogado(request));
                     //Passa o objeto como parâmetro para tela de volta:
                     request.setAttribute("listModelLogin", listModelLogin);
                     request.setAttribute("totalResListaUsuario", "Total de Registros: " + (listModelLogin == null ? "0" : listModelLogin.size()));
@@ -165,7 +168,7 @@ public class ServletUsuarioController extends HttpServlet {
                         request.setAttribute("msgListaUser", "Nenhum usuário cadastrado");
                     }
 
-                    Login consultaLogin = daoUsuarioRepository.consultarUsuario(loginSel);
+                    Login consultaLogin = daoUsuarioRepository.consultarUsuario(loginSel, servletUtil.getUsuarioLogado(request));
 
                     if (consultaLogin != null) {
                         //Passa o objeto como parâmetro para tela de volta:
@@ -181,7 +184,7 @@ public class ServletUsuarioController extends HttpServlet {
                     && !acao.isEmpty()
                     && acao.equals("listarUsuarios")) {
                 //Rotina para carregar Lista de Usuarios sempre que abrir a tela de usuario:
-                List<Login> listModelLogin = daoUsuarioRepository.consultarTodosUsuarios();
+                List<Login> listModelLogin = daoUsuarioRepository.consultarTodosUsuarios(servletUtil.getUsuarioLogado(request));
                 //Passa o objeto como parâmetro para tela de volta:
                 request.setAttribute("listModelLogin", listModelLogin);
                 request.setAttribute("totalResListaUsuario", "Total de Registros: " + (listModelLogin == null ? "0" : listModelLogin.size()));
@@ -203,7 +206,7 @@ public class ServletUsuarioController extends HttpServlet {
                 redirecionar.forward(request, response);
             } else {
                 //Rotina para carregar Lista de Usuarios sempre que abrir a tela de usuario:
-                List<Login> listModelLogin = daoUsuarioRepository.consultarTodosUsuarios();
+                List<Login> listModelLogin = daoUsuarioRepository.consultarTodosUsuarios(servletUtil.getUsuarioLogado(request));
                 //Passa o objeto como parâmetro para tela de volta:
                 request.setAttribute("listModelLogin", listModelLogin);
                 request.setAttribute("totalResListaUsuario", "Total de Registros: " + (listModelLogin == null ? "0" : listModelLogin.size()));
@@ -266,22 +269,22 @@ public class ServletUsuarioController extends HttpServlet {
                 newLogin.setNome(nome);
                 newLogin.setEmail(email);
 
-                Login consultaLogin = daoUsuarioRepository.consultarUsuario(login);
+                Login consultaLogin = daoUsuarioRepository.consultarUsuario(login, servletUtil.getUsuarioLogado(request));
 
                 if (!confirmSenha.equals(senha)) {
                     request.setAttribute("msg", "Senha e confirmação de senha devem ser iguais. Verifique!");
                 } else if (consultaLogin != null) {
                     //Login já existente >> Update:
-                    daoUsuarioRepository.salvarUsuario(newLogin, true);
+                    daoUsuarioRepository.salvarUsuario(newLogin, true, servletUtil.getUsuarioLogado(request));
                     request.setAttribute("msg", "Usuário atualizado com sucesso!");
                 } else {
                     //Login Novo >> Insert:
-                    daoUsuarioRepository.salvarUsuario(newLogin, false);
+                    daoUsuarioRepository.salvarUsuario(newLogin, false, servletUtil.getUsuarioLogado(request));
                     request.setAttribute("msg", "Usuário Incluído com sucesso!");
                 }
 
                 //Rotina para carregar Lista de Usuarios sempre que abrir a tela de usuario:
-                List<Login> listModelLogin = daoUsuarioRepository.consultarTodosUsuarios();
+                List<Login> listModelLogin = daoUsuarioRepository.consultarTodosUsuarios(servletUtil.getUsuarioLogado(request));
                 //Passa o objeto como parâmetro para tela de volta:
                 request.setAttribute("listModelLogin", listModelLogin);
                 request.setAttribute("totalResListaUsuario", "Total de Registros: " + (listModelLogin == null ? "0" : listModelLogin.size()));

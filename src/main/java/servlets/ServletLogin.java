@@ -81,7 +81,9 @@ public class ServletLogin extends HttpServlet {
                 //Validar Login:
                 if (daoLoginRepository.getValidAutenticacao(newLogin)) {
                     //Colocar o objeto Login como atributo de sessão para acessar durante o uso do sistema pelo usuário
-                    request.getSession().setAttribute("usuario", newLogin);
+                    Login modelLogin = daoLoginRepository.consultarUsuario(login);
+
+                    request.getSession().setAttribute("usuario", modelLogin);
 
                     if (url == null
                             || url.isEmpty()

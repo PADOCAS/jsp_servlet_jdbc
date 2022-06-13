@@ -25,18 +25,19 @@ public class DAOUsuarioRepository {
         connection = SingleConnection.getConnection();
     }
 
-    public void salvarUsuario(Login modelLogin, Boolean update) throws Exception {
+    public void salvarUsuario(Login modelLogin, Boolean update, String usuarioLogado) throws Exception {
         StringBuilder sqlInsert = new StringBuilder();
-        sqlInsert.append("INSERT INTO public.login (login, senha, email, nome) VALUES (?, ?, ?, ?);");
+        sqlInsert.append("INSERT INTO public.login (login, senha, email, nome, usuario_login) VALUES (?, ?, ?, ?, ?);");
 
         StringBuilder sqlUpdate = new StringBuilder();
-        sqlUpdate.append("UPDATE public.login SET senha = ?, email = ?, nome = ? WHERE login = ?;");
+        sqlUpdate.append("UPDATE public.login SET senha = ?, email = ?, nome = ?, usuario_login = ? WHERE login = ?;");
 
         if (modelLogin != null
                 && modelLogin.getLogin() != null
                 && modelLogin.getSenha() != null
                 && modelLogin.getEmail() != null
-                && modelLogin.getNome() != null) {
+                && modelLogin.getNome() != null
+                && usuarioLogado != null) {
             if (update == null
                     || !update) {
                 //INSERT:
@@ -45,6 +46,7 @@ public class DAOUsuarioRepository {
                     pstaInsert.setString(2, modelLogin.getSenha());
                     pstaInsert.setString(3, modelLogin.getEmail());
                     pstaInsert.setString(4, modelLogin.getNome());
+                    pstaInsert.setString(5, usuarioLogado);
 
                     pstaInsert.executeUpdate();
                     connection.commit();
@@ -67,7 +69,8 @@ public class DAOUsuarioRepository {
                     pstaInsert.setString(1, modelLogin.getSenha());
                     pstaInsert.setString(2, modelLogin.getEmail());
                     pstaInsert.setString(3, modelLogin.getNome());
-                    pstaInsert.setString(4, modelLogin.getLogin());
+                    pstaInsert.setString(4, usuarioLogado);
+                    pstaInsert.setString(5, modelLogin.getLogin());
 
                     pstaInsert.executeUpdate();
                     connection.commit();
@@ -90,15 +93,17 @@ public class DAOUsuarioRepository {
         }
     }
 
-    public Login consultarUsuario(String login) throws Exception {
+    public Login consultarUsuario(String login, String usuarioLogado) throws Exception {
         Login modelLogin = null;
 
         StringBuilder sql = new StringBuilder();
-        sql.append("SELECT * FROM public.login WHERE login = ?;");
+        sql.append("SELECT * FROM public.login WHERE login = ? AND admin is false AND usuario_login = ?;");
 
-        if (login != null) {
+        if (login != null
+                && usuarioLogado != null) {
             try (PreparedStatement pstaSel = connection.prepareStatement(sql.toString());) {
                 pstaSel.setString(1, login);
+                pstaSel.setString(2, usuarioLogado);
 
                 try (ResultSet rsSel = pstaSel.executeQuery();) {
                     if (rsSel.next()) {
@@ -107,7 +112,9 @@ public class DAOUsuarioRepository {
                         modelLogin.setSenha(rsSel.getString("senha"));
                         modelLogin.setConfirmSenha(rsSel.getString("senha"));
                         modelLogin.setEmail(rsSel.getString("email"));
+                        modelLogin.setAdmin(rsSel.getBoolean("admin"));
                         modelLogin.setNome(rsSel.getString("nome"));
+                        modelLogin.setUsuarioLogin(rsSel.getString("usuario_login"));
                     }
                 }
             } catch (SQLException ex) {
@@ -130,16 +137,18 @@ public class DAOUsuarioRepository {
         return modelLogin;
     }
 
-    public List<Login> consultarUsuarioPorNome(String nome) throws Exception {
+    public List<Login> consultarUsuarioPorNome(String nome, String usuarioLogado) throws Exception {
         List<Login> listModelLogin = new ArrayList<>();
 
         StringBuilder sql = new StringBuilder();
-        sql.append("SELECT * FROM public.login WHERE nome LIKE ?;");
+        sql.append("SELECT * FROM public.login WHERE nome LIKE ? AND admin is false AND usuario_login = ?;");
 
         if (nome != null
-                && !nome.isEmpty()) {
+                && !nome.isEmpty()
+                && usuarioLogado != null) {
             try (PreparedStatement pstaSel = connection.prepareStatement(sql.toString());) {
                 pstaSel.setString(1, nome + "%");
+                pstaSel.setString(2, usuarioLogado);
 
                 try (ResultSet rsSel = pstaSel.executeQuery();) {
                     while (rsSel.next()) {
@@ -148,7 +157,9 @@ public class DAOUsuarioRepository {
                         modelLogin.setSenha(rsSel.getString("senha"));
                         modelLogin.setConfirmSenha(rsSel.getString("senha"));
                         modelLogin.setEmail(rsSel.getString("email"));
+                        modelLogin.setAdmin(rsSel.getBoolean("admin"));
                         modelLogin.setNome(rsSel.getString("nome"));
+                        modelLogin.setUsuarioLogin(rsSel.getString("usuario_login"));
 
                         listModelLogin.add(modelLogin);
                     }
@@ -173,37 +184,45 @@ public class DAOUsuarioRepository {
         return listModelLogin;
     }
 
-    public List<Login> consultarTodosUsuarios() throws Exception {
+    public List<Login> consultarTodosUsuarios(String usuarioLogado) throws Exception {
         List<Login> listModelLogin = new ArrayList<>();
 
         StringBuilder sql = new StringBuilder();
-        sql.append("SELECT * FROM public.login;");
+        sql.append("SELECT * FROM public.login WHERE admin is false AND usuario_login = ?;");
 
-        try (PreparedStatement pstaSel = connection.prepareStatement(sql.toString());) {
-            try (ResultSet rsSel = pstaSel.executeQuery();) {
-                while (rsSel.next()) {
-                    Login modelLogin = new Login();
-                    modelLogin.setLogin(rsSel.getString("login"));
-                    modelLogin.setSenha(rsSel.getString("senha"));
-                    modelLogin.setConfirmSenha(rsSel.getString("senha"));
-                    modelLogin.setEmail(rsSel.getString("email"));
-                    modelLogin.setNome(rsSel.getString("nome"));
+        if (usuarioLogado != null) {
+            try (PreparedStatement pstaSel = connection.prepareStatement(sql.toString());) {
+                pstaSel.setString(1, usuarioLogado);
 
-                    listModelLogin.add(modelLogin);
+                try (ResultSet rsSel = pstaSel.executeQuery();) {
+                    while (rsSel.next()) {
+                        Login modelLogin = new Login();
+                        modelLogin.setLogin(rsSel.getString("login"));
+                        modelLogin.setSenha(rsSel.getString("senha"));
+                        modelLogin.setConfirmSenha(rsSel.getString("senha"));
+                        modelLogin.setEmail(rsSel.getString("email"));
+                        modelLogin.setAdmin(rsSel.getBoolean("admin"));
+                        modelLogin.setNome(rsSel.getString("nome"));
+                        modelLogin.setUsuarioLogin(rsSel.getString("usuario_login"));
+
+                        listModelLogin.add(modelLogin);
+                    }
                 }
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
 
-            if (connection != null) {
-                try {
-                    connection.rollback();
-                } catch (SQLException ex1) {
-                    ex1.printStackTrace();
+                if (connection != null) {
+                    try {
+                        connection.rollback();
+                    } catch (SQLException ex1) {
+                        ex1.printStackTrace();
+                    }
                 }
-            }
 
-            throw new Exception(ex.getMessage());
+                throw new Exception(ex.getMessage());
+            }
+        } else {
+            throw new Exception("Usuário Logado não foi informado!");
         }
 
         return listModelLogin;
@@ -211,7 +230,7 @@ public class DAOUsuarioRepository {
 
     public void deletarUsuario(String login) throws Exception {
         StringBuilder sql = new StringBuilder();
-        sql.append("DELETE FROM public.login WHERE login = ?;");
+        sql.append("DELETE FROM public.login WHERE login = ? AND admin is false;");
 
         if (login != null) {
             try (PreparedStatement pstaDel = connection.prepareStatement(sql.toString());) {
