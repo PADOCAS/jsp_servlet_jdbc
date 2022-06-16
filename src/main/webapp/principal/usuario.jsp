@@ -4,6 +4,7 @@
     Author     : lucia
 --%>
 
+<%@page import="model.Login"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 <%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
@@ -64,6 +65,48 @@
                                                                     <span class="form-bar"></span>
                                                                     <label class="float-label">Confirmação da Senha</label>
                                                                 </div>
+
+                                                                <div class="form-group form-default form-static-label">
+                                                                    <select class="form-control" aria-label="Default select example" name="perfil">
+                                                                        <option disabled="disabled">[Selecione o Perfil do Usuário]</option>
+                                                                        <option value="ADMIN" <%
+                                                                            Login loginCheck = (Login) request.getAttribute("modelLogin");
+
+                                                                            if (loginCheck != null
+                                                                                    && loginCheck.getPerfil() != null
+                                                                                    && loginCheck.getPerfil().equals("ADMIN")) {
+                                                                                out.print(" ");
+                                                                                out.print("selected=\"selected\"");
+                                                                                out.print(" ");
+                                                                            }
+                                                                                %>>Administrador</option>
+                                                                        <option value="SECRETARIA" <%
+                                                                            loginCheck = (Login) request.getAttribute("modelLogin");
+
+                                                                            if (loginCheck != null
+                                                                                    && loginCheck.getPerfil() != null
+                                                                                    && loginCheck.getPerfil().equals("SECRETARIA")) {
+                                                                                out.print(" ");
+                                                                                out.print("selected=\"selected\"");
+                                                                                out.print(" ");
+                                                                            }
+                                                                                %>>Secretária</option>
+                                                                        <option value="AUXILIAR" <%
+                                                                            loginCheck = (Login) request.getAttribute("modelLogin");
+
+                                                                            if (loginCheck != null
+                                                                                    && loginCheck.getPerfil() != null
+                                                                                    && loginCheck.getPerfil().equals("AUXILIAR")) {
+                                                                                out.print(" ");
+                                                                                out.print("selected=\"selected\"");
+                                                                                out.print(" ");
+                                                                            }
+                                                                                %>>Auxiliar</option>
+                                                                    </select>    
+                                                                    <span class="form-bar"></span>
+                                                                    <label class="float-label">Perfil</label>
+                                                                </div>
+
                                                                 <div class="form-group form-default form-static-label">
                                                                     <input type="text" name="nome" id="nome" class="form-control" placeholder="Informe o Nome" required="required" maxlength="100" autocomplete="off" value="${modelLogin.nome}">
                                                                     <span class="form-bar"></span>
@@ -250,7 +293,7 @@
                             success: function (response) {
                                 //roda o limpar formulario se tudo ok:
                                 limpar();
-                                
+
                                 document.getElementById("msg").textContent = response;
 
                                 if (response !== null

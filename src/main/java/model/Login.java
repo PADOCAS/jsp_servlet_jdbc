@@ -30,6 +30,8 @@ public class Login implements Serializable {
 
     private String usuarioLogin;
 
+    private String perfil;
+
     public Login() {
     }
 
@@ -89,6 +91,14 @@ public class Login implements Serializable {
         this.usuarioLogin = usuarioLogin;
     }
 
+    public String getPerfil() {
+        return perfil;
+    }
+
+    public void setPerfil(String perfil) {
+        this.perfil = perfil;
+    }
+
     @Override
     public int hashCode() {
         int hash = 7;
@@ -113,7 +123,7 @@ public class Login implements Serializable {
 
     @Override
     public String toString() {
-        return "Login{" + "login=" + login + ", senha=" + senha + ", nome=" + nome + ", email=" + email + ", admin=" + admin + ", usuarioLogin=" + usuarioLogin + '}';
+        return "Login{" + "login=" + login + ", senha=" + senha + ", nome=" + nome + ", email=" + email + ", admin=" + admin + ", usuarioLogin=" + usuarioLogin + ", perfil=" + perfil + '}';
     }
 
 }

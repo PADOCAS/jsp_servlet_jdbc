@@ -250,6 +250,7 @@ public class ServletUsuarioController extends HttpServlet {
             String confirmSenha = request.getParameter("confirmSenha");
             String nome = request.getParameter("nome");
             String email = request.getParameter("email");
+            String perfil = request.getParameter("perfil");
 
             //Validação:
             if (login != null
@@ -261,13 +262,16 @@ public class ServletUsuarioController extends HttpServlet {
                     && email != null
                     && !email.isEmpty()
                     && confirmSenha != null
-                    && !confirmSenha.isEmpty()) {
+                    && !confirmSenha.isEmpty()
+                    && perfil != null
+                    && !perfil.isEmpty()) {
                 Login newLogin = new Login();
                 newLogin.setLogin(login);
                 newLogin.setSenha(senha);
                 newLogin.setConfirmSenha(confirmSenha);
                 newLogin.setNome(nome);
                 newLogin.setEmail(email);
+                newLogin.setPerfil(perfil);
 
                 Login consultaLogin = daoUsuarioRepository.consultarUsuario(login, servletUtil.getUsuarioLogado(request));
 
