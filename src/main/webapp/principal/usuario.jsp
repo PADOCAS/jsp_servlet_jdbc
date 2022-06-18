@@ -47,7 +47,7 @@
                                                             <div class="card-block">
                                                                 <h4 class="sub-title">Cadastro de Usuário</h4>
 
-                                                                <form class="form-material" action="<%= request.getContextPath()%>/ServletUsuarioController" method="post" id="formUser">
+                                                                <form class="form-material" action="<%= request.getContextPath()%>/ServletUsuarioController" method="post" id="formUser" enctype="multipart/form-data">
                                                                 <input type="hidden" name="acao" id="acao" value="" />
 
                                                                 <div class="form-group form-default form-static-label">
@@ -143,6 +143,24 @@
                                                                     <span class="form-bar"></span>
                                                                     <label class="float-label">Email</label>
                                                                 </div>
+
+                                                                <p>Imagem</p>
+                                                                <div class="form-group form-default input-group mb-4">
+                                                                    <div class="input-group-prepend" >
+                                                                        <c:if test="${modelLogin.fotoUser != null
+                                                                                      && modelLogin.fotoUser != ''}">
+                                                                              <!--Se tem imagem:-->
+                                                                              <img id="fotoBase64" alt="Imagem User" src="${modelLogin.fotoUser}" width="100px;" />                                                                        
+                                                                        </c:if>
+                                                                        <c:if test="${modelLogin.fotoUser == null
+                                                                                      || modelLogin.fotoUser == ''}">
+                                                                              <!--Se não tem imagem:-->
+                                                                              <img id="fotoBase64" alt="Imagem User" src="assets/images/User_font_awesome.svg.png" width="100px;" />                                                                        
+                                                                        </c:if>
+                                                                    </div>
+                                                                    <!--Aceitar apenas imagens: >> accept="image/*"-->
+                                                                    <input id="fileFoto" name="fileFoto" type="file" accept="image/*" onchange="visualizarImagem('fotoBase64', 'fileFoto');" class="form-control-file" style="margin-top: 15px; margin-left: 5px;"/>
+                                                                </div>    
 
                                                                 <button type="submit" class="btn btn-primary waves-effect waves-light">Salvar</button>
                                                                 <button type="submit" class="btn btn-success waves-effect waves-light">Salvar/Novo</button>
@@ -246,6 +264,21 @@
 
 
             <script type="text/javascript" >
+                function visualizarImagem(fotoBase64, fileFoto) {
+                    var preview = document.getElementById(fotoBase64); //Campo Imagem do Html
+                    var fileUser = document.getElementById(fileFoto).files[0]; //Campo File do Html 
+                    var reader = new FileReader();
+                    reader.onloadend = function () {
+                        preview.src = reader.result; //Carrega a Foto na tela
+                    };
+
+                    if (fileUser) {
+                        reader.readAsDataURL(fileUser); //Preview da Imagem
+                    } else {
+                        preview.src = '';
+                    }
+                }
+
                 function limpar() {
                     var elementos = document.getElementById("formUser").elements; //Retorno os elementos HTML  dentro do form
 

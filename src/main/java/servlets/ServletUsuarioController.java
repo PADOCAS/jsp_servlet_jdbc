@@ -10,17 +10,22 @@ import java.io.IOException;
 import java.util.List;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
 import model.Login;
+import org.apache.tomcat.util.codec.binary.Base64;
+import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import servlets.util.ServletUtil;
 
 /**
  *
  * @author lucia
  */
+@MultipartConfig
 @WebServlet(name = "ServletUsuarioController", urlPatterns = {"/principal/ServletUsuarioController", "/ServletUsuarioController"})
 public class ServletUsuarioController extends HttpServlet {
 
@@ -281,7 +286,26 @@ public class ServletUsuarioController extends HttpServlet {
                 newLogin.setPerfil(perfil);
                 newLogin.setSexo(sexo);
 
-                Login consultaLogin = daoUsuarioRepository.consultarUsuario(login, servletUtil.getUsuarioLogado(request));
+                Boolean informouFoto = false;
+
+                if (ServletFileUpload.isMultipartContent(request)) {
+                    //Pegar Foto da Tela:
+                    Part part = request.getPart("fileFoto");
+                    if (part != null
+                            && part.getSize() > 0) {
+                        informouFoto = true;
+                        //Converte Imagem para byte:
+                        byte[] foto = org.apache.commons.compress.utils.IOUtils.toByteArray(part.getInputStream());
+                        //Converte para String base 64:
+                        String imagemBase64 = "data:image/" + part.getContentType().split("\\/")[1] + ";base64," + new Base64().encodeBase64String(foto);
+
+                        //Seta informações da foto a gravar:
+                        newLogin.setFotoUser(imagemBase64);
+                        newLogin.setExtensaoFotoUser(part.getContentType().split("\\/")[1]);
+                    }
+                }
+
+                Login consultaLogin = daoUsuarioRepository.consultarUsuarioGeralSaberSeInsert(login, servletUtil.getUsuarioLogado(request));
 
                 if (!confirmSenha.equals(senha)) {
                     request.setAttribute("msg", "Senha e confirmação de senha devem ser iguais. Verifique!");
@@ -289,6 +313,12 @@ public class ServletUsuarioController extends HttpServlet {
                     //Login já existente >> Update:
                     daoUsuarioRepository.salvarUsuario(newLogin, true, servletUtil.getUsuarioLogado(request));
                     request.setAttribute("msg", "Usuário atualizado com sucesso!");
+
+                    //Caso der update e não alterou a foto, seta a existente para carregar em tela:
+                    if (!informouFoto) {
+                        newLogin.setFotoUser(consultaLogin.getFotoUser());
+                        newLogin.setExtensaoFotoUser(consultaLogin.getExtensaoFotoUser());
+                    }
                 } else {
                     //Login Novo >> Insert:
                     daoUsuarioRepository.salvarUsuario(newLogin, false, servletUtil.getUsuarioLogado(request));

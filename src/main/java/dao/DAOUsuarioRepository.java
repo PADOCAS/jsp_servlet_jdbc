@@ -27,10 +27,22 @@ public class DAOUsuarioRepository {
 
     public void salvarUsuario(Login modelLogin, Boolean update, String usuarioLogado) throws Exception {
         StringBuilder sqlInsert = new StringBuilder();
-        sqlInsert.append("INSERT INTO public.login (login, senha, email, nome, usuario_login, perfil, sexo) VALUES (?, ?, ?, ?, ?, ?, ?);");
-
         StringBuilder sqlUpdate = new StringBuilder();
-        sqlUpdate.append("UPDATE public.login SET senha = ?, email = ?, nome = ?, usuario_login = ?, perfil = ?, sexo = ? WHERE login = ?;");
+        Boolean gravouFoto = false;
+
+        if (modelLogin != null
+                && modelLogin.getFotoUser() != null
+                && !modelLogin.getFotoUser().isEmpty()
+                && modelLogin.getExtensaoFotoUser() != null
+                && !modelLogin.getExtensaoFotoUser().isEmpty()) {
+            gravouFoto = true;
+
+            sqlInsert.append("INSERT INTO public.login (login, senha, email, nome, usuario_login, perfil, sexo, foto_user, extensao_foto_user) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);");
+            sqlUpdate.append("UPDATE public.login SET senha = ?, email = ?, nome = ?, usuario_login = ?, perfil = ?, sexo = ?, foto_user = ?, extensao_foto_user = ? WHERE login = ?;");
+        } else {
+            sqlInsert.append("INSERT INTO public.login (login, senha, email, nome, usuario_login, perfil, sexo) VALUES (?, ?, ?, ?, ?, ?, ?);");
+            sqlUpdate.append("UPDATE public.login SET senha = ?, email = ?, nome = ?, usuario_login = ?, perfil = ?, sexo = ? WHERE login = ?;");
+        }
 
         if (modelLogin != null
                 && modelLogin.getLogin() != null
@@ -52,6 +64,11 @@ public class DAOUsuarioRepository {
                     pstaInsert.setString(6, modelLogin.getPerfil());
                     pstaInsert.setString(7, modelLogin.getSexo());
 
+                    if (gravouFoto) {
+                        pstaInsert.setString(8, modelLogin.getFotoUser());
+                        pstaInsert.setString(9, modelLogin.getExtensaoFotoUser());
+                    }
+
                     pstaInsert.executeUpdate();
                     connection.commit();
                 } catch (SQLException ex) {
@@ -69,16 +86,23 @@ public class DAOUsuarioRepository {
                 }
             } else {
                 //UPDATE:
-                try (PreparedStatement pstaInsert = connection.prepareStatement(sqlUpdate.toString());) {
-                    pstaInsert.setString(1, modelLogin.getSenha());
-                    pstaInsert.setString(2, modelLogin.getEmail());
-                    pstaInsert.setString(3, modelLogin.getNome());
-                    pstaInsert.setString(4, usuarioLogado);
-                    pstaInsert.setString(5, modelLogin.getPerfil());
-                    pstaInsert.setString(6, modelLogin.getSexo());
-                    pstaInsert.setString(7, modelLogin.getLogin());
+                try (PreparedStatement pstaUpdate = connection.prepareStatement(sqlUpdate.toString());) {
+                    pstaUpdate.setString(1, modelLogin.getSenha());
+                    pstaUpdate.setString(2, modelLogin.getEmail());
+                    pstaUpdate.setString(3, modelLogin.getNome());
+                    pstaUpdate.setString(4, usuarioLogado);
+                    pstaUpdate.setString(5, modelLogin.getPerfil());
+                    pstaUpdate.setString(6, modelLogin.getSexo());
 
-                    pstaInsert.executeUpdate();
+                    if (gravouFoto) {
+                        pstaUpdate.setString(7, modelLogin.getFotoUser());
+                        pstaUpdate.setString(8, modelLogin.getExtensaoFotoUser());
+                        pstaUpdate.setString(9, modelLogin.getLogin());
+                    } else {
+                        pstaUpdate.setString(7, modelLogin.getLogin());
+                    }
+
+                    pstaUpdate.executeUpdate();
                     connection.commit();
                 } catch (SQLException ex) {
                     ex.printStackTrace();
@@ -97,6 +121,53 @@ public class DAOUsuarioRepository {
         } else {
             throw new Exception("Campos faltando serem informados. Verifique!");
         }
+    }
+    
+    public Login consultarUsuarioGeralSaberSeInsert(String login, String usuarioLogado) throws Exception {
+        Login modelLogin = null;
+
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT * FROM public.login WHERE login = ?;");
+
+        if (login != null
+                && usuarioLogado != null) {
+            try (PreparedStatement pstaSel = connection.prepareStatement(sql.toString());) {
+                pstaSel.setString(1, login);
+
+                try (ResultSet rsSel = pstaSel.executeQuery();) {
+                    if (rsSel.next()) {
+                        modelLogin = new Login();
+                        modelLogin.setLogin(rsSel.getString("login"));
+                        modelLogin.setSenha(rsSel.getString("senha"));
+                        modelLogin.setConfirmSenha(rsSel.getString("senha"));
+                        modelLogin.setEmail(rsSel.getString("email"));
+                        modelLogin.setAdmin(rsSel.getBoolean("admin"));
+                        modelLogin.setNome(rsSel.getString("nome"));
+                        modelLogin.setUsuarioLogin(rsSel.getString("usuario_login"));
+                        modelLogin.setPerfil(rsSel.getString("perfil"));
+                        modelLogin.setSexo(rsSel.getString("sexo"));
+                        modelLogin.setFotoUser(rsSel.getString("foto_user"));
+                        modelLogin.setExtensaoFotoUser(rsSel.getString("extensao_foto_user"));
+                    }
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+
+                if (connection != null) {
+                    try {
+                        connection.rollback();
+                    } catch (SQLException ex1) {
+                        ex1.printStackTrace();
+                    }
+                }
+
+                throw new Exception(ex.getMessage());
+            }
+        } else {
+            throw new Exception("Informe um Login para ser consultado!");
+        }
+
+        return modelLogin;
     }
 
     public Login consultarUsuario(String login, String usuarioLogado) throws Exception {
@@ -123,6 +194,8 @@ public class DAOUsuarioRepository {
                         modelLogin.setUsuarioLogin(rsSel.getString("usuario_login"));
                         modelLogin.setPerfil(rsSel.getString("perfil"));
                         modelLogin.setSexo(rsSel.getString("sexo"));
+                        modelLogin.setFotoUser(rsSel.getString("foto_user"));
+                        modelLogin.setExtensaoFotoUser(rsSel.getString("extensao_foto_user"));
                     }
                 }
             } catch (SQLException ex) {
@@ -170,6 +243,8 @@ public class DAOUsuarioRepository {
                         modelLogin.setUsuarioLogin(rsSel.getString("usuario_login"));
                         modelLogin.setPerfil(rsSel.getString("perfil"));
                         modelLogin.setSexo(rsSel.getString("sexo"));
+                        modelLogin.setFotoUser(rsSel.getString("foto_user"));
+                        modelLogin.setExtensaoFotoUser(rsSel.getString("extensao_foto_user"));
 
                         listModelLogin.add(modelLogin);
                     }
@@ -216,6 +291,8 @@ public class DAOUsuarioRepository {
                         modelLogin.setUsuarioLogin(rsSel.getString("usuario_login"));
                         modelLogin.setPerfil(rsSel.getString("perfil"));
                         modelLogin.setSexo(rsSel.getString("sexo"));
+                        modelLogin.setFotoUser(rsSel.getString("foto_user"));
+                        modelLogin.setExtensaoFotoUser(rsSel.getString("extensao_foto_user"));
 
                         listModelLogin.add(modelLogin);
                     }

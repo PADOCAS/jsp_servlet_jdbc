@@ -34,6 +34,10 @@ public class Login implements Serializable {
 
     private String sexo;
 
+    private String fotoUser;
+
+    private String extensaoFotoUser;
+
     public Login() {
     }
 
@@ -109,6 +113,22 @@ public class Login implements Serializable {
         this.sexo = sexo;
     }
 
+    public String getFotoUser() {
+        return fotoUser;
+    }
+
+    public void setFotoUser(String fotoUser) {
+        this.fotoUser = fotoUser;
+    }
+
+    public String getExtensaoFotoUser() {
+        return extensaoFotoUser;
+    }
+
+    public void setExtensaoFotoUser(String extensaoFotoUser) {
+        this.extensaoFotoUser = extensaoFotoUser;
+    }
+
     @Override
     public int hashCode() {
         int hash = 7;
@@ -133,7 +153,7 @@ public class Login implements Serializable {
 
     @Override
     public String toString() {
-        return "Login{" + "login=" + login + ", senha=" + senha + ", nome=" + nome + ", email=" + email + ", admin=" + admin + ", usuarioLogin=" + usuarioLogin + ", perfil=" + perfil + ", sexo=" + sexo +'}';
+        return "Login{" + "login=" + login + ", senha=" + senha + ", nome=" + nome + ", email=" + email + ", admin=" + admin + ", usuarioLogin=" + usuarioLogin + ", perfil=" + perfil + ", sexo=" + sexo + ", fotoUser=" + fotoUser + ", extensaoFotoUser=" + extensaoFotoUser + '}';
     }
 
 }

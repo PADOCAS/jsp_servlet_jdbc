@@ -54,6 +54,18 @@
             <artifactId>jakarta.servlet.jsp.jstl</artifactId>
             <version>2.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-coyote</artifactId>
+            <version>7.0.96</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.tomcat/jakartaee-migration -->
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>jakartaee-migration</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
     </dependencies>
     
     <build>
