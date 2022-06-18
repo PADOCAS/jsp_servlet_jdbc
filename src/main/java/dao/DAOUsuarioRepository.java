@@ -27,10 +27,10 @@ public class DAOUsuarioRepository {
 
     public void salvarUsuario(Login modelLogin, Boolean update, String usuarioLogado) throws Exception {
         StringBuilder sqlInsert = new StringBuilder();
-        sqlInsert.append("INSERT INTO public.login (login, senha, email, nome, usuario_login, perfil) VALUES (?, ?, ?, ?, ?, ?);");
+        sqlInsert.append("INSERT INTO public.login (login, senha, email, nome, usuario_login, perfil, sexo) VALUES (?, ?, ?, ?, ?, ?, ?);");
 
         StringBuilder sqlUpdate = new StringBuilder();
-        sqlUpdate.append("UPDATE public.login SET senha = ?, email = ?, nome = ?, usuario_login = ?, perfil = ? WHERE login = ?;");
+        sqlUpdate.append("UPDATE public.login SET senha = ?, email = ?, nome = ?, usuario_login = ?, perfil = ?, sexo = ? WHERE login = ?;");
 
         if (modelLogin != null
                 && modelLogin.getLogin() != null
@@ -38,7 +38,8 @@ public class DAOUsuarioRepository {
                 && modelLogin.getEmail() != null
                 && modelLogin.getNome() != null
                 && usuarioLogado != null
-                && modelLogin.getPerfil() != null) {
+                && modelLogin.getPerfil() != null
+                && modelLogin.getSexo() != null) {
             if (update == null
                     || !update) {
                 //INSERT:
@@ -49,6 +50,7 @@ public class DAOUsuarioRepository {
                     pstaInsert.setString(4, modelLogin.getNome());
                     pstaInsert.setString(5, usuarioLogado);
                     pstaInsert.setString(6, modelLogin.getPerfil());
+                    pstaInsert.setString(7, modelLogin.getSexo());
 
                     pstaInsert.executeUpdate();
                     connection.commit();
@@ -73,7 +75,8 @@ public class DAOUsuarioRepository {
                     pstaInsert.setString(3, modelLogin.getNome());
                     pstaInsert.setString(4, usuarioLogado);
                     pstaInsert.setString(5, modelLogin.getPerfil());
-                    pstaInsert.setString(6, modelLogin.getLogin());
+                    pstaInsert.setString(6, modelLogin.getSexo());
+                    pstaInsert.setString(7, modelLogin.getLogin());
 
                     pstaInsert.executeUpdate();
                     connection.commit();
@@ -119,6 +122,7 @@ public class DAOUsuarioRepository {
                         modelLogin.setNome(rsSel.getString("nome"));
                         modelLogin.setUsuarioLogin(rsSel.getString("usuario_login"));
                         modelLogin.setPerfil(rsSel.getString("perfil"));
+                        modelLogin.setSexo(rsSel.getString("sexo"));
                     }
                 }
             } catch (SQLException ex) {
@@ -165,6 +169,7 @@ public class DAOUsuarioRepository {
                         modelLogin.setNome(rsSel.getString("nome"));
                         modelLogin.setUsuarioLogin(rsSel.getString("usuario_login"));
                         modelLogin.setPerfil(rsSel.getString("perfil"));
+                        modelLogin.setSexo(rsSel.getString("sexo"));
 
                         listModelLogin.add(modelLogin);
                     }
@@ -210,6 +215,7 @@ public class DAOUsuarioRepository {
                         modelLogin.setNome(rsSel.getString("nome"));
                         modelLogin.setUsuarioLogin(rsSel.getString("usuario_login"));
                         modelLogin.setPerfil(rsSel.getString("perfil"));
+                        modelLogin.setSexo(rsSel.getString("sexo"));
 
                         listModelLogin.add(modelLogin);
                     }

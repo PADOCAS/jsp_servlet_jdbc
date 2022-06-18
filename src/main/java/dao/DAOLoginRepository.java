@@ -62,6 +62,7 @@ public class DAOLoginRepository {
                         modelLogin.setNome(rsSel.getString("nome"));
                         modelLogin.setUsuarioLogin(rsSel.getString("usuario_login"));
                         modelLogin.setPerfil(rsSel.getString("perfil"));
+                        modelLogin.setSexo(rsSel.getString("sexo"));
                     }
                 }
             } catch (SQLException ex) {

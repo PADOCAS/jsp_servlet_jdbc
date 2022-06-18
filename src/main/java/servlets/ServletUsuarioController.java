@@ -25,7 +25,7 @@ import servlets.util.ServletUtil;
 public class ServletUsuarioController extends HttpServlet {
 
     DAOUsuarioRepository daoUsuarioRepository = new DAOUsuarioRepository();
-    
+
     ServletUtil servletUtil = new ServletUtil();
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -65,6 +65,8 @@ public class ServletUsuarioController extends HttpServlet {
                 String confirmSenha = request.getParameter("confirmSenha");
                 String nome = request.getParameter("nome");
                 String email = request.getParameter("email");
+                String perfil = request.getParameter("perfil");
+                String sexo = request.getParameter("sexo");
 
                 if (login != null
                         && !login.isEmpty()) {
@@ -73,7 +75,9 @@ public class ServletUsuarioController extends HttpServlet {
                     newLogin.setSenha(senha);
                     newLogin.setConfirmSenha(confirmSenha);
                     newLogin.setNome(nome);
-                    newLogin.setEmail(email);                                        
+                    newLogin.setEmail(email);
+                    newLogin.setPerfil(perfil);
+                    newLogin.setSexo(sexo);
 
                     Login consultaLogin = daoUsuarioRepository.consultarUsuario(login, servletUtil.getUsuarioLogado(request));
 
@@ -251,6 +255,7 @@ public class ServletUsuarioController extends HttpServlet {
             String nome = request.getParameter("nome");
             String email = request.getParameter("email");
             String perfil = request.getParameter("perfil");
+            String sexo = request.getParameter("sexo");
 
             //Validação:
             if (login != null
@@ -264,7 +269,9 @@ public class ServletUsuarioController extends HttpServlet {
                     && confirmSenha != null
                     && !confirmSenha.isEmpty()
                     && perfil != null
-                    && !perfil.isEmpty()) {
+                    && !perfil.isEmpty()
+                    && sexo != null
+                    && !sexo.isEmpty()) {
                 Login newLogin = new Login();
                 newLogin.setLogin(login);
                 newLogin.setSenha(senha);
@@ -272,6 +279,7 @@ public class ServletUsuarioController extends HttpServlet {
                 newLogin.setNome(nome);
                 newLogin.setEmail(email);
                 newLogin.setPerfil(perfil);
+                newLogin.setSexo(sexo);
 
                 Login consultaLogin = daoUsuarioRepository.consultarUsuario(login, servletUtil.getUsuarioLogado(request));
 

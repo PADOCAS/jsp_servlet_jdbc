@@ -32,6 +32,8 @@ public class Login implements Serializable {
 
     private String perfil;
 
+    private String sexo;
+
     public Login() {
     }
 
@@ -99,6 +101,14 @@ public class Login implements Serializable {
         this.perfil = perfil;
     }
 
+    public String getSexo() {
+        return sexo;
+    }
+
+    public void setSexo(String sexo) {
+        this.sexo = sexo;
+    }
+
     @Override
     public int hashCode() {
         int hash = 7;
@@ -123,7 +133,7 @@ public class Login implements Serializable {
 
     @Override
     public String toString() {
-        return "Login{" + "login=" + login + ", senha=" + senha + ", nome=" + nome + ", email=" + email + ", admin=" + admin + ", usuarioLogin=" + usuarioLogin + ", perfil=" + perfil + '}';
+        return "Login{" + "login=" + login + ", senha=" + senha + ", nome=" + nome + ", email=" + email + ", admin=" + admin + ", usuarioLogin=" + usuarioLogin + ", perfil=" + perfil + ", sexo=" + sexo +'}';
     }
 
 }

@@ -67,7 +67,7 @@
                                                                 </div>
 
                                                                 <div class="form-group form-default form-static-label">
-                                                                    <select class="form-control" aria-label="Default select example" name="perfil">
+                                                                    <select class="form-control" aria-label="Default select example" name="perfil" required="required">
                                                                         <option disabled="disabled">[Selecione o Perfil do Usuário]</option>
                                                                         <option value="ADMIN" <%
                                                                             Login loginCheck = (Login) request.getAttribute("modelLogin");
@@ -105,6 +105,32 @@
                                                                     </select>    
                                                                     <span class="form-bar"></span>
                                                                     <label class="float-label">Perfil</label>
+                                                                </div>
+
+                                                                <div class="form-group form-default form-static-label">
+                                                                    <p>Sexo</p>
+                                                                    <input type="radio" name="sexo" value="M" class="radio-sexo" required="required" <%
+                                                                        loginCheck = (Login) request.getAttribute("modelLogin");
+
+                                                                        if (loginCheck != null
+                                                                                && loginCheck.getSexo() != null
+                                                                                && loginCheck.getSexo().equals("M")) {
+                                                                            out.print(" ");
+                                                                            out.print("checked=\"checked\"");
+                                                                            out.print(" ");
+                                                                        }
+                                                                           %>>Masculino</>
+                                                                    <input type="radio" name="sexo" value="F" class="radio-sexo" required="required" <%
+                                                                        loginCheck = (Login) request.getAttribute("modelLogin");
+
+                                                                        if (loginCheck != null
+                                                                                && loginCheck.getSexo() != null
+                                                                                && loginCheck.getSexo().equals("F")) {
+                                                                            out.print(" ");
+                                                                            out.print("checked=\"checked\"");
+                                                                            out.print(" ");
+                                                                        }
+                                                                           %>>Feminino</>
                                                                 </div>
 
                                                                 <div class="form-group form-default form-static-label">
@@ -224,7 +250,10 @@
                     var elementos = document.getElementById("formUser").elements; //Retorno os elementos HTML  dentro do form
 
                     for (p = 0; p < elementos.length; p++) {
-                        elementos[p].value = '';
+                        if (elementos[p].type !== null
+                                && elementos[p].type !== 'radio') {
+                            elementos[p].value = '';
+                        }
                     }
                 }
 
