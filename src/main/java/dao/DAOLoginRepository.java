@@ -65,6 +65,12 @@ public class DAOLoginRepository {
                         modelLogin.setSexo(rsSel.getString("sexo"));
                         modelLogin.setFotoUser(rsSel.getString("foto_user"));
                         modelLogin.setExtensaoFotoUser(rsSel.getString("extensao_foto_user"));
+                        modelLogin.setCep(rsSel.getString("cep"));
+                        modelLogin.setLogradouro(rsSel.getString("logradouro"));
+                        modelLogin.setBairro(rsSel.getString("bairro"));
+                        modelLogin.setLocalidade(rsSel.getString("localidade"));
+                        modelLogin.setUf(rsSel.getString("uf"));
+                        modelLogin.setNumero(rsSel.getString("numero"));
                     }
                 }
             } catch (SQLException ex) {

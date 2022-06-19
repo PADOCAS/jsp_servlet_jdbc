@@ -37,11 +37,11 @@ public class DAOUsuarioRepository {
                 && !modelLogin.getExtensaoFotoUser().isEmpty()) {
             gravouFoto = true;
 
-            sqlInsert.append("INSERT INTO public.login (login, senha, email, nome, usuario_login, perfil, sexo, foto_user, extensao_foto_user) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);");
-            sqlUpdate.append("UPDATE public.login SET senha = ?, email = ?, nome = ?, usuario_login = ?, perfil = ?, sexo = ?, foto_user = ?, extensao_foto_user = ? WHERE login = ?;");
+            sqlInsert.append("INSERT INTO public.login (login, senha, email, nome, usuario_login, perfil, sexo, cep, logradouro, bairro, localidade, uf, numero, foto_user, extensao_foto_user) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+            sqlUpdate.append("UPDATE public.login SET senha = ?, email = ?, nome = ?, usuario_login = ?, perfil = ?, sexo = ?, cep = ?, logradouro = ?, bairro = ?, localidade = ?, uf = ?, numero = ?, foto_user = ?, extensao_foto_user = ? WHERE login = ?;");
         } else {
-            sqlInsert.append("INSERT INTO public.login (login, senha, email, nome, usuario_login, perfil, sexo) VALUES (?, ?, ?, ?, ?, ?, ?);");
-            sqlUpdate.append("UPDATE public.login SET senha = ?, email = ?, nome = ?, usuario_login = ?, perfil = ?, sexo = ? WHERE login = ?;");
+            sqlInsert.append("INSERT INTO public.login (login, senha, email, nome, usuario_login, perfil, sexo, cep, logradouro, bairro, localidade, uf, numero) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+            sqlUpdate.append("UPDATE public.login SET senha = ?, email = ?, nome = ?, usuario_login = ?, perfil = ?, sexo = ?, cep = ?, logradouro = ?, bairro = ?, localidade = ?, uf = ?, numero = ? WHERE login = ?;");
         }
 
         if (modelLogin != null
@@ -51,7 +51,13 @@ public class DAOUsuarioRepository {
                 && modelLogin.getNome() != null
                 && usuarioLogado != null
                 && modelLogin.getPerfil() != null
-                && modelLogin.getSexo() != null) {
+                && modelLogin.getSexo() != null
+                && modelLogin.getCep() != null
+                && modelLogin.getLogradouro() != null
+                && modelLogin.getBairro() != null
+                && modelLogin.getLocalidade() != null
+                && modelLogin.getUf() != null
+                && modelLogin.getNumero() != null) {
             if (update == null
                     || !update) {
                 //INSERT:
@@ -63,10 +69,16 @@ public class DAOUsuarioRepository {
                     pstaInsert.setString(5, usuarioLogado);
                     pstaInsert.setString(6, modelLogin.getPerfil());
                     pstaInsert.setString(7, modelLogin.getSexo());
+                    pstaInsert.setString(8, modelLogin.getCep());
+                    pstaInsert.setString(9, modelLogin.getLogradouro());
+                    pstaInsert.setString(10, modelLogin.getBairro());
+                    pstaInsert.setString(11, modelLogin.getLocalidade());
+                    pstaInsert.setString(12, modelLogin.getUf());
+                    pstaInsert.setString(13, modelLogin.getNumero());
 
                     if (gravouFoto) {
-                        pstaInsert.setString(8, modelLogin.getFotoUser());
-                        pstaInsert.setString(9, modelLogin.getExtensaoFotoUser());
+                        pstaInsert.setString(14, modelLogin.getFotoUser());
+                        pstaInsert.setString(15, modelLogin.getExtensaoFotoUser());
                     }
 
                     pstaInsert.executeUpdate();
@@ -93,13 +105,19 @@ public class DAOUsuarioRepository {
                     pstaUpdate.setString(4, usuarioLogado);
                     pstaUpdate.setString(5, modelLogin.getPerfil());
                     pstaUpdate.setString(6, modelLogin.getSexo());
+                    pstaUpdate.setString(7, modelLogin.getCep());
+                    pstaUpdate.setString(8, modelLogin.getLogradouro());
+                    pstaUpdate.setString(9, modelLogin.getBairro());
+                    pstaUpdate.setString(10, modelLogin.getLocalidade());
+                    pstaUpdate.setString(11, modelLogin.getUf());
+                    pstaUpdate.setString(12, modelLogin.getNumero());
 
                     if (gravouFoto) {
-                        pstaUpdate.setString(7, modelLogin.getFotoUser());
-                        pstaUpdate.setString(8, modelLogin.getExtensaoFotoUser());
-                        pstaUpdate.setString(9, modelLogin.getLogin());
+                        pstaUpdate.setString(13, modelLogin.getFotoUser());
+                        pstaUpdate.setString(14, modelLogin.getExtensaoFotoUser());
+                        pstaUpdate.setString(15, modelLogin.getLogin());
                     } else {
-                        pstaUpdate.setString(7, modelLogin.getLogin());
+                        pstaUpdate.setString(13, modelLogin.getLogin());
                     }
 
                     pstaUpdate.executeUpdate();
@@ -122,7 +140,7 @@ public class DAOUsuarioRepository {
             throw new Exception("Campos faltando serem informados. Verifique!");
         }
     }
-    
+
     public Login consultarUsuarioGeralSaberSeInsert(String login, String usuarioLogado) throws Exception {
         Login modelLogin = null;
 
@@ -148,6 +166,12 @@ public class DAOUsuarioRepository {
                         modelLogin.setSexo(rsSel.getString("sexo"));
                         modelLogin.setFotoUser(rsSel.getString("foto_user"));
                         modelLogin.setExtensaoFotoUser(rsSel.getString("extensao_foto_user"));
+                        modelLogin.setCep(rsSel.getString("cep"));
+                        modelLogin.setLogradouro(rsSel.getString("logradouro"));
+                        modelLogin.setBairro(rsSel.getString("bairro"));
+                        modelLogin.setLocalidade(rsSel.getString("localidade"));
+                        modelLogin.setUf(rsSel.getString("uf"));
+                        modelLogin.setNumero(rsSel.getString("numero"));
                     }
                 }
             } catch (SQLException ex) {
@@ -196,6 +220,12 @@ public class DAOUsuarioRepository {
                         modelLogin.setSexo(rsSel.getString("sexo"));
                         modelLogin.setFotoUser(rsSel.getString("foto_user"));
                         modelLogin.setExtensaoFotoUser(rsSel.getString("extensao_foto_user"));
+                        modelLogin.setCep(rsSel.getString("cep"));
+                        modelLogin.setLogradouro(rsSel.getString("logradouro"));
+                        modelLogin.setBairro(rsSel.getString("bairro"));
+                        modelLogin.setLocalidade(rsSel.getString("localidade"));
+                        modelLogin.setUf(rsSel.getString("uf"));
+                        modelLogin.setNumero(rsSel.getString("numero"));
                     }
                 }
             } catch (SQLException ex) {
@@ -245,6 +275,12 @@ public class DAOUsuarioRepository {
                         modelLogin.setSexo(rsSel.getString("sexo"));
                         modelLogin.setFotoUser(rsSel.getString("foto_user"));
                         modelLogin.setExtensaoFotoUser(rsSel.getString("extensao_foto_user"));
+                        modelLogin.setCep(rsSel.getString("cep"));
+                        modelLogin.setLogradouro(rsSel.getString("logradouro"));
+                        modelLogin.setBairro(rsSel.getString("bairro"));
+                        modelLogin.setLocalidade(rsSel.getString("localidade"));
+                        modelLogin.setUf(rsSel.getString("uf"));
+                        modelLogin.setNumero(rsSel.getString("numero"));
 
                         listModelLogin.add(modelLogin);
                     }
@@ -293,6 +329,12 @@ public class DAOUsuarioRepository {
                         modelLogin.setSexo(rsSel.getString("sexo"));
                         modelLogin.setFotoUser(rsSel.getString("foto_user"));
                         modelLogin.setExtensaoFotoUser(rsSel.getString("extensao_foto_user"));
+                        modelLogin.setCep(rsSel.getString("cep"));
+                        modelLogin.setLogradouro(rsSel.getString("logradouro"));
+                        modelLogin.setBairro(rsSel.getString("bairro"));
+                        modelLogin.setLocalidade(rsSel.getString("localidade"));
+                        modelLogin.setUf(rsSel.getString("uf"));
+                        modelLogin.setNumero(rsSel.getString("numero"));
 
                         listModelLogin.add(modelLogin);
                     }

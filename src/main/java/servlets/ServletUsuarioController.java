@@ -72,6 +72,12 @@ public class ServletUsuarioController extends HttpServlet {
                 String email = request.getParameter("email");
                 String perfil = request.getParameter("perfil");
                 String sexo = request.getParameter("sexo");
+                String cep = request.getParameter("cep");
+                String logradouro = request.getParameter("logradouro");
+                String bairro = request.getParameter("bairro");
+                String localidade = request.getParameter("localidade");
+                String uf = request.getParameter("uf");
+                String numero = request.getParameter("numero");
 
                 if (login != null
                         && !login.isEmpty()) {
@@ -83,6 +89,12 @@ public class ServletUsuarioController extends HttpServlet {
                     newLogin.setEmail(email);
                     newLogin.setPerfil(perfil);
                     newLogin.setSexo(sexo);
+                    newLogin.setCep(cep);
+                    newLogin.setLogradouro(logradouro);
+                    newLogin.setBairro(bairro);
+                    newLogin.setLocalidade(localidade);
+                    newLogin.setUf(uf);
+                    newLogin.setNumero(numero);
 
                     Login consultaLogin = daoUsuarioRepository.consultarUsuario(login, servletUtil.getUsuarioLogado(request));
 
@@ -283,6 +295,12 @@ public class ServletUsuarioController extends HttpServlet {
             String email = request.getParameter("email");
             String perfil = request.getParameter("perfil");
             String sexo = request.getParameter("sexo");
+            String cep = request.getParameter("cep");
+            String logradouro = request.getParameter("logradouro");
+            String bairro = request.getParameter("bairro");
+            String localidade = request.getParameter("localidade");
+            String uf = request.getParameter("uf");
+            String numero = request.getParameter("numero");
 
             //Validação:
             if (login != null
@@ -298,7 +316,19 @@ public class ServletUsuarioController extends HttpServlet {
                     && perfil != null
                     && !perfil.isEmpty()
                     && sexo != null
-                    && !sexo.isEmpty()) {
+                    && !sexo.isEmpty()
+                    && cep != null
+                    && !cep.isEmpty()
+                    && logradouro != null
+                    && !logradouro.isEmpty()
+                    && bairro != null
+                    && !bairro.isEmpty()
+                    && localidade != null
+                    && !localidade.isEmpty()
+                    && uf != null
+                    && !uf.isEmpty()
+                    && numero != null
+                    && !numero.isEmpty()) {
                 Login newLogin = new Login();
                 newLogin.setLogin(login);
                 newLogin.setSenha(senha);
@@ -307,6 +337,12 @@ public class ServletUsuarioController extends HttpServlet {
                 newLogin.setEmail(email);
                 newLogin.setPerfil(perfil);
                 newLogin.setSexo(sexo);
+                newLogin.setCep(cep);
+                newLogin.setLogradouro(logradouro);
+                newLogin.setBairro(bairro);
+                newLogin.setLocalidade(localidade);
+                newLogin.setUf(uf);
+                newLogin.setNumero(numero);
 
                 Boolean informouFoto = false;
 

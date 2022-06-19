@@ -5,7 +5,7 @@
 --%>
 
 <%@page import="model.Login"%>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page language="java" contentType="text/html; charset=ISO-8859-1"%>
 
 <%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
 
@@ -45,7 +45,7 @@
                                                         <!-- Basic Form Inputs card start -->
                                                         <div class="card">
                                                             <div class="card-block">
-                                                                <h4 class="sub-title">Cadastro de Usu√°rio</h4>
+                                                                <h4 class="sub-title">Cadastro de Usu·rio</h4>
 
                                                                 <form class="form-material" action="<%= request.getContextPath()%>/ServletUsuarioController" method="post" id="formUser" enctype="multipart/form-data">
                                                                 <input type="hidden" name="acao" id="acao" value="" />
@@ -54,21 +54,44 @@
                                                                     <input type="text" name="login" id="login" class="form-control" placeholder="Informe o Login" required="required" maxlength="20" autocomplete="off" value="${modelLogin.login}">
                                                                     <span class="form-bar"></span>
                                                                     <label class="float-label">Login</label>
-                                                                </div>                                                                    
+                                                                </div>                                        
+
+                                                                <p>Imagem</p>
+                                                                <div class="form-group form-default input-group mb-4">
+                                                                    <div class="input-group-prepend" >
+                                                                        <c:if test="${modelLogin.fotoUser != null
+                                                                                      && modelLogin.fotoUser != ''}">
+                                                                              <!--Se tem imagem:-->
+                                                                              <!--envolvido o objeto img num link (a) para fazer a parte do download da imagem-->
+                                                                              <!--Componente href vai sempre po doGet da servlet-->
+                                                                              <a href="<%= request.getContextPath()%>/ServletUsuarioController?acao=downloadFoto&login=${modelLogin.login}">
+                                                                                  <img id="fotoBase64" alt="Imagem User" src="${modelLogin.fotoUser}" width="100px;" />                                                                        
+                                                                              </a>
+                                                                        </c:if>
+                                                                        <c:if test="${modelLogin.fotoUser == null
+                                                                                      || modelLogin.fotoUser == ''}">
+                                                                              <!--Se n„o tem imagem:-->
+                                                                              <img id="fotoBase64" alt="Imagem User" src="assets/images/User_font_awesome.svg.png" width="100px;" />                                                                        
+                                                                        </c:if>
+                                                                    </div>
+                                                                    <!--Aceitar apenas imagens: >> accept="image/*"-->
+                                                                    <input id="fileFoto" name="fileFoto" type="file" accept="image/*" onchange="visualizarImagem('fotoBase64', 'fileFoto');" class="form-control-file" style="margin-top: 15px; margin-left: 5px;"/>
+                                                                </div>
+
                                                                 <div class="form-group form-default form-static-label">
                                                                     <input type="password" name="senha" id="senha" class="form-control" placeholder="Informe a Senha" required="required" maxlength="20" autocomplete="off" value="${modelLogin.senha}">
                                                                     <span class="form-bar"></span>
                                                                     <label class="float-label">Senha</label>
                                                                 </div>
                                                                 <div class="form-group form-default form-static-label">
-                                                                    <input type="password" name="confirmSenha" id="confirmSenha" class="form-control" placeholder="Confirma√ß√£o da Senha" required="required" maxlength="20" autocomplete="off" value="${modelLogin.confirmSenha}">
+                                                                    <input type="password" name="confirmSenha" id="confirmSenha" class="form-control" placeholder="ConfirmaÁ„o da Senha" required="required" maxlength="20" autocomplete="off" value="${modelLogin.confirmSenha}">
                                                                     <span class="form-bar"></span>
-                                                                    <label class="float-label">Confirma√ß√£o da Senha</label>
+                                                                    <label class="float-label">ConfirmaÁ„o da Senha</label>
                                                                 </div>
 
                                                                 <div class="form-group form-default form-static-label">
                                                                     <select class="form-control" aria-label="Default select example" name="perfil" required="required">
-                                                                        <option disabled="disabled">[Selecione o Perfil do Usu√°rio]</option>
+                                                                        <option disabled="disabled">[Selecione o Perfil do Usu·rio]</option>
                                                                         <option value="ADMIN" <%
                                                                             Login loginCheck = (Login) request.getAttribute("modelLogin");
 
@@ -90,7 +113,7 @@
                                                                                 out.print("selected=\"selected\"");
                                                                                 out.print(" ");
                                                                             }
-                                                                                %>>Secret√°ria</option>
+                                                                                %>>Secret·ria</option>
                                                                         <option value="AUXILIAR" <%
                                                                             loginCheck = (Login) request.getAttribute("modelLogin");
 
@@ -144,27 +167,41 @@
                                                                     <label class="float-label">Email</label>
                                                                 </div>
 
-                                                                <p>Imagem</p>
-                                                                <div class="form-group form-default input-group mb-4">
-                                                                    <div class="input-group-prepend" >
-                                                                        <c:if test="${modelLogin.fotoUser != null
-                                                                                      && modelLogin.fotoUser != ''}">
-                                                                              <!--Se tem imagem:-->
-                                                                              <!--envolvido o objeto img num link (a) para fazer a parte do download da imagem-->
-                                                                              <!--Componente href vai sempre po doGet da servlet-->
-                                                                              <a href="<%= request.getContextPath()%>/ServletUsuarioController?acao=downloadFoto&login=${modelLogin.login}">
-                                                                                  <img id="fotoBase64" alt="Imagem User" src="${modelLogin.fotoUser}" width="100px;" />                                                                        
-                                                                              </a>
-                                                                        </c:if>
-                                                                        <c:if test="${modelLogin.fotoUser == null
-                                                                                      || modelLogin.fotoUser == ''}">
-                                                                              <!--Se n√£o tem imagem:-->
-                                                                              <img id="fotoBase64" alt="Imagem User" src="assets/images/User_font_awesome.svg.png" width="100px;" />                                                                        
-                                                                        </c:if>
-                                                                    </div>
-                                                                    <!--Aceitar apenas imagens: >> accept="image/*"-->
-                                                                    <input id="fileFoto" name="fileFoto" type="file" accept="image/*" onchange="visualizarImagem('fotoBase64', 'fileFoto');" class="form-control-file" style="margin-top: 15px; margin-left: 5px;"/>
-                                                                </div>    
+                                                                <div class="form-group form-default form-static-label">
+                                                                    <input onblur="pesquisaCep();" type="text" name="cep" id="cep" class="form-control" placeholder="Informe o CEP" required="required" maxlength="12" autocomplete="off" value="${modelLogin.cep}">
+                                                                    <span class="form-bar"></span>
+                                                                    <label class="float-label">CEP</label>
+                                                                </div>   
+
+                                                                <div class="form-group form-default form-static-label">
+                                                                    <input type="text" name="logradouro" id="logradouro" class="form-control" placeholder="Informe o Logradouro" required="required" maxlength="100" autocomplete="off" value="${modelLogin.logradouro}">
+                                                                    <span class="form-bar"></span>
+                                                                    <label class="float-label">Logradouro</label>
+                                                                </div>   
+
+                                                                <div class="form-group form-default form-static-label">
+                                                                    <input type="text" name="bairro" id="bairro" class="form-control" placeholder="Informe o Bairro" maxlength="60" required="required" autocomplete="off" value="${modelLogin.bairro}">
+                                                                    <span class="form-bar"></span>
+                                                                    <label class="float-label">Bairro</label>
+                                                                </div>   
+
+                                                                <div class="form-group form-default form-static-label">
+                                                                    <input type="text" name="localidade" id="localidade" class="form-control" placeholder="Informe a Localidade" required="required" maxlength="60" autocomplete="off" value="${modelLogin.localidade}">
+                                                                    <span class="form-bar"></span>
+                                                                    <label class="float-label">Localidade</label>
+                                                                </div>   
+
+                                                                <div class="form-group form-default form-static-label">
+                                                                    <input type="text" name="uf" id="uf" class="form-control" placeholder="Informe o Estado" maxlength="2" required="required" autocomplete="off" value="${modelLogin.uf}">
+                                                                    <span class="form-bar"></span>
+                                                                    <label class="float-label">Estado</label>
+                                                                </div>   
+
+                                                                <div class="form-group form-default form-static-label">
+                                                                    <input type="text" name="numero" id="numero" class="form-control" placeholder="Informe o N˙mero" required="required" maxlength="15" autocomplete="off" value="${modelLogin.numero}">
+                                                                    <span class="form-bar"></span>
+                                                                    <label class="float-label">N˙mero</label>
+                                                                </div>           
 
                                                                 <button type="submit" class="btn btn-primary waves-effect waves-light">Salvar</button>
                                                                 <button type="submit" class="btn btn-success waves-effect waves-light">Salvar/Novo</button>
@@ -230,14 +267,14 @@
                 <div class="modal-dialog" role="document" style="max-width: 800px;">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Pesquisa de Usu√°rio</h5>
+                            <h5 class="modal-title" id="exampleModalLabel">Pesquisa de Usu·rio</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
                         <div class="modal-body">
                             <div class="input-group mb-3">
-                                <input type="text" id="nomePesquisa" class="form-control" placeholder="Nome do Usu√°rio" aria-label="Nome" aria-describedby="basic-addon2">
+                                <input type="text" id="nomePesquisa" class="form-control" placeholder="Nome do Usu·rio" aria-label="Nome" aria-describedby="basic-addon2">
                                 <div class="input-group-append">
                                     <button class="btn btn-success" type="button" onclick="buscarUsuario();">Pesquisar</button>
                                 </div>
@@ -253,7 +290,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <!--Sera preenchido pelo javascript na m√£o sempre as linhas e colunas-->
+                                        <!--Sera preenchido pelo javascript na m„o sempre as linhas e colunas-->
                                     </tbody>
                                 </table>
                             </div>
@@ -268,6 +305,61 @@
 
 
             <script type="text/javascript" >
+                function pesquisaCep() {
+                    var cep = $("#cep").val();
+
+                    //Busca no WebService por jQuery mesmo:
+                    if (cep !== null
+                            && cep !== '') {
+                        //Express„o regular para validar o CEP.
+                        var validacep = /^[0-9]{8}$/;
+
+                        //Valida o formato do CEP.
+                        if (validacep.test(cep)) {
+                            $.getJSON("https://viacep.com.br/ws/" + cep + "/json/?callback=?", function (dados) {
+                                if (!("erro" in dados)) {
+                                    //Atualiza os campos com os valores da consulta.
+                                    if (dados.cep !== null) {
+                                        $("#cep").val(dados.cep.toUpperCase());
+                                    }
+
+                                    if (dados.logradouro !== null) {
+                                        $("#logradouro").val(dados.logradouro.toUpperCase());
+                                    }
+
+                                    if (dados.bairro !== null) {
+                                        $("#bairro").val(dados.bairro.toUpperCase());
+                                    }
+
+                                    if (dados.localidade !== null) {
+                                        $("#localidade").val(dados.localidade.toUpperCase());
+                                    }
+
+                                    if (dados.uf !== null) {
+                                        $("#uf").val(dados.uf.toUpperCase());
+                                    }
+                                } else {
+                                    //CEP pesquisado n„o foi encontrado.
+                                    limpa_formul·rio_cep();
+                                    alert("CEP n„o encontrado.");
+                                }
+                            });
+                        } else {
+                            //cep È inv·lido.
+                            limpa_formul·rio_cep();
+                            alert("Formato de CEP inv·lido.");
+                        }
+                    }
+                }
+
+                function limpa_formul·rio_cep() {
+                    // Limpa valores do formul·rio de cep.
+                    $("#logradouro").val("");
+                    $("#bairro").val("");
+                    $("#localidade").val("");
+                    $("#uf").val("");
+                }
+
                 function visualizarImagem(fotoBase64, fileFoto) {
                     var preview = document.getElementById(fotoBase64); //Campo Imagem do Html
                     var fileUser = document.getElementById(fileFoto).files[0]; //Campo File do Html 
@@ -293,7 +385,7 @@
                         }
                     }
 
-                    //Limpar a Imagem para a padr√£o:
+                    //Limpar a Imagem para a padr„o:
                     if (document.getElementById("fotoBase64") !== null
                             && document.getElementById("fotoBase64") !== '') {
                         document.getElementById("fotoBase64").src = "assets/images/User_font_awesome.svg.png";
@@ -310,20 +402,20 @@
 
                 function deletar() {
                     //Aparecer um dialog para o usuario confirmar a exclusao
-                    if (confirm('Deseja realmente excluir o usu√°rio ?')) {
-                        //Trocar para o method get o formul√°rio:
+                    if (confirm('Deseja realmente excluir o usu·rio ?')) {
+                        //Trocar para o method get o formul·rio:
                         document.getElementById("formUser").method = 'get';
                         //Atributo acao recebe o valor 'deletar' para trabalhar com ele no metodo doGet dentro do Servlet
                         document.getElementById("acao").value = 'deletar';
-                        //Envia o formul√°rio
+                        //Envia o formul·rio
                         document.getElementById("formUser").submit();
                     }
                 }
 
                 function deletarComAjax() {
                     //Aparecer um dialog para o usuario confirmar a exclusao
-                    if (confirm('Deseja realmente excluir o usu√°rio ?')) {
-                        //Pega a URLAction do formul√°rio para cair no doGet (servlet utilizado)
+                    if (confirm('Deseja realmente excluir o usu·rio ?')) {
+                        //Pega a URLAction do formul·rio para cair no doGet (servlet utilizado)
                         var urlAction = document.getElementById("formUser").action;
                         var idLogin = document.getElementById("login").value;
 
@@ -345,15 +437,15 @@
                             }
                         }).fail(function (xhr, status, errorThrow) {
                             document.getElementById("msg").textContent = xhr.responseText;
-//                            alert("Erro ao deletar usu√°rio!\n" + xhr.responseText);
+//                            alert("Erro ao deletar usu·rio!\n" + xhr.responseText);
                         });
                     }
                 }
 
                 function deletarComAjaxDiretoLista(loginSel) {
                     //Aparecer um dialog para o usuario confirmar a exclusao
-                    if (confirm('Deseja realmente excluir o usu√°rio ?')) {
-                        //Pega a URLAction do formul√°rio para cair no doGet (servlet utilizado)
+                    if (confirm('Deseja realmente excluir o usu·rio ?')) {
+                        //Pega a URLAction do formul·rio para cair no doGet (servlet utilizado)
                         var urlAction = document.getElementById("formUser").action;
 
                         $.ajax({
@@ -390,7 +482,7 @@
                     if (nomePesquisa !== null
                             && nomePesquisa !== ""
                             && nomePesquisa.trim() !== "") {
-                        //Pega a URLAction do formul√°rio para cair no doGet (servlet utilizado)
+                        //Pega a URLAction do formul·rio para cair no doGet (servlet utilizado)
                         var urlAction = document.getElementById("formUser").action;
 
                         $.ajax({
@@ -416,7 +508,7 @@
                                             $('#tabelaUsuarioPesquisa > tbody').append("<td>" + json[i].login + "</td>");
                                             $('#tabelaUsuarioPesquisa > tbody').append("<td>" + json[i].nome + "</td>");
                                             $('#tabelaUsuarioPesquisa > tbody').append("<td>" + json[i].email + "</td>");
-                                            //Na String do button, para passar aspas duplas e n√£o dar pal na string, colocar assim \' com isso funciona normalmente‚Ä¶
+                                            //Na String do button, para passar aspas duplas e n„o dar pal na string, colocar assim \' com isso funciona normalmente?
                                             $('#tabelaUsuarioPesquisa > tbody').append('<td><button type="button" onclick="selEditar(\'' + json[i].login + '\');" class="btn btn-info">Selecionar</button></td>');
                                             $('#tabelaUsuarioPesquisa > tbody').append("</tr>");
                                         }
@@ -438,7 +530,7 @@
                             $('#tabelaUsuarioPesquisa > tbody > td').remove();
                             $('#tabelaUsuarioPesquisa > tbody > tr').remove();
 
-                            alert("Erro ao pesquisar usu√°rio!\n" + xhr.responseText);
+                            alert("Erro ao pesquisar usu·rio!\n" + xhr.responseText);
                         });
                     } else {
                         document.getElementById("totalResPesquisa").textContent = "Total de Registros: 0";
@@ -446,12 +538,12 @@
                         $('#tabelaUsuarioPesquisa > tbody > td').remove();
                         $('#tabelaUsuarioPesquisa > tbody > tr').remove();
 
-                        alert("Digite alguma informa√ß√£o para habilitar a pesquisa!");
+                        alert("Digite alguma informaÁ„o para habilitar a pesquisa!");
                     }
                 }
 
                 function selEditar(loginSel) {
-                    //Pega a URLAction do formul√°rio para cair no doGet (servlet utilizado)
+                    //Pega a URLAction do formul·rio para cair no doGet (servlet utilizado)
                     var urlAction = document.getElementById("formUser").action;
 
                     //Redirecionar com ajax:
