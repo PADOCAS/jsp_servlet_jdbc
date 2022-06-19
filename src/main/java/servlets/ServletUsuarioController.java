@@ -213,6 +213,28 @@ public class ServletUsuarioController extends HttpServlet {
                 //Redireciona
                 RequestDispatcher redirecionar = request.getRequestDispatcher("/principal/usuario.jsp");
                 redirecionar.forward(request, response);
+            } else if (acao != null
+                    && !acao.isEmpty()
+                    && acao.equals("downloadFoto")) {
+                //Ajax não atualizar o formulário... nao tem redirecionamento!
+                String login = request.getParameter("login");
+
+                if (login != null
+                        && !login.isEmpty()) {
+                    Login consultaLogin = daoUsuarioRepository.consultarUsuario(login, servletUtil.getUsuarioLogado(request));
+
+                    if (consultaLogin != null
+                            && consultaLogin.getFotoUser() != null
+                            && !consultaLogin.getFotoUser().isEmpty()
+                            && consultaLogin.getExtensaoFotoUser() != null
+                            && !consultaLogin.getExtensaoFotoUser().isEmpty()) {
+                        //Enviar como resposta um arquivo para download:
+                        response.setHeader("Content-Disposition", "attachment;filename=arquivo." + consultaLogin.getExtensaoFotoUser());
+                        //Quebrar a String nas virgulas (split\\,) e pega a segunda string quebrada, joga fora a primeira parte (data:image/" + part.getContentType().split("\\/")[1] + ";base64,)
+                        //vai pegar so o que vem depois do base64, >>> daqui em diante:
+                        response.getOutputStream().write(new Base64().decode(consultaLogin.getFotoUser().split("\\,")[1]));
+                    }
+                }
             } else {
                 //Rotina para carregar Lista de Usuarios sempre que abrir a tela de usuario:
                 List<Login> listModelLogin = daoUsuarioRepository.consultarTodosUsuarios(servletUtil.getUsuarioLogado(request));

@@ -150,7 +150,11 @@
                                                                         <c:if test="${modelLogin.fotoUser != null
                                                                                       && modelLogin.fotoUser != ''}">
                                                                               <!--Se tem imagem:-->
-                                                                              <img id="fotoBase64" alt="Imagem User" src="${modelLogin.fotoUser}" width="100px;" />                                                                        
+                                                                              <!--envolvido o objeto img num link (a) para fazer a parte do download da imagem-->
+                                                                              <!--Componente href vai sempre po doGet da servlet-->
+                                                                              <a href="<%= request.getContextPath()%>/ServletUsuarioController?acao=downloadFoto&login=${modelLogin.login}">
+                                                                                  <img id="fotoBase64" alt="Imagem User" src="${modelLogin.fotoUser}" width="100px;" />                                                                        
+                                                                              </a>
                                                                         </c:if>
                                                                         <c:if test="${modelLogin.fotoUser == null
                                                                                       || modelLogin.fotoUser == ''}">
@@ -287,6 +291,12 @@
                                 && elementos[p].type !== 'radio') {
                             elementos[p].value = '';
                         }
+                    }
+
+                    //Limpar a Imagem para a padrão:
+                    if (document.getElementById("fotoBase64") !== null
+                            && document.getElementById("fotoBase64") !== '') {
+                        document.getElementById("fotoBase64").src = "assets/images/User_font_awesome.svg.png";
                     }
                 }
 
