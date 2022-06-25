@@ -252,7 +252,7 @@ public class DAOUsuarioRepository {
         List<Login> listModelLogin = new ArrayList<>();
 
         StringBuilder sql = new StringBuilder();
-        sql.append("SELECT * FROM public.login WHERE nome LIKE ? AND admin is false AND usuario_login = ?;");
+        sql.append("SELECT * FROM public.login WHERE nome LIKE ? AND admin is false AND usuario_login = ? ORDER BY login;");
 
         if (nome != null
                 && !nome.isEmpty()
@@ -305,11 +305,126 @@ public class DAOUsuarioRepository {
         return listModelLogin;
     }
 
+    public List<Login> consultarUsuarioPorNomePaginada(String nome, String usuarioLogado, Integer offset) throws Exception {
+        List<Login> listModelLogin = new ArrayList<>();
+
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT * FROM public.login WHERE nome LIKE ? AND admin is false AND usuario_login = ? ORDER BY login offset ? LIMIT 5;");
+
+        if (nome != null
+                && !nome.isEmpty()
+                && usuarioLogado != null) {
+            try (PreparedStatement pstaSel = connection.prepareStatement(sql.toString());) {
+                pstaSel.setString(1, nome + "%");
+                pstaSel.setString(2, usuarioLogado);
+                pstaSel.setInt(3, offset == null ? 0 : offset);
+
+                try (ResultSet rsSel = pstaSel.executeQuery();) {
+                    while (rsSel.next()) {
+                        Login modelLogin = new Login();
+                        modelLogin.setLogin(rsSel.getString("login"));
+                        modelLogin.setSenha(rsSel.getString("senha"));
+                        modelLogin.setConfirmSenha(rsSel.getString("senha"));
+                        modelLogin.setEmail(rsSel.getString("email"));
+                        modelLogin.setAdmin(rsSel.getBoolean("admin"));
+                        modelLogin.setNome(rsSel.getString("nome"));
+                        modelLogin.setUsuarioLogin(rsSel.getString("usuario_login"));
+                        modelLogin.setPerfil(rsSel.getString("perfil"));
+                        modelLogin.setSexo(rsSel.getString("sexo"));
+                        modelLogin.setFotoUser(rsSel.getString("foto_user"));
+                        modelLogin.setExtensaoFotoUser(rsSel.getString("extensao_foto_user"));
+                        modelLogin.setCep(rsSel.getString("cep"));
+                        modelLogin.setLogradouro(rsSel.getString("logradouro"));
+                        modelLogin.setBairro(rsSel.getString("bairro"));
+                        modelLogin.setLocalidade(rsSel.getString("localidade"));
+                        modelLogin.setUf(rsSel.getString("uf"));
+                        modelLogin.setNumero(rsSel.getString("numero"));
+
+                        listModelLogin.add(modelLogin);
+                    }
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+
+                if (connection != null) {
+                    try {
+                        connection.rollback();
+                    } catch (SQLException ex1) {
+                        ex1.printStackTrace();
+                    }
+                }
+
+                throw new Exception(ex.getMessage());
+            }
+        } else {
+            throw new Exception("Informe um Nome para ser consultado!");
+        }
+
+        return listModelLogin;
+    }
+
+    public List<Login> consultarTodosUsuariosPaginada(String usuarioLogado, Integer offset) throws Exception {
+        List<Login> listModelLogin = new ArrayList<>();
+
+        StringBuilder sql = new StringBuilder();
+        //Paginar com limit 5 registros: (para não carregar tudo de uma vez)
+        sql.append("SELECT * FROM public.login WHERE admin is false AND usuario_login = ? ORDER BY login offset ? LIMIT 5;");
+
+        if (usuarioLogado != null) {
+            try (PreparedStatement pstaSel = connection.prepareStatement(sql.toString());) {
+                pstaSel.setString(1, usuarioLogado);
+                pstaSel.setInt(2, offset == null ? 0 : offset);
+
+                try (ResultSet rsSel = pstaSel.executeQuery();) {
+                    while (rsSel.next()) {
+                        Login modelLogin = new Login();
+                        modelLogin.setLogin(rsSel.getString("login"));
+                        modelLogin.setSenha(rsSel.getString("senha"));
+                        modelLogin.setConfirmSenha(rsSel.getString("senha"));
+                        modelLogin.setEmail(rsSel.getString("email"));
+                        modelLogin.setAdmin(rsSel.getBoolean("admin"));
+                        modelLogin.setNome(rsSel.getString("nome"));
+                        modelLogin.setUsuarioLogin(rsSel.getString("usuario_login"));
+                        modelLogin.setPerfil(rsSel.getString("perfil"));
+                        modelLogin.setSexo(rsSel.getString("sexo"));
+                        modelLogin.setFotoUser(rsSel.getString("foto_user"));
+                        modelLogin.setExtensaoFotoUser(rsSel.getString("extensao_foto_user"));
+                        modelLogin.setCep(rsSel.getString("cep"));
+                        modelLogin.setLogradouro(rsSel.getString("logradouro"));
+                        modelLogin.setBairro(rsSel.getString("bairro"));
+                        modelLogin.setLocalidade(rsSel.getString("localidade"));
+                        modelLogin.setUf(rsSel.getString("uf"));
+                        modelLogin.setNumero(rsSel.getString("numero"));
+
+                        listModelLogin.add(modelLogin);
+                    }
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+
+                if (connection != null) {
+                    try {
+                        connection.rollback();
+                    } catch (SQLException ex1) {
+                        ex1.printStackTrace();
+                    }
+                }
+
+                throw new Exception(ex.getMessage());
+            }
+        } else {
+            throw new Exception("Usuário Logado não foi informado!");
+        }
+
+        return listModelLogin;
+    }
+
     public List<Login> consultarTodosUsuarios(String usuarioLogado) throws Exception {
         List<Login> listModelLogin = new ArrayList<>();
 
         StringBuilder sql = new StringBuilder();
-        sql.append("SELECT * FROM public.login WHERE admin is false AND usuario_login = ?;");
+        //Paginar com limit 5 registros: (para não carregar tudo de uma vez)
+        sql.append("SELECT * FROM public.login WHERE admin is false AND usuario_login = ? ORDER BY login;");
 
         if (usuarioLogado != null) {
             try (PreparedStatement pstaSel = connection.prepareStatement(sql.toString());) {
@@ -385,5 +500,47 @@ public class DAOUsuarioRepository {
         } else {
             throw new Exception("Informe um Login para ser deletado!");
         }
+    }
+
+    public Long getTotalPaginasConsultaTodosUsuarios(String usuarioLogado) throws Exception {
+        Long numPagina = 1L;
+
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT count(*) as total FROM public.login WHERE admin is false AND usuario_login = ?;");
+
+        try (PreparedStatement pstaSel = connection.prepareStatement(sql.toString());) {
+            pstaSel.setString(1, usuarioLogado);
+
+            try (ResultSet rsSel = pstaSel.executeQuery();) {
+                if (rsSel.next()) {
+                    Long totalSel = rsSel.getLong("total");
+                    //Paginacao de 5 em 5:
+                    Double limit = 5D;
+                    Double pagina = totalSel.doubleValue() / limit;
+                    Double restoDivisao = pagina % 2;
+
+                    //Se sobrou registros, abre uma nova página
+                    if (restoDivisao > 0) {
+                        pagina++;
+                    }
+
+                    numPagina = pagina.longValue();
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+
+            if (connection != null) {
+                try {
+                    connection.rollback();
+                } catch (SQLException ex1) {
+                    ex1.printStackTrace();
+                }
+            }
+
+            throw new Exception(ex.getMessage());
+        }
+
+        return numPagina;
     }
 }

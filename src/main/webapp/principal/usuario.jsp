@@ -49,6 +49,8 @@
 
                                                                 <form class="form-material" action="<%= request.getContextPath()%>/ServletUsuarioController" method="post" id="formUser" enctype="multipart/form-data">
                                                                 <input type="hidden" name="acao" id="acao" value="" />
+                                                                <input type="hidden" name="paginaAtual" id="paginaAtual" value="${paginaAtual}" />
+                                                                <input type="hidden" name="totalPagina" id="totalPagina" value="${totalPagina}" />
 
                                                                 <div class="form-group form-default form-static-label">
                                                                     <input type="text" name="login" id="login" class="form-control" placeholder="Informe o Login" required="required" maxlength="20" autocomplete="off" value="${modelLogin.login}">
@@ -242,7 +244,28 @@
                                                                 </c:forEach>
                                                             </tbody>
                                                         </table>
-                                                        <span id="totalResListaUsuario" style="color: black; font-weight: bold;">${totalResListaUsuario}</span>
+
+                                                        <nav aria-label="Paginação" style="margin-left: 5px;">
+                                                            <ul class="pagination">
+                                                                <li class="page-item"><a class="page-link" style="cursor: pointer;" onclick="paginaAnterior();">Anterior</a></li>
+                                                                    <%
+                                                                        Long totalPagina = (Long) request.getAttribute("totalPagina");
+
+                                                                        for (int i = 0; i < totalPagina; i++) {
+                                                                            //Acao para servlet paginar passando a pagina que esta visualizando:
+                                                                            //Pega a pagina e multiplica por 5, pois é 5 por pagina para iniciar o offset
+                                                                            String url = request.getContextPath() + "/ServletUsuarioController?acao=paginar&pagina=" + (i * 5) + "&paginaAtual=" + (i + 1);
+                                                                            //Mostra na tela a pagina i + 1, pois o indice começa com zero aqui no teste
+                                                                            out.print("<li class=\"page-item\"><a class=\"page-link\" href=\"" + url + "\">" + (i + 1) + "</a></li>");
+                                                                        }
+                                                                    %>
+                                                                <li class="page-item"><a class="page-link" style="cursor: pointer;" onclick="paginaProxima();">Próxima</a></li>
+                                                            </ul>
+                                                        </nav>
+
+                                                        <br/>
+
+                                                        <span id="totalResListaUsuario" style="color: black; font-weight: bold; margin-left: 5px;">${totalResListaUsuario}</span>
                                                         <!--</div>-->
                                                     </div>
                                                 </div>
@@ -302,8 +325,7 @@
                     </div>
                 </div>
             </div>
-
-
+            
             <script type="text/javascript" >
                 function pesquisaCep() {
                     var cep = $("#cep").val();
@@ -440,6 +462,69 @@
 //                            alert("Erro ao deletar usuário!\n" + xhr.responseText);
                         });
                     }
+                }
+
+                function paginaAnterior() {
+                    //Botão Anterior:
+                    var urlAction = document.getElementById("formUser").action;
+                    var paginaAtual = document.getElementById("paginaAtual").value;
+                    var offset;
+                    var paginaNova;
+
+                    //PaginaAtual recebe as paginas nao o offset (de 1 pra cima):
+                    if (parseInt(paginaAtual) <= 1) {
+                        offset = 0;
+                        paginaNova = 1;
+                    } else {
+                        offset = (parseInt(paginaAtual) - 2) * 5;
+                        paginaNova = (parseInt(paginaAtual) - 1);
+                    }
+
+                    $.ajax({
+                        method: "get",
+                        url: urlAction,
+                        contentType: "application/x-www-form-urlencoded;charset=utf-8",
+                        //Parametros fica no data
+                        data: "acao=paginar&pagina=" + offset + "&paginaAtual=" + paginaNova,
+                        success: function (response) {
+                            //Redirecionar com ajax carregando a listas de usuarios:
+                            window.location.href = urlAction + "?acao=paginar&pagina=" + offset + "&paginaAtual=" + paginaNova;
+                        }
+                    }).fail(function (xhr, status, errorThrow) {
+                        document.getElementById("msg").textContent = xhr.responseText;
+                    });
+                }
+
+                function paginaProxima() {
+                    //Botão Proximo:
+                    var urlAction = document.getElementById("formUser").action;
+                    var paginaAtual = document.getElementById("paginaAtual").value;
+                    var totalPagina = document.getElementById("totalPagina").value;
+                    var offset;
+                    var paginaNova;
+
+                    //PaginaAtual recebe as paginas nao o offset (de 1 pra cima):
+                    if (parseInt(paginaAtual) >= parseInt(totalPagina)) {
+                        offset = (parseInt(paginaAtual) - 1) * 5;
+                        paginaNova = totalPagina;
+                    } else {
+                        offset = (parseInt(paginaAtual) * 5);
+                        paginaNova = (parseInt(paginaAtual) + 1);
+                    }
+
+                    $.ajax({
+                        method: "get",
+                        url: urlAction,
+                        contentType: "application/x-www-form-urlencoded;charset=utf-8",
+                        //Parametros fica no data
+                        data: "acao=paginar&pagina=" + offset + "&paginaAtual=" + paginaNova,
+                        success: function (response) {
+                            //Redirecionar com ajax carregando a listas de usuarios:
+                            window.location.href = urlAction + "?acao=paginar&pagina=" + offset + "&paginaAtual=" + paginaNova;
+                        }
+                    }).fail(function (xhr, status, errorThrow) {
+                        document.getElementById("msg").textContent = xhr.responseText;
+                    });
                 }
 
                 function deletarComAjaxDiretoLista(loginSel) {

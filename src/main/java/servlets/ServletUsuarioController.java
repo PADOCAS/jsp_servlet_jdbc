@@ -53,13 +53,16 @@ public class ServletUsuarioController extends HttpServlet {
                     && !acao.isEmpty()
                     && acao.equals("deletar")) {
                 //Rotina para carregar Lista de Usuarios sempre que abrir a tela de usuario:
-                List<Login> listModelLogin = daoUsuarioRepository.consultarTodosUsuarios(servletUtil.getUsuarioLogado(request));
+                List<Login> listModelLoginPaginada = daoUsuarioRepository.consultarTodosUsuariosPaginada(servletUtil.getUsuarioLogado(request), 0);
+                List<Login> listModelLoginGeral = daoUsuarioRepository.consultarTodosUsuarios(servletUtil.getUsuarioLogado(request));
                 //Passa o objeto como parâmetro para tela de volta:
-                request.setAttribute("listModelLogin", listModelLogin);
-                request.setAttribute("totalResListaUsuario", "Total de Registros: " + (listModelLogin == null ? "0" : listModelLogin.size()));
+                request.setAttribute("listModelLogin", listModelLoginPaginada);
+                request.setAttribute("totalPagina", daoUsuarioRepository.getTotalPaginasConsultaTodosUsuarios(servletUtil.getUsuarioLogado(request)));
+                request.setAttribute("paginaAtual", 1L); //Adicinando parametro para trabalhar com os botoes anterior e proximo
+                request.setAttribute("totalResListaUsuario", "Total de Registros: " + (listModelLoginGeral == null ? "0" : listModelLoginGeral.size()));
 
-                if (listModelLogin != null
-                        && !listModelLogin.isEmpty()) {
+                if (listModelLoginGeral != null
+                        && !listModelLoginGeral.isEmpty()) {
                     request.setAttribute("msgListaUser", "Listagem de Usuários");
                 } else {
                     request.setAttribute("msgListaUser", "Nenhum usuário cadastrado");
@@ -177,13 +180,16 @@ public class ServletUsuarioController extends HttpServlet {
                 if (loginSel != null
                         && !loginSel.isEmpty()) {
                     //Rotina para carregar Lista de Usuarios sempre que abrir a tela de usuario:
-                    List<Login> listModelLogin = daoUsuarioRepository.consultarTodosUsuarios(servletUtil.getUsuarioLogado(request));
+                    List<Login> listModelLoginPaginada = daoUsuarioRepository.consultarTodosUsuariosPaginada(servletUtil.getUsuarioLogado(request), 0);
+                    List<Login> listModelLoginGeral = daoUsuarioRepository.consultarTodosUsuarios(servletUtil.getUsuarioLogado(request));
                     //Passa o objeto como parâmetro para tela de volta:
-                    request.setAttribute("listModelLogin", listModelLogin);
-                    request.setAttribute("totalResListaUsuario", "Total de Registros: " + (listModelLogin == null ? "0" : listModelLogin.size()));
+                    request.setAttribute("listModelLogin", listModelLoginPaginada);
+                    request.setAttribute("totalPagina", daoUsuarioRepository.getTotalPaginasConsultaTodosUsuarios(servletUtil.getUsuarioLogado(request)));
+                    request.setAttribute("paginaAtual", 1L); //Adicinando parametro para trabalhar com os botoes anterior e proximo
+                    request.setAttribute("totalResListaUsuario", "Total de Registros: " + (listModelLoginGeral == null ? "0" : listModelLoginGeral.size()));
 
-                    if (listModelLogin != null
-                            && !listModelLogin.isEmpty()) {
+                    if (listModelLoginGeral != null
+                            && !listModelLoginGeral.isEmpty()) {
                         request.setAttribute("msgListaUser", "Listagem de Usuários");
                     } else {
                         request.setAttribute("msgListaUser", "Nenhum usuário cadastrado");
@@ -205,13 +211,16 @@ public class ServletUsuarioController extends HttpServlet {
                     && !acao.isEmpty()
                     && acao.equals("listarUsuarios")) {
                 //Rotina para carregar Lista de Usuarios sempre que abrir a tela de usuario:
-                List<Login> listModelLogin = daoUsuarioRepository.consultarTodosUsuarios(servletUtil.getUsuarioLogado(request));
+                List<Login> listModelLoginPaginada = daoUsuarioRepository.consultarTodosUsuariosPaginada(servletUtil.getUsuarioLogado(request), 0);
+                List<Login> listModelLoginGeral = daoUsuarioRepository.consultarTodosUsuarios(servletUtil.getUsuarioLogado(request));
                 //Passa o objeto como parâmetro para tela de volta:
-                request.setAttribute("listModelLogin", listModelLogin);
-                request.setAttribute("totalResListaUsuario", "Total de Registros: " + (listModelLogin == null ? "0" : listModelLogin.size()));
+                request.setAttribute("listModelLogin", listModelLoginPaginada);
+                request.setAttribute("totalPagina", daoUsuarioRepository.getTotalPaginasConsultaTodosUsuarios(servletUtil.getUsuarioLogado(request)));
+                request.setAttribute("paginaAtual", 1L); //Adicinando parametro para trabalhar com os botoes anterior e proximo
+                request.setAttribute("totalResListaUsuario", "Total de Registros: " + (listModelLoginGeral == null ? "0" : listModelLoginGeral.size()));
 
-                if (listModelLogin != null
-                        && !listModelLogin.isEmpty()) {
+                if (listModelLoginGeral != null
+                        && !listModelLoginGeral.isEmpty()) {
                     request.setAttribute("msgListaUser", "Listagem de Usuários");
                 } else {
                     request.setAttribute("msgListaUser", "Nenhum usuário cadastrado");
@@ -247,15 +256,49 @@ public class ServletUsuarioController extends HttpServlet {
                         response.getOutputStream().write(new Base64().decode(consultaLogin.getFotoUser().split("\\,")[1]));
                     }
                 }
+            } else if (acao != null
+                    && !acao.isEmpty()
+                    && acao.equals("paginar")) {
+                Integer offset = request.getParameter("pagina") == null ? 0 : Integer.valueOf(request.getParameter("pagina"));
+                Long paginaAtual = request.getParameter("paginaAtual") == null ? 0 : Long.valueOf(request.getParameter("paginaAtual"));
+
+//                //Rotina para carregar Lista de Usuarios PAGINADA sempre que abrir a tela de usuario:
+                List<Login> listModelLoginPaginada = daoUsuarioRepository.consultarTodosUsuariosPaginada(servletUtil.getUsuarioLogado(request), offset);
+                //Executar sem paginacao para saber total de registros.. seria melhor por um count mesmo aqui
+                List<Login> listTotalRegistros = daoUsuarioRepository.consultarTodosUsuarios(servletUtil.getUsuarioLogado(request));
+
+                //Passa o objeto como parâmetro para tela de volta:
+                request.setAttribute("listModelLogin", listModelLoginPaginada);
+                request.setAttribute("totalPagina", daoUsuarioRepository.getTotalPaginasConsultaTodosUsuarios(servletUtil.getUsuarioLogado(request)));
+                request.setAttribute("paginaAtual", paginaAtual); //Adicinando parametro para trabalhar com os botoes anterior e proximo
+                request.setAttribute("totalResListaUsuario", "Total de Registros: " + (listTotalRegistros == null ? "0" : listTotalRegistros.size()));
+
+                if (listTotalRegistros != null
+                        && !listTotalRegistros.isEmpty()) {
+                    request.setAttribute("msgListaUser", "Listagem de Usuários");
+                } else {
+                    request.setAttribute("msgListaUser", "Nenhum usuário cadastrado");
+                }
+
+                if (msgAuxiliar != null
+                        && !msgAuxiliar.isEmpty()) {
+                    request.setAttribute("msg", msgAuxiliar);
+                }
+//                //Redireciona
+                RequestDispatcher redirecionar = request.getRequestDispatcher("/principal/usuario.jsp");
+                redirecionar.forward(request, response);
             } else {
                 //Rotina para carregar Lista de Usuarios sempre que abrir a tela de usuario:
-                List<Login> listModelLogin = daoUsuarioRepository.consultarTodosUsuarios(servletUtil.getUsuarioLogado(request));
+                List<Login> listModelLoginPaginada = daoUsuarioRepository.consultarTodosUsuariosPaginada(servletUtil.getUsuarioLogado(request), 0);
+                List<Login> listModelLoginGeral = daoUsuarioRepository.consultarTodosUsuarios(servletUtil.getUsuarioLogado(request));
                 //Passa o objeto como parâmetro para tela de volta:
-                request.setAttribute("listModelLogin", listModelLogin);
-                request.setAttribute("totalResListaUsuario", "Total de Registros: " + (listModelLogin == null ? "0" : listModelLogin.size()));
+                request.setAttribute("listModelLogin", listModelLoginPaginada);
+                request.setAttribute("totalPagina", daoUsuarioRepository.getTotalPaginasConsultaTodosUsuarios(servletUtil.getUsuarioLogado(request)));
+                request.setAttribute("paginaAtual", 1L); //Adicinando parametro para trabalhar com os botoes anterior e proximo
+                request.setAttribute("totalResListaUsuario", "Total de Registros: " + (listModelLoginGeral == null ? "0" : listModelLoginGeral.size()));
 
-                if (listModelLogin != null
-                        && !listModelLogin.isEmpty()) {
+                if (listModelLoginGeral != null
+                        && !listModelLoginGeral.isEmpty()) {
                     request.setAttribute("msgListaUser", "Listagem de Usuários");
                 } else {
                     request.setAttribute("msgListaUser", "Nenhum usuário cadastrado");
@@ -384,13 +427,16 @@ public class ServletUsuarioController extends HttpServlet {
                 }
 
                 //Rotina para carregar Lista de Usuarios sempre que abrir a tela de usuario:
-                List<Login> listModelLogin = daoUsuarioRepository.consultarTodosUsuarios(servletUtil.getUsuarioLogado(request));
+                List<Login> listModelLoginPaginada = daoUsuarioRepository.consultarTodosUsuariosPaginada(servletUtil.getUsuarioLogado(request), 0);
+                List<Login> listModelLoginGeral = daoUsuarioRepository.consultarTodosUsuarios(servletUtil.getUsuarioLogado(request));
                 //Passa o objeto como parâmetro para tela de volta:
-                request.setAttribute("listModelLogin", listModelLogin);
-                request.setAttribute("totalResListaUsuario", "Total de Registros: " + (listModelLogin == null ? "0" : listModelLogin.size()));
+                request.setAttribute("listModelLogin", listModelLoginPaginada);
+                request.setAttribute("totalPagina", daoUsuarioRepository.getTotalPaginasConsultaTodosUsuarios(servletUtil.getUsuarioLogado(request)));
+                request.setAttribute("paginaAtual", 1L); //Adicinando parametro para trabalhar com os botoes anterior e proximo
+                request.setAttribute("totalResListaUsuario", "Total de Registros: " + (listModelLoginGeral == null ? "0" : listModelLoginGeral.size()));
 
-                if (listModelLogin != null
-                        && !listModelLogin.isEmpty()) {
+                if (listModelLoginGeral != null
+                        && !listModelLoginGeral.isEmpty()) {
                     request.setAttribute("msgListaUser", "Listagem de Usuários");
                 } else {
                     request.setAttribute("msgListaUser", "Nenhum usuário cadastrado");
