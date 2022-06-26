@@ -256,7 +256,7 @@
                                                                             //Pega a pagina e multiplica por 5, pois é 5 por pagina para iniciar o offset
                                                                             String url = request.getContextPath() + "/ServletUsuarioController?acao=paginar&pagina=" + (i * 5) + "&paginaAtual=" + (i + 1);
                                                                             //Mostra na tela a pagina i + 1, pois o indice começa com zero aqui no teste
-                                                                            out.print("<li class=\"page-item\"><a class=\"page-link\" href=\"" + url + "\">" + (i + 1) + "</a></li>");
+                                                                            out.print("<li class=\"page-item\"><a class=\"page-link button_pagination_treinamento_jsp\" href=\"" + url + "\">" + (i + 1) + "</a></li>");
                                                                         }
                                                                     %>
                                                                 <li class="page-item"><a class="page-link" style="cursor: pointer;" onclick="paginaProxima();">Próxima</a></li>
@@ -325,7 +325,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <script type="text/javascript" >
                 function pesquisaCep() {
                     var cep = $("#cep").val();
@@ -525,6 +525,51 @@
                     }).fail(function (xhr, status, errorThrow) {
                         document.getElementById("msg").textContent = xhr.responseText;
                     });
+                }
+
+                window.onload = function () {
+                    //Sempre que acabar de carregar a pagina roda o evento de chegar pagina ativa:
+                    selectButtonPagination();
+                };
+
+                function selectButtonPagination() {
+//                    Fazer o querySelector pegar todos os elementos da tela que satisfação a condição de classe (.button_pagination_treinamento_jsp):
+                    let listBtnDispPagination = document.querySelectorAll(".button_pagination_treinamento_jsp");
+                    let paginaAtual = document.getElementById("paginaAtual").value;
+
+                    if (listBtnDispPagination !== null
+                            && listBtnDispPagination !== ''
+                            && paginaAtual !== null
+                            && paginaAtual !== '') {
+                        //Remove a Classe de selecao para todos:
+                        for (i = 0; i < listBtnDispPagination.length; i++) {
+                            if (listBtnDispPagination[i] !== null
+                                    && listBtnDispPagination[i] !== ''
+                                    && listBtnDispPagination[i] !== 'undefined'
+                                    && listBtnDispPagination[i].classList !== null
+                                    && listBtnDispPagination[i].classList !== ''
+                                    && listBtnDispPagination[i].classList !== 'undefined') {
+                                if (listBtnDispPagination[i].classList.contains('button_pagination_selection')) {
+                                    listBtnDispPagination[i].classList.remove("button_pagination_selection");
+                                }
+                            }
+                        }
+
+                        //Coloca a Classe apenas no selecionado:
+                        for (i = 0; i < listBtnDispPagination.length; i++) {
+                            if (listBtnDispPagination[i] !== null
+                                    && listBtnDispPagination[i] !== ''
+                                    && listBtnDispPagination[i] !== 'undefined'
+                                    && listBtnDispPagination[i].classList !== null
+                                    && listBtnDispPagination[i].classList !== ''
+                                    && listBtnDispPagination[i].classList !== 'undefined'
+                                    && listBtnDispPagination[i].innerHTML !== null) {
+                                if (listBtnDispPagination[i].innerHTML === paginaAtual) {
+                                    listBtnDispPagination[i].classList.add("button_pagination_selection");
+                                }
+                            }
+                        }
+                    }
                 }
 
                 function deletarComAjaxDiretoLista(loginSel) {
