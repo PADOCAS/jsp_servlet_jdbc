@@ -51,6 +51,8 @@
                                                                 <input type="hidden" name="acao" id="acao" value="" />
                                                                 <input type="hidden" name="paginaAtual" id="paginaAtual" value="${paginaAtual}" />
                                                                 <input type="hidden" name="totalPagina" id="totalPagina" value="${totalPagina}" />
+                                                                <input type="hidden" name="paginaAtualAjax" id="paginaAtualAjax" />
+                                                                <input type="hidden" name="totalPaginaAjax" id="totalPaginaAjax" />
 
                                                                 <div class="form-group form-default form-static-label">
                                                                     <input type="text" name="login" id="login" class="form-control" placeholder="Informe o Login" required="required" maxlength="20" autocomplete="off" value="${modelLogin.login}">
@@ -317,7 +319,16 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <span id="totalResPesquisa" style="color: black; font-weight: bold;"></span>
+
+                            <nav aria-label="Paginação" style="margin-left: 5px;">
+                                <ul class="pagination" id="ulPaginacaoUserAjax">
+
+                                </ul>
+                            </nav>
+
+                            <br/>
+
+                            <span id="totalResPesquisa" style="color: black; font-weight: bold; margin-left: 5px;"></span>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
@@ -527,10 +538,91 @@
                     });
                 }
 
+                function paginaProximaAjax() {
+                    //Botão Proximo Consulta por Nome Ajax:
+                    var nomePesquisa = document.getElementById("nomePesquisa").value;
+                    var paginaAtualAjaxCampo = document.getElementById("paginaAtualAjax").value;
+                    var totalPaginaAjaxCampo = document.getElementById("totalPaginaAjax").value;
+                    var offset;
+                    var paginaNova;
+
+                    //PaginaAtual recebe as paginas nao o offset (de 1 pra cima):
+                    if (parseInt(paginaAtualAjaxCampo) >= parseInt(totalPaginaAjaxCampo)) {
+                        offset = (parseInt(paginaAtualAjaxCampo) - 1) * 5;
+                        paginaNova = totalPaginaAjaxCampo;
+                    } else {
+                        offset = (parseInt(paginaAtualAjaxCampo) * 5);
+                        paginaNova = (parseInt(paginaAtualAjaxCampo) + 1);
+                    }
+
+                    var urlNova = "nomePesquisa=" + nomePesquisa + "&acao=consultarajaxPage&paginaAjax=" + offset + "&paginaAtualAjax=" + paginaNova;
+                    buscarUsuarioPageAjax(urlNova);
+                }
+                
+                function paginaAnteriorAjax() {
+                    //Botão Anterior:
+                    var nomePesquisa = document.getElementById("nomePesquisa").value;
+                    var paginaAtualAjaxCampo = document.getElementById("paginaAtualAjax").value;
+                    var offset;
+                    var paginaNova;
+
+                    //PaginaAtual recebe as paginas nao o offset (de 1 pra cima):
+                    if (parseInt(paginaAtualAjaxCampo) <= 1) {
+                        offset = 0;
+                        paginaNova = 1;
+                    } else {
+                        offset = (parseInt(paginaAtualAjaxCampo) - 2) * 5;
+                        paginaNova = (parseInt(paginaAtualAjaxCampo) - 1);
+                    }
+
+                    var urlNova = "nomePesquisa=" + nomePesquisa + "&acao=consultarajaxPage&paginaAjax=" + offset + "&paginaAtualAjax=" + paginaNova;
+                    buscarUsuarioPageAjax(urlNova);
+                }
+
                 window.onload = function () {
                     //Sempre que acabar de carregar a pagina roda o evento de chegar pagina ativa:
                     selectButtonPagination();
                 };
+
+                function selectButtonPaginationAjax() {
+//                    Fazer o querySelector pegar todos os elementos da tela que satisfação a condição de classe (.button_pagination_treinamento_consulta_nome_ajax_jsp):
+                    let listBtnDispPagination = document.querySelectorAll(".button_pagination_treinamento_consulta_nome_ajax_jsp");
+                    let paginaAtual = document.getElementById("paginaAtualAjax").value;
+
+                    if (listBtnDispPagination !== null
+                            && listBtnDispPagination !== ''
+                            && paginaAtual !== null
+                            && paginaAtual !== '') {
+                        //Remove a Classe de selecao para todos:
+                        for (i = 0; i < listBtnDispPagination.length; i++) {
+                            if (listBtnDispPagination[i] !== null
+                                    && listBtnDispPagination[i] !== ''
+                                    && listBtnDispPagination[i] !== 'undefined'
+                                    && listBtnDispPagination[i].classList !== null
+                                    && listBtnDispPagination[i].classList !== ''
+                                    && listBtnDispPagination[i].classList !== 'undefined') {
+                                if (listBtnDispPagination[i].classList.contains('button_pagination_selection')) {
+                                    listBtnDispPagination[i].classList.remove("button_pagination_selection");
+                                }
+                            }
+                        }
+
+                        //Coloca a Classe apenas no selecionado:
+                        for (i = 0; i < listBtnDispPagination.length; i++) {
+                            if (listBtnDispPagination[i] !== null
+                                    && listBtnDispPagination[i] !== ''
+                                    && listBtnDispPagination[i] !== 'undefined'
+                                    && listBtnDispPagination[i].classList !== null
+                                    && listBtnDispPagination[i].classList !== ''
+                                    && listBtnDispPagination[i].classList !== 'undefined'
+                                    && listBtnDispPagination[i].innerHTML !== null) {
+                                if (listBtnDispPagination[i].innerHTML === paginaAtual) {
+                                    listBtnDispPagination[i].classList.add("button_pagination_selection");
+                                }
+                            }
+                        }
+                    }
+                }
 
                 function selectButtonPagination() {
 //                    Fazer o querySelector pegar todos os elementos da tela que satisfação a condição de classe (.button_pagination_treinamento_jsp):
@@ -606,6 +698,85 @@
                     }
                 }
 
+                function buscarUsuarioPageAjax(url) {
+                    var nomePesquisa = document.getElementById("nomePesquisa").value;
+
+                    //Pega a URLAction do formulário para cair no doGet (servlet utilizado)
+                    var urlAction = document.getElementById("formUser").action;
+
+                    $.ajax({
+                        method: "get",
+                        url: urlAction,
+                        contentType: "application/x-www-form-urlencoded;charset=utf-8",
+                        data: url,
+                        success: function (response, textStatus, xhr) {
+                            //Remove todos os resultados da tabela (pesquisa anteriores)
+                            $('#tabelaUsuarioPesquisa > tbody > td').remove();
+                            $('#tabelaUsuarioPesquisa > tbody > tr').remove();
+                            //Limpa a paginação ja realizada antes!
+                            $('#ulPaginacaoUserAjax > li').remove();
+
+                            if (response !== null
+                                    && response !== "") {
+                                try {
+                                    var json = JSON.parse(response);
+
+                                    console.info(json);
+
+                                    for (var i = 0; i < json.length; i++) {
+                                        $('#tabelaUsuarioPesquisa > tbody').append("<tr>");
+                                        $('#tabelaUsuarioPesquisa > tbody').append("<td>" + json[i].login + "</td>");
+                                        $('#tabelaUsuarioPesquisa > tbody').append("<td>" + json[i].nome + "</td>");
+                                        $('#tabelaUsuarioPesquisa > tbody').append("<td>" + json[i].email + "</td>");
+                                        //Na String do button, para passar aspas duplas e não dar pal na string, colocar assim \' com isso funciona normalmente?
+                                        $('#tabelaUsuarioPesquisa > tbody').append('<td><button type="button" onclick="selEditar(\'' + json[i].login + '\');" class="btn btn-info">Selecionar</button></td>');
+                                        $('#tabelaUsuarioPesquisa > tbody').append("</tr>");
+                                    }
+
+                                    var totalRegistrosConsultaNome = xhr.getResponseHeader("totalRegistrosConsultaNome");
+
+                                    document.getElementById("totalResPesquisa").textContent = "Total de Registros: " + totalRegistrosConsultaNome;
+
+                                    var totalPaginaAjax = xhr.getResponseHeader("totalPaginaAjax");
+                                    var paginaAtualAjax = xhr.getResponseHeader("paginaAtualAjax");
+
+                                    $('#ulPaginacaoUserAjax').append("<li class=\"page-item\"><a class=\"page-link\" onclick=\"paginaAnteriorAjax();\" style=\"cursor: pointer;\">Anterior</a></li>");
+
+                                    for (var i = 0; i < totalPaginaAjax; i++) {
+                                        var urlNova = "nomePesquisa=" + nomePesquisa + "&acao=consultarajaxPage&paginaAjax=" + (i * 5) + "&paginaAtualAjax=" + (i + 1);
+                                        //ulPaginacaoUserAjax (Acrescentar as paginas)
+                                        $('#ulPaginacaoUserAjax').append('<li class="page-item"><a class="page-link button_pagination_treinamento_consulta_nome_ajax_jsp" style="cursor: pointer;" onclick="buscarUsuarioPageAjax(\'' + urlNova + '\');">' + (i + 1) + '</a></li>');
+                                    }
+
+                                    $("#ulPaginacaoUserAjax").append("<li class=\"page-item\"><a class=\"page-link\" onclick=\"paginaProximaAjax();\" style=\"cursor: pointer;\">Próxima</a></li>");
+
+                                    document.getElementById("paginaAtualAjax").value = paginaAtualAjax;
+                                    document.getElementById("totalPaginaAjax").value = totalPaginaAjax;
+                                    selectButtonPaginationAjax();
+                                } catch (e) {
+                                    document.getElementById("totalResPesquisa").textContent = "Total de Registros: 0";
+                                    //Remove todos os resultados da tabela (pesquisa anteriores)
+                                    $('#tabelaUsuarioPesquisa > tbody > td').remove();
+                                    $('#tabelaUsuarioPesquisa > tbody > tr').remove();
+                                    //Limpa a paginação ja realizada antes!
+                                    $('#ulPaginacaoUserAjax > li').remove();
+
+                                    alert(response);
+                                    selectButtonPaginationAjax();
+                                }
+                            }
+                        }
+                    }).fail(function (xhr, status, errorThrow) {
+                        document.getElementById("totalResPesquisa").textContent = "Total de Registros: 0";
+                        //Remove todos os resultados da tabela (pesquisa anteriores)
+                        $('#tabelaUsuarioPesquisa > tbody > td').remove();
+                        $('#tabelaUsuarioPesquisa > tbody > tr').remove();
+
+                        alert("Erro ao pesquisar usuário!\n" + xhr.responseText);
+                        selectButtonPaginationAjax();
+                    });
+                }
+
                 function buscarUsuario() {
                     var nomePesquisa = document.getElementById("nomePesquisa").value;
 
@@ -621,10 +792,12 @@
                             contentType: "application/x-www-form-urlencoded;charset=utf-8",
                             //Parametros fica no data
                             data: "nomePesquisa=" + nomePesquisa + "&acao=consultarajax",
-                            success: function (response) {
+                            success: function (response, textStatus, xhr) {
                                 //Remove todos os resultados da tabela (pesquisa anteriores)
                                 $('#tabelaUsuarioPesquisa > tbody > td').remove();
                                 $('#tabelaUsuarioPesquisa > tbody > tr').remove();
+                                //Limpa a paginação ja realizada antes!
+                                $('#ulPaginacaoUserAjax > li').remove();
 
                                 if (response !== null
                                         && response !== "") {
@@ -643,14 +816,38 @@
                                             $('#tabelaUsuarioPesquisa > tbody').append("</tr>");
                                         }
 
-                                        document.getElementById("totalResPesquisa").textContent = "Total de Registros: " + json.length;
+                                        var totalRegistrosConsultaNome = xhr.getResponseHeader("totalRegistrosConsultaNome");
+
+                                        document.getElementById("totalResPesquisa").textContent = "Total de Registros: " + totalRegistrosConsultaNome;
+
+                                        var totalPaginaAjax = xhr.getResponseHeader("totalPaginaAjax");
+                                        var paginaAtualAjax = xhr.getResponseHeader("paginaAtualAjax");
+
+                                        $('#ulPaginacaoUserAjax').append("<li class=\"page-item\"><a class=\"page-link\" onclick=\"paginaAnteriorAjax();\" style=\"cursor: pointer;\">Anterior</a></li>");
+
+                                        for (var i = 0; i < totalPaginaAjax; i++) {
+                                            var url = "nomePesquisa=" + nomePesquisa + "&acao=consultarajaxPage&paginaAjax=" + (i * 5) + "&paginaAtualAjax=" + (i + 1);
+                                            //ulPaginacaoUserAjax (Acrescentar as paginas)
+                                            $('#ulPaginacaoUserAjax').append('<li class="page-item"><a class="page-link button_pagination_treinamento_consulta_nome_ajax_jsp" style="cursor: pointer;" onclick="buscarUsuarioPageAjax(\'' + url + '\');">' + (i + 1) + '</a></li>');
+                                        }
+
+                                        $("#ulPaginacaoUserAjax").append("<li class=\"page-item\"><a class=\"page-link\" onclick=\"paginaProximaAjax();\" style=\"cursor: pointer;\">Próxima</a></li>");
+
+                                        document.getElementById("paginaAtualAjax").value = paginaAtualAjax;
+                                        document.getElementById("totalPaginaAjax").value = totalPaginaAjax;
+
+                                        selectButtonPaginationAjax();
                                     } catch (e) {
                                         document.getElementById("totalResPesquisa").textContent = "Total de Registros: 0";
                                         //Remove todos os resultados da tabela (pesquisa anteriores)
                                         $('#tabelaUsuarioPesquisa > tbody > td').remove();
                                         $('#tabelaUsuarioPesquisa > tbody > tr').remove();
+                                        //Limpa a paginação ja realizada antes!
+                                        $('#ulPaginacaoUserAjax > li').remove();
 
                                         alert(response);
+
+                                        selectButtonPaginationAjax();
                                     }
                                 }
                             }
@@ -661,6 +858,7 @@
                             $('#tabelaUsuarioPesquisa > tbody > tr').remove();
 
                             alert("Erro ao pesquisar usuário!\n" + xhr.responseText);
+                            selectButtonPaginationAjax();
                         });
                     } else {
                         document.getElementById("totalResPesquisa").textContent = "Total de Registros: 0";

@@ -252,7 +252,7 @@ public class DAOUsuarioRepository {
         List<Login> listModelLogin = new ArrayList<>();
 
         StringBuilder sql = new StringBuilder();
-        sql.append("SELECT * FROM public.login WHERE nome LIKE ? AND admin is false AND usuario_login = ? ORDER BY login;");
+        sql.append("SELECT * FROM public.login WHERE nome LIKE ? AND admin is false AND usuario_login = ? ORDER BY login LIMIT 5;");
 
         if (nome != null
                 && !nome.isEmpty()
@@ -303,6 +303,94 @@ public class DAOUsuarioRepository {
         }
 
         return listModelLogin;
+    }
+    
+    public Long consultarUsuarioPorNomeTotalRegistros(String nome, String usuarioLogado) throws Exception {
+        Long totalReg = 0L;
+
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT count(*) as total FROM public.login WHERE nome LIKE ? AND admin is false AND usuario_login = ?;");
+
+        if (nome != null
+                && !nome.isEmpty()
+                && usuarioLogado != null) {
+            try (PreparedStatement pstaSel = connection.prepareStatement(sql.toString());) {
+                pstaSel.setString(1, nome + "%");
+                pstaSel.setString(2, usuarioLogado);
+
+                try (ResultSet rsSel = pstaSel.executeQuery();) {
+                    if (rsSel.next()) {
+                        Long totalSel = rsSel.getLong("total");
+                        totalReg = totalSel;
+                    }
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+
+                if (connection != null) {
+                    try {
+                        connection.rollback();
+                    } catch (SQLException ex1) {
+                        ex1.printStackTrace();
+                    }
+                }
+
+                throw new Exception(ex.getMessage());
+            }
+        } else {
+            throw new Exception("Informe um Nome para ser consultado!");
+        }
+
+        return totalReg;
+    }
+
+    public Long consultarUsuarioPorNomeTotalPorPagina(String nome, String usuarioLogado) throws Exception {
+        Long numPagina = 1L;
+
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT count(*) as total FROM public.login WHERE nome LIKE ? AND admin is false AND usuario_login = ?;");
+
+        if (nome != null
+                && !nome.isEmpty()
+                && usuarioLogado != null) {
+            try (PreparedStatement pstaSel = connection.prepareStatement(sql.toString());) {
+                pstaSel.setString(1, nome + "%");
+                pstaSel.setString(2, usuarioLogado);
+
+                try (ResultSet rsSel = pstaSel.executeQuery();) {
+                    if (rsSel.next()) {
+                        Long totalSel = rsSel.getLong("total");
+                        //Paginacao de 5 em 5:
+                        Double limit = 5D;
+                        Double pagina = totalSel.doubleValue() / limit;
+                        Double restoDivisao = pagina % 2;
+
+                        //Se sobrou registros, abre uma nova página
+                        if (restoDivisao > 0) {
+                            pagina++;
+                        }
+
+                        numPagina = pagina.longValue();
+                    }
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+
+                if (connection != null) {
+                    try {
+                        connection.rollback();
+                    } catch (SQLException ex1) {
+                        ex1.printStackTrace();
+                    }
+                }
+
+                throw new Exception(ex.getMessage());
+            }
+        } else {
+            throw new Exception("Informe um Nome para ser consultado!");
+        }
+
+        return numPagina;
     }
 
     public List<Login> consultarUsuarioPorNomePaginada(String nome, String usuarioLogado, Integer offset) throws Exception {

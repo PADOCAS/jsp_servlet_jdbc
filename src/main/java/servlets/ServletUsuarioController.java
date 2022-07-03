@@ -155,6 +155,8 @@ public class ServletUsuarioController extends HttpServlet {
                 if (nomePesquisa != null
                         && !nomePesquisa.isEmpty()) {
                     List<Login> listLogin = daoUsuarioRepository.consultarUsuarioPorNome(nomePesquisa, servletUtil.getUsuarioLogado(request));
+                    Long totalPaginaAjax = daoUsuarioRepository.consultarUsuarioPorNomeTotalPorPagina(nomePesquisa, servletUtil.getUsuarioLogado(request));
+                    Long totalRegistrosConsultaNome = daoUsuarioRepository.consultarUsuarioPorNomeTotalRegistros(nomePesquisa, servletUtil.getUsuarioLogado(request));
 
                     if (listLogin != null
                             && !listLogin.isEmpty()) {
@@ -164,11 +166,60 @@ public class ServletUsuarioController extends HttpServlet {
 
                         response.setContentType("text/html; charset=UTF-8");
                         response.setCharacterEncoding("UTF-8");
+                        //Adiciona um parametro no cabeçario para pegar no evento ajax
+                        //Passar sempre o addHeader antes do Writer se nao nao chega o parametro no header
+                        response.addHeader("totalPaginaAjax", totalPaginaAjax == null ? "1" : String.valueOf(totalPaginaAjax));
+                        response.addHeader("paginaAtualAjax", String.valueOf(1)); //Adicinando parametro para trabalhar com os botoes anterior e proximo
+                        response.addHeader("totalRegistrosConsultaNome", totalRegistrosConsultaNome == null ? "0" : String.valueOf(totalRegistrosConsultaNome));
                         response.getWriter().write(jsonResposta);
                     } else {
                         //Resposta para o Ajax:
                         response.setContentType("text/html; charset=UTF-8");
                         response.setCharacterEncoding("UTF-8");
+                        //Adiciona um parametro no cabeçario para pegar no evento ajax
+                        //Passar sempre o addHeader antes do Writer se nao nao chega o parametro no header
+                        response.addHeader("totalPaginaAjax", totalPaginaAjax == null ? "1" : String.valueOf(totalPaginaAjax));
+                        response.addHeader("paginaAtualAjax", String.valueOf(1)); //Adicinando parametro para trabalhar com os botoes anterior e proximo
+                        response.addHeader("totalRegistrosConsultaNome", totalRegistrosConsultaNome == null ? "0" : String.valueOf(totalRegistrosConsultaNome));
+                        response.getWriter().write("Nenhum Usuário encontrado!");
+                    }
+                }
+            } else if (acao != null
+                    && !acao.isEmpty()
+                    && acao.equals("consultarajaxPage")) {
+                //Consultar Ajax (Paginacao):
+                //Ajax não atualizar o formulário... nao tem redirecionamento!
+                String nomePesquisa = request.getParameter("nomePesquisa");
+                Integer offset = request.getParameter("paginaAjax") == null ? 0 : Integer.valueOf(request.getParameter("paginaAjax"));
+                Long paginaAtualAjax = request.getParameter("paginaAtualAjax") == null ? 0 : Long.valueOf(request.getParameter("paginaAtualAjax"));
+                Long totalRegistrosConsultaNome = daoUsuarioRepository.consultarUsuarioPorNomeTotalRegistros(nomePesquisa, servletUtil.getUsuarioLogado(request));
+
+                if (nomePesquisa != null
+                        && !nomePesquisa.isEmpty()) {
+                    List<Login> listLogin = daoUsuarioRepository.consultarUsuarioPorNomePaginada(nomePesquisa, servletUtil.getUsuarioLogado(request), offset);
+                    Long totalPaginaAjax = daoUsuarioRepository.consultarUsuarioPorNomeTotalPorPagina(nomePesquisa, servletUtil.getUsuarioLogado(request));
+
+                    if (listLogin != null
+                            && !listLogin.isEmpty()) {
+                        //Resposta para o Ajax em json (Transforma lista em String json):
+                        ObjectMapper mapper = new ObjectMapper();
+                        String jsonResposta = mapper.writeValueAsString(listLogin);
+
+                        response.setContentType("text/html; charset=UTF-8");
+                        response.setCharacterEncoding("UTF-8");
+                        //Adiciona um parametro no cabeçario para pegar no evento ajax
+                        response.addHeader("totalPaginaAjax", totalPaginaAjax == null ? "1" : String.valueOf(totalPaginaAjax));
+                        response.addHeader("paginaAtualAjax", String.valueOf(paginaAtualAjax)); //Adicinando parametro para trabalhar com os botoes anterior e proximo
+                        response.addHeader("totalRegistrosConsultaNome", totalRegistrosConsultaNome == null ? "0" : String.valueOf(totalRegistrosConsultaNome));
+                        response.getWriter().write(jsonResposta);
+                    } else {
+                        //Resposta para o Ajax:
+                        response.setContentType("text/html; charset=UTF-8");
+                        response.setCharacterEncoding("UTF-8");
+                        //Adiciona um parametro no cabeçario para pegar no evento ajax
+                        response.addHeader("totalPaginaAjax", totalPaginaAjax == null ? "1" : String.valueOf(totalPaginaAjax));
+                        response.addHeader("paginaAtualAjax", String.valueOf(paginaAtualAjax)); //Adicinando parametro para trabalhar com os botoes anterior e proximo
+                        response.addHeader("totalRegistrosConsultaNome", totalRegistrosConsultaNome == null ? "0" : String.valueOf(totalRegistrosConsultaNome));
                         response.getWriter().write("Nenhum Usuário encontrado!");
                     }
                 }
