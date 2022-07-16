@@ -210,6 +210,8 @@
                                                                 <button type="submit" class="btn btn-primary waves-effect waves-light">Salvar</button>
                                                                 <button type="submit" class="btn btn-success waves-effect waves-light">Salvar/Novo</button>
                                                                 <button type="button" class="btn btn-danger waves-effect waves-light" onclick="deletarComAjax();">Excluir</button>
+                                                                <!--Vai mandar um Get para a servlet onde será feito uma consulta dos telefones do usuario-->
+                                                                <a href="<%= request.getContextPath()%>/ServletTelefoneController?login=${modelLogin.login}" class="btn btn-warning waves-effect waves-light">Telefone</a>
                                                                 <button type="button" class="btn btn-inverse waves-effect waves-light" onclick="limpar();">Limpar</button>
                                                                 <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modalPesquisaUsuario" onclick="limpaCamposPesquisa();">Pesquisar</button>
                                                             </form>
@@ -558,7 +560,7 @@
                     var urlNova = "nomePesquisa=" + nomePesquisa + "&acao=consultarajaxPage&paginaAjax=" + offset + "&paginaAtualAjax=" + paginaNova;
                     buscarUsuarioPageAjax(urlNova);
                 }
-                
+
                 function paginaAnteriorAjax() {
                     //Botão Anterior:
                     var nomePesquisa = document.getElementById("nomePesquisa").value;
