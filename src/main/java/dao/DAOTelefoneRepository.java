@@ -11,6 +11,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.Login;
 import model.Telefone;
 
@@ -178,5 +180,45 @@ public class DAOTelefoneRepository {
         }
 
         return listTelefone;
+    }
+
+    public Boolean existsTelefone(String numero, String login) throws Exception {
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT count(*) as qtde FROM public.telefone WHERE login = ? AND numero = ?;");
+
+        if (numero != null
+                && !numero.isEmpty()
+                && login != null
+                && !login.isEmpty()) {
+            try (PreparedStatement pstaSel = connection.prepareStatement(sql.toString());) {
+                pstaSel.setString(1, login);
+                pstaSel.setString(2, numero);
+
+                try (ResultSet rsSel = pstaSel.executeQuery();) {
+                    if (rsSel.next()) {
+                        if (rsSel.getObject("qtde") != null
+                                && rsSel.getLong("qtde") > 0) {
+                            return true;
+                        }
+                    }
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+
+                if (connection != null) {
+                    try {
+                        connection.rollback();
+                    } catch (SQLException ex1) {
+                        ex1.printStackTrace();
+                    }
+                }
+
+                throw new Exception(ex.getMessage());
+            }
+        } else {
+            throw new Exception("Campos faltando serem informados para validação. Verifique!");
+        }
+
+        return false;
     }
 }

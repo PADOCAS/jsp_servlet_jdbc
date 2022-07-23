@@ -163,30 +163,51 @@ public class ServletTelefoneController extends HttpServlet {
                     && numero != null
                     && !numero.isEmpty()) {
                 Login modelLogin = daoLoginRepository.consultarUsuario(login);
-                Telefone newTelefone = new Telefone();
-                newTelefone.setLogin(modelLogin);
-                newTelefone.setUsuarioLogin(daoLoginRepository.consultarUsuario(servletUtil.getUsuarioLogado(request)));
-                newTelefone.setNumero(numero);
 
-                daoTelefoneRepository.salvarTelefone(newTelefone);
+                if (!daoTelefoneRepository.existsTelefone(numero, login)) {
+                    Telefone newTelefone = new Telefone();
+                    newTelefone.setLogin(modelLogin);
+                    newTelefone.setUsuarioLogin(daoLoginRepository.consultarUsuario(servletUtil.getUsuarioLogado(request)));
+                    newTelefone.setNumero(numero);
 
-                request.setAttribute("msg", "Telefone Incluído com sucesso para o usuário " + login + "!");
-                request.setAttribute("modelLogin", modelLogin);  //Importante para manter o LOGIN e NOME em tela e salvar mais telefones!
+                    daoTelefoneRepository.salvarTelefone(newTelefone);
 
-                //Carregar listas de telefones para mostrar atualizada:
-                List<Telefone> listTelefones = daoTelefoneRepository.getListConsultaTelefone(modelLogin);
-                request.setAttribute("listTelefones", listTelefones);
+                    request.setAttribute("msg", "Telefone Incluído com sucesso para o usuário " + login + "!");
+                    request.setAttribute("modelLogin", modelLogin);  //Importante para manter o LOGIN e NOME em tela e salvar mais telefones!
 
-                if (listTelefones != null
-                        && !listTelefones.isEmpty()) {
-                    request.setAttribute("msgListaTelefones", "Listagem de Telefones");
+                    //Carregar listas de telefones para mostrar atualizada:
+                    List<Telefone> listTelefones = daoTelefoneRepository.getListConsultaTelefone(modelLogin);
+                    request.setAttribute("listTelefones", listTelefones);
+
+                    if (listTelefones != null
+                            && !listTelefones.isEmpty()) {
+                        request.setAttribute("msgListaTelefones", "Listagem de Telefones");
+                    } else {
+                        request.setAttribute("msgListaTelefones", "Nenhum telefone cadastrado");
+                    }
+
+                    //Redireciona para inserir novos telefones:
+                    RequestDispatcher redirecionar = request.getRequestDispatcher("/principal/telefone.jsp");
+                    redirecionar.forward(request, response);
                 } else {
-                    request.setAttribute("msgListaTelefones", "Nenhum telefone cadastrado");
-                }
+                    request.setAttribute("msg", "Telefone já existe para o usuário " + login + "!");
+                    request.setAttribute("modelLogin", modelLogin);  //Importante para manter o LOGIN e NOME em tela e salvar mais telefones!
+                    
+                    //Carregar listas de telefones para mostrar atualizada:
+                    List<Telefone> listTelefones = daoTelefoneRepository.getListConsultaTelefone(modelLogin);
+                    request.setAttribute("listTelefones", listTelefones);
 
-                //Redireciona para inserir novos telefones:
-                RequestDispatcher redirecionar = request.getRequestDispatcher("/principal/telefone.jsp");
-                redirecionar.forward(request, response);
+                    if (listTelefones != null
+                            && !listTelefones.isEmpty()) {
+                        request.setAttribute("msgListaTelefones", "Listagem de Telefones");
+                    } else {
+                        request.setAttribute("msgListaTelefones", "Nenhum telefone cadastrado");
+                    }
+
+                    //Redireciona para inserir novos telefones:
+                    RequestDispatcher redirecionar = request.getRequestDispatcher("/principal/telefone.jsp");
+                    redirecionar.forward(request, response);
+                }
             }
         } catch (Exception ex) {
             ex.printStackTrace();
