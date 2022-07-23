@@ -164,7 +164,20 @@
                                                                     <input type="text" name="nome" id="nome" class="form-control" placeholder="Informe o Nome" required="required" maxlength="100" autocomplete="off" value="${modelLogin.nome}">
                                                                     <span class="form-bar"></span>
                                                                     <label class="float-label">Nome</label>
-                                                                </div>                                                                    
+                                                                </div>   
+
+                                                                <div class="form-group form-default form-static-label">
+                                                                    <input type="text" name="dataNascimento" id="dataNascimento" class="form-control" placeholder="Informe a data de Nascimento" autocomplete="off" value="${modelLogin.dataNascimento}">
+                                                                    <span class="form-bar"></span>
+                                                                    <label class="float-label">Data Nascimento</label>
+                                                                </div>  
+
+                                                                <div class="form-group form-default form-static-label">
+                                                                    <input type="text" name="rendaMensal" id="rendaMensal" class="form-control" required="required" placeholder="Informe a Renda Mensal" autocomplete="off" value="${modelLogin.rendaMensal}">
+                                                                    <span class="form-bar"></span>
+                                                                    <label class="float-label">Renda Mensal</label>
+                                                                </div>  
+
                                                                 <div class="form-group form-default form-static-label">
                                                                     <input type="email" name="email" id="email" class="form-control" placeholder="Informe o Email" required="required" maxlength="100" autocomplete="off" value="${modelLogin.email}">
                                                                     <span class="form-bar"></span>
@@ -340,15 +353,52 @@
             </div>
 
             <script type="text/javascript" >
+                //Renda Mensal - campo monetário:
+                $("#rendaMensal").maskMoney({showSymbol: true, symbol: "R$ ", decimal: ",", thousands: ".", precision: 2, allowZero: true});
+                //forçar a formatacao do campo monetario e dar o foco nele:
+                const formatterMoney = new Intl.NumberFormat('pt-BR', {
+                    currency: 'BRL',
+                    minimumFractionDigits: 2
+                });
+
+                $("#rendaMensal").val(formatterMoney.format($("#rendaMensal").val()));
+                $("#rendaMensal").focus();
+
+                //forçar a formatacao do campo data nascimento:
+                let dataNasc = $("#dataNascimento").val();
+                if (dataNasc !== null
+                        && dataNasc !== "") {
+                    let dateFormat = new Date(dataNasc);
+                    $("#dataNascimento").val(dateFormat.toLocaleDateString('pt-BR', {
+                        timeZone: 'UTC'
+                    }));
+                }
+                $("#nome").focus();
+
+                //Função para calendario na data Nascimento:
+                //Vai traduzir o calendario padrao:
+                $(function () {
+                    $("#dataNascimento").datepicker({
+                        dateFormat: 'dd/mm/yy',
+                        dayNames: ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'],
+                        dayNamesMin: ['D', 'S', 'T', 'Q', 'Q', 'S', 'S', 'D'],
+                        dayNamesShort: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'],
+                        monthNames: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+                        monthNamesShort: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+                        nextText: 'Próximo',
+                        prevText: 'Anterior'
+                    });
+                });
+
                 //Funções para validar apenas números:
                 $("#numero").keypress(function (event) {
-                   return /\d/.test(String.fromCharCode(event.keyCode));
+                    return /\d/.test(String.fromCharCode(event.keyCode));
                 });
-                
+
                 $("#cep").keypress(function (event) {
-                   return /\d/.test(String.fromCharCode(event.keyCode));
+                    return /\d/.test(String.fromCharCode(event.keyCode));
                 });
-                
+
                 function pesquisaCep() {
                     var cep = $("#cep").val();
 

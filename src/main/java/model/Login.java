@@ -50,7 +50,12 @@ public class Login implements Serializable {
 
     private String numero;
 
+    private java.util.Date dataNascimento;
+
+    private Double rendaMensal;
+
     public Login() {
+        this.rendaMensal = Double.valueOf(0);
     }
 
     public String getLogin() {
@@ -189,6 +194,22 @@ public class Login implements Serializable {
         this.numero = numero;
     }
 
+    public java.util.Date getDataNascimento() {
+        return dataNascimento;
+    }
+
+    public void setDataNascimento(java.util.Date dataNascimento) {
+        this.dataNascimento = dataNascimento;
+    }
+
+    public Double getRendaMensal() {
+        return rendaMensal;
+    }
+
+    public void setRendaMensal(Double rendaMensal) {
+        this.rendaMensal = rendaMensal;
+    }
+
     @Override
     public int hashCode() {
         int hash = 7;
@@ -213,7 +234,7 @@ public class Login implements Serializable {
 
     @Override
     public String toString() {
-        return "Login{" + "login=" + login + ", senha=" + senha + ", nome=" + nome + ", email=" + email + ", admin=" + admin + ", usuarioLogin=" + usuarioLogin + ", perfil=" + perfil + ", sexo=" + sexo + ", fotoUser=" + fotoUser + ", extensaoFotoUser=" + extensaoFotoUser + ", cep=" + cep + ", logradouro=" + logradouro + ", bairro=" + bairro + ", localidade=" + localidade + ", uf=" + uf + ", numero=" + numero + '}';
+        return "Login{" + "login=" + login + ", senha=" + senha + ", confirmSenha=" + confirmSenha + ", nome=" + nome + ", email=" + email + ", admin=" + admin + ", usuarioLogin=" + usuarioLogin + ", perfil=" + perfil + ", sexo=" + sexo + ", fotoUser=" + fotoUser + ", extensaoFotoUser=" + extensaoFotoUser + ", cep=" + cep + ", logradouro=" + logradouro + ", bairro=" + bairro + ", localidade=" + localidade + ", uf=" + uf + ", numero=" + numero + ", dataNascimento=" + dataNascimento + ", rendaMensal=" + rendaMensal + '}';
     }
 
 }

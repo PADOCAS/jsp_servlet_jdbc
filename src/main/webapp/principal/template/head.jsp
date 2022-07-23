@@ -42,4 +42,6 @@
     <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/assets/css/style.css">
     <!-- Style do Treinamento JSP - implementacoes -->
     <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/assets/css/style_treinamento_jsp.css">
+    <!--Style com CSS do jQuery-->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.9.1/themes/smoothness/jquery-ui.css">
 </head>

@@ -9,6 +9,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.Login;
 
 /**
@@ -40,7 +45,7 @@ public class DAOLoginRepository {
 
         return false;
     }
-
+    
     public Login consultarUsuario(String login) throws Exception {
         Login modelLogin = null;
 
@@ -71,6 +76,8 @@ public class DAOLoginRepository {
                         modelLogin.setLocalidade(rsSel.getString("localidade"));
                         modelLogin.setUf(rsSel.getString("uf"));
                         modelLogin.setNumero(rsSel.getString("numero"));
+                        modelLogin.setDataNascimento(rsSel.getObject("data_nascimento") != null ? rsSel.getDate("data_nascimento") : null);    
+                        modelLogin.setRendaMensal(rsSel.getDouble("renda_mensal"));
                     }
                 }
             } catch (SQLException ex) {

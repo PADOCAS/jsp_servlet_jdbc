@@ -7,6 +7,7 @@ package servlets;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dao.DAOUsuarioRepository;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -395,6 +396,10 @@ public class ServletUsuarioController extends HttpServlet {
             String localidade = request.getParameter("localidade");
             String uf = request.getParameter("uf");
             String numero = request.getParameter("numero");
+            String dataNascimento = request.getParameter("dataNascimento");
+            String rendaMensal = request.getParameter("rendaMensal");
+            //Quebra em um vetor quando achar espaco (R$ ).. com isso vai pegar so o numero e tirar os pontos e decimal ficar com .
+            rendaMensal = rendaMensal != null && !rendaMensal.isEmpty() ? rendaMensal.split("\\ ")[1].replaceAll("\\.", "").replaceAll("\\,", ".") : null;
 
             //Validação:
             if (login != null
@@ -422,7 +427,9 @@ public class ServletUsuarioController extends HttpServlet {
                     && uf != null
                     && !uf.isEmpty()
                     && numero != null
-                    && !numero.isEmpty()) {
+                    && !numero.isEmpty()
+                    && rendaMensal != null
+                    && !rendaMensal.isEmpty()) {
                 Login newLogin = new Login();
                 newLogin.setLogin(login);
                 newLogin.setSenha(senha);
@@ -437,6 +444,8 @@ public class ServletUsuarioController extends HttpServlet {
                 newLogin.setLocalidade(localidade);
                 newLogin.setUf(uf);
                 newLogin.setNumero(numero);
+                newLogin.setDataNascimento(dataNascimento != null && !dataNascimento.isEmpty() ? new SimpleDateFormat("dd/MM/yyyy").parse(dataNascimento) : null);
+                newLogin.setRendaMensal(Double.parseDouble(rendaMensal));
 
                 Boolean informouFoto = false;
 
@@ -493,11 +502,16 @@ public class ServletUsuarioController extends HttpServlet {
                     request.setAttribute("msgListaUser", "Nenhum usuário cadastrado");
                 }
 
-                //Redireciona
-                RequestDispatcher redirecionar = request.getRequestDispatcher("/principal/usuario.jsp");
-                //Passa o objeto como parâmetro para tela de volta:
-                request.setAttribute("modelLogin", newLogin);
-                redirecionar.forward(request, response);
+                Login loginCharged = daoUsuarioRepository.consultarUsuario(login, servletUtil.getUsuarioLogado(request));
+
+                if (loginCharged != null) {
+                    //Passa o objeto como parâmetro para tela de volta:
+                    request.setAttribute("modelLogin", loginCharged);
+
+                    //Redireciona
+                    RequestDispatcher redirecionar = request.getRequestDispatcher("/principal/usuario.jsp");
+                    redirecionar.forward(request, response);
+                }
             }
         } catch (Exception ex) {
             ex.printStackTrace();
