@@ -6,18 +6,17 @@ package dao;
 
 import connection.SingleConnection;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Map;
 import model.Login;
+import model.Telefone;
 
 /**
  *
@@ -26,6 +25,8 @@ import model.Login;
 public class DAOUsuarioRepository {
 
     private Connection connection;
+
+    private DAOLoginRepository daoLoginRepository = new DAOLoginRepository();
 
     public DAOUsuarioRepository() {
         connection = SingleConnection.getConnection();
@@ -93,7 +94,7 @@ public class DAOUsuarioRepository {
                         } else {
                             pstaInsert.setNull(16, Types.DATE);
                         }
-                        
+
                         pstaInsert.setDouble(17, modelLogin.getRendaMensal());
                     } else {
                         if (modelLogin.getDataNascimento() != null) {
@@ -102,7 +103,7 @@ public class DAOUsuarioRepository {
                         } else {
                             pstaInsert.setNull(14, Types.DATE);
                         }
-                        
+
                         pstaInsert.setDouble(15, modelLogin.getRendaMensal());
                     }
 
@@ -147,7 +148,7 @@ public class DAOUsuarioRepository {
                         } else {
                             pstaUpdate.setNull(15, Types.DATE);
                         }
-                        
+
                         pstaUpdate.setDouble(16, modelLogin.getRendaMensal());
                         pstaUpdate.setString(17, modelLogin.getLogin());
                     } else {
@@ -557,6 +558,126 @@ public class DAOUsuarioRepository {
         }
 
         return listModelLogin;
+    }
+
+    public List<Login> consultarTodosUsuariosRel(String usuarioLogado, Map<String, Object> param) throws Exception {
+        List<Login> listModelLogin = new ArrayList<>();
+
+        StringBuilder sql = new StringBuilder();
+        Boolean filterDataNasc = false;
+
+        if (param != null
+                && param.get("dataInicial") != null
+                && !((String) param.get("dataInicial")).isEmpty()
+                && param.get("dataFinal") != null
+                && !((String) param.get("dataFinal")).isEmpty()) {
+            filterDataNasc = true;
+        }
+
+        if (!filterDataNasc) {
+            sql.append("SELECT * FROM public.login WHERE admin is false AND usuario_login = ? ORDER BY login;");
+        } else {
+            sql.append("SELECT * FROM public.login WHERE admin is false AND usuario_login = ? AND data_nascimento BETWEEN TO_DATE(?, 'yyyy-mm-dd') AND TO_DATE(?, 'yyyy-mm-dd') ORDER BY login;");
+        }
+
+        if (usuarioLogado != null) {
+            try (PreparedStatement pstaSel = connection.prepareStatement(sql.toString());) {
+                pstaSel.setString(1, usuarioLogado);
+                if(filterDataNasc
+                        && param != null) {
+                    pstaSel.setDate(2, Date.valueOf(new SimpleDateFormat("yyyy-mm-dd").format(new SimpleDateFormat("dd/mm/yyyy").parse((String) param.get("dataInicial")))));
+                    pstaSel.setDate(3, Date.valueOf(new SimpleDateFormat("yyyy-mm-dd").format(new SimpleDateFormat("dd/mm/yyyy").parse((String) param.get("dataFinal")))));
+                }
+
+                try (ResultSet rsSel = pstaSel.executeQuery();) {
+                    while (rsSel.next()) {
+                        Login modelLogin = new Login();
+                        modelLogin.setLogin(rsSel.getString("login"));
+                        modelLogin.setSenha(rsSel.getString("senha"));
+                        modelLogin.setConfirmSenha(rsSel.getString("senha"));
+                        modelLogin.setEmail(rsSel.getString("email"));
+                        modelLogin.setAdmin(rsSel.getBoolean("admin"));
+                        modelLogin.setNome(rsSel.getString("nome"));
+                        modelLogin.setUsuarioLogin(rsSel.getString("usuario_login"));
+                        modelLogin.setPerfil(rsSel.getString("perfil"));
+                        modelLogin.setSexo(rsSel.getString("sexo"));
+                        modelLogin.setFotoUser(rsSel.getString("foto_user"));
+                        modelLogin.setExtensaoFotoUser(rsSel.getString("extensao_foto_user"));
+                        modelLogin.setCep(rsSel.getString("cep"));
+                        modelLogin.setLogradouro(rsSel.getString("logradouro"));
+                        modelLogin.setBairro(rsSel.getString("bairro"));
+                        modelLogin.setLocalidade(rsSel.getString("localidade"));
+                        modelLogin.setUf(rsSel.getString("uf"));
+                        modelLogin.setNumero(rsSel.getString("numero"));
+                        modelLogin.setDataNascimento(rsSel.getObject("data_nascimento") != null ? rsSel.getDate("data_nascimento") : null);
+                        modelLogin.setRendaMensal(rsSel.getDouble("renda_mensal"));
+
+                        //telefones:
+                        modelLogin.setListTelefone(getListConsultaTelefone(modelLogin));
+
+                        listModelLogin.add(modelLogin);
+                    }
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+
+                if (connection != null) {
+                    try {
+                        connection.rollback();
+                    } catch (SQLException ex1) {
+                        ex1.printStackTrace();
+                    }
+                }
+
+                throw new Exception(ex.getMessage());
+            }
+        } else {
+            throw new Exception("Usuário Logado não foi informado!");
+        }
+
+        return listModelLogin;
+    }
+
+    public List<Telefone> getListConsultaTelefone(Login login) throws Exception {
+        List<Telefone> listTelefone = new ArrayList<>();
+
+        StringBuilder sql = new StringBuilder();
+        sql.append(" SELECT * FROM public.telefone WHERE login = ?;");
+
+        if (login != null
+                && login.getLogin() != null) {
+            try (PreparedStatement pstaConsulta = connection.prepareStatement(sql.toString());) {
+                pstaConsulta.setString(1, login.getLogin());
+
+                try (ResultSet rsConsulta = pstaConsulta.executeQuery();) {
+                    while (rsConsulta.next()) {
+                        Telefone telefone = new Telefone();
+                        telefone.setId(rsConsulta.getLong("id"));
+                        telefone.setNumero(rsConsulta.getString("numero"));
+                        telefone.setLogin(daoLoginRepository.consultarUsuario(rsConsulta.getString("login")));
+                        telefone.setUsuarioLogin(daoLoginRepository.consultarUsuario(rsConsulta.getString("usuario_login")));
+
+                        listTelefone.add(telefone);
+                    }
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+
+                if (connection != null) {
+                    try {
+                        connection.rollback();
+                    } catch (SQLException ex1) {
+                        ex1.printStackTrace();
+                    }
+                }
+
+                throw new Exception(ex.getMessage());
+            }
+        } else {
+            throw new Exception("Campos faltando serem informados para deletar. Verifique!");
+        }
+
+        return listTelefone;
     }
 
     public List<Login> consultarTodosUsuarios(String usuarioLogado) throws Exception {

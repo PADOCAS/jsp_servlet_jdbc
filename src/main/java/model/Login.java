@@ -5,6 +5,7 @@
 package model;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -53,6 +54,8 @@ public class Login implements Serializable {
     private java.util.Date dataNascimento;
 
     private Double rendaMensal;
+
+    private List<Telefone> listTelefone;
 
     public Login() {
         this.rendaMensal = Double.valueOf(0);
@@ -124,6 +127,14 @@ public class Login implements Serializable {
 
     public String getSexo() {
         return sexo;
+    }
+
+    public List<Telefone> getListTelefone() {
+        return listTelefone;
+    }
+
+    public void setListTelefone(List<Telefone> listTelefone) {
+        this.listTelefone = listTelefone;
     }
 
     public void setSexo(String sexo) {

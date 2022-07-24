@@ -8,7 +8,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dao.DAOUsuarioRepository;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -338,6 +340,27 @@ public class ServletUsuarioController extends HttpServlet {
                 }
 //                //Redireciona
                 RequestDispatcher redirecionar = request.getRequestDispatcher("/principal/usuario.jsp");
+                redirecionar.forward(request, response);
+            } else if (acao != null
+                    && !acao.isEmpty()
+                    && acao.equals("imprimirRelUser")) {
+                //Formulario de impressão relatorio de usuário:
+                String dataInicial = request.getParameter("dataInicial");
+                String dataFinal = request.getParameter("dataFinal");
+
+                Map<String, Object> param = new HashMap<>();
+                param.put("dataInicial", dataInicial);
+                param.put("dataFinal", dataFinal);
+
+                List<Login> listModelLoginGeral = daoUsuarioRepository.consultarTodosUsuariosRel(servletUtil.getUsuarioLogado(request), param);
+                request.setAttribute("listModelLoginGeral", listModelLoginGeral);
+                request.setAttribute("totalResListaUsuario", "Total de Usuários: " + (listModelLoginGeral == null || listModelLoginGeral.isEmpty() ? "0" : listModelLoginGeral.size()));
+
+                //Redireciona para a mesma página de usuário:
+                request.setAttribute("dataInicial", dataInicial);
+                request.setAttribute("dataFinal", dataFinal);
+
+                RequestDispatcher redirecionar = request.getRequestDispatcher("/principal/relatorio-usuario.jsp");
                 redirecionar.forward(request, response);
             } else {
                 //Rotina para carregar Lista de Usuarios sempre que abrir a tela de usuario:

@@ -163,11 +163,17 @@
 
                 <a href="javascript:void(0)" class="waves-effect waves-dark">
                     <span class="pcoded-micon"><i class="ti-layout-grid2-alt"></i></span>
-                    <span class="pcoded-mtext"  data-i18n="nav.basic-components.main">Relatórios</span>
+                    <span class="pcoded-mtext"  data-i18n="nav.basic-components.main">Consultas</span>
                     <span class="pcoded-mcaret"></span>
                 </a>
                 <ul class="pcoded-submenu">
-
+                    <li class=" ">
+                        <a href="<%= request.getContextPath()%>/principal/relatorio-usuario.jsp" class="waves-effect waves-dark" style="margin-top: 10px;">
+                            <span class="pcoded-micon"><i class="ti-home"></i><b>D</b></span>
+                            <span class="pcoded-mtext" data-i18n="nav.dash.main">Usuário</span>
+                            <span class="pcoded-mcaret"></span>
+                        </a>
+                    </li>
                 </ul>
             </li>
         </ul>
