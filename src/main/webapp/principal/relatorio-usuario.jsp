@@ -68,6 +68,10 @@
                                                                 </div>
                                                             </form>
 
+                                                            <div class="card-footer">
+                                                                <span><code id="msg" style="${msg == null or empty msg ? 'display: none;' : ''}">${msg}</code></span>
+                                                            </div>
+
                                                             <div style="height: 400px; overflow: scroll;">
                                                                 <table class="table" id="tabelaUsuarios">
                                                                     <thead class="thead-dark">
@@ -90,12 +94,12 @@
                                                                                     <th scope="col" style="color: blue; font-size: 10px; font-weight: bold;">Telefone(s) ${modelLoginAux.login}</th>
                                                                                     <th scope="col" style="color: blue; font-size: 10px; font-weight: bold;"></th>
                                                                                     <th scope="col" style="color: blue; font-size: 10px; font-weight: bold;"></th>
-                                                                                    
-                                                                                        <c:forEach items="${modelLoginAux.listTelefone}" var="telefone">
+
+                                                                                    <c:forEach items="${modelLoginAux.listTelefone}" var="telefone">
                                                                                     <tr>
                                                                                         <td style="font-size: 9px; color: blue;"><c:out value="${telefone.numero}"></c:out></td>
-                                                                                        <td style="font-size: 9px; color: blue;"></td>
-                                                                                        <td style="font-size: 9px; color: blue;"></td>
+                                                                                            <td style="font-size: 9px; color: blue;"></td>
+                                                                                            <td style="font-size: 9px; color: blue;"></td>
                                                                                         </tr>
                                                                                 </c:forEach>
                                                                                 </tr>
