@@ -4,12 +4,37 @@
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<parameter name="TITULO_RELATORIO" class="java.lang.String"/>
+	<parameter name="SUB_REPORT_TELEFONE" class="java.lang.String"/>
 	<queryString language="sqlwqewqeqw">
 		<![CDATA[numero]]>
 	</queryString>
 	<field name="nome" class="java.lang.String"/>
 	<field name="login" class="java.lang.String"/>
 	<field name="dataNascimento" class="java.sql.Date"/>
+	<field name="listTelefone" class="java.util.List"/>
+	<group name="grupo_login">
+		<groupExpression><![CDATA[$F{login}]]></groupExpression>
+		<groupHeader>
+			<band height="20">
+				<textField>
+					<reportElement x="0" y="0" width="80" height="19" uuid="fac51cb9-2ecf-4a77-b1cd-c434622fdd8b"/>
+					<textFieldExpression><![CDATA[$F{login}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="80" y="0" width="370" height="19" uuid="949fc9dd-2537-40ae-a0b1-cbd62b3c16b9"/>
+					<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
+				</textField>
+				<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+					<reportElement x="450" y="0" width="98" height="19" uuid="066b5d59-077f-4199-bd76-6da12e378cd6"/>
+					<textElement textAlignment="Center"/>
+					<textFieldExpression><![CDATA[$F{dataNascimento}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="0" y="19" width="548" height="1" uuid="8cda915c-d0ac-4a36-bd21-9eacb30784b2"/>
+				</line>
+			</band>
+		</groupHeader>
+	</group>
 	<title>
 		<band height="36" splitType="Stretch">
 			<textField>
@@ -50,23 +75,23 @@
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="20" splitType="Stretch">
-			<textField>
-				<reportElement x="0" y="0" width="79" height="19" uuid="fac51cb9-2ecf-4a77-b1cd-c434622fdd8b"/>
-				<textFieldExpression><![CDATA[$F{login}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="80" y="0" width="370" height="19" uuid="949fc9dd-2537-40ae-a0b1-cbd62b3c16b9"/>
-				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
-			</textField>
-			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement x="450" y="0" width="98" height="19" uuid="066b5d59-077f-4199-bd76-6da12e378cd6"/>
-				<textElement textAlignment="Center"/>
-				<textFieldExpression><![CDATA[$F{dataNascimento}]]></textFieldExpression>
-			</textField>
-			<line>
-				<reportElement x="0" y="19" width="548" height="1" uuid="8cda915c-d0ac-4a36-bd21-9eacb30784b2"/>
-			</line>
+		<band height="37" splitType="Stretch">
+			<printWhenExpression><![CDATA[($F{listTelefone} != null && !$F{listTelefone}.isEmpty())]]></printWhenExpression>
+			<frame>
+				<reportElement mode="Opaque" x="0" y="0" width="548" height="18" backcolor="#EBEBEB" uuid="9a3fa590-03df-4829-a66a-f855c575e568"/>
+			</frame>
+			<subreport>
+				<reportElement x="0" y="18" width="548" height="19" uuid="41a0abc1-5194-453a-aa32-35e69283e38f"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{listTelefone})]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUB_REPORT_TELEFONE}]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement x="40" y="0" width="200" height="19" uuid="9c97ce6b-c728-4013-b010-e35d3c853c7b"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Telefones:]]></text>
+			</staticText>
 		</band>
 	</detail>
 	<summary>

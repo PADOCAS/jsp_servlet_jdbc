@@ -6,6 +6,7 @@ package servlets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dao.DAOUsuarioRepository;
+import java.io.File;
 import java.io.IOException;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
@@ -391,6 +392,9 @@ public class ServletUsuarioController extends HttpServlet {
                     param.put("dataInicial", dataInicial);
                     param.put("dataFinal", dataFinal);
                     param.put("TITULO_RELATORIO", "Usuários");
+                    //SubRelatorio:
+                    String caminhoSubRelJasper = request.getServletContext().getRealPath("relatorio") + File.separator + "subrelatorio" + File.separator + "sub_report_user.jasper";
+                    param.put("SUB_REPORT_TELEFONE", caminhoSubRelJasper);
 
                     //Gera o byte[] com o relatorio pdf:
                     List<Login> listModelLoginGeral = daoUsuarioRepository.consultarTodosUsuariosRel(servletUtil.getUsuarioLogado(request), param);
