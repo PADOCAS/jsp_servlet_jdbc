@@ -50,7 +50,7 @@
                                                                 <!-- vamos chamar pro metodo GET da servlet -->
                                                                 <form class="form-material" action="<%= request.getContextPath()%>/ServletUsuarioController" method="get" id="formUser">
                                                                 <!--Vamos passar o parametro acao aqui no input, pois direto no formulario nao esta sendo enviado no get-->
-                                                                <input type="hidden" id="acao" name="acao" value="imprimirRelUser" />
+                                                                <input type="hidden" id="acaoConsultarImprimir" name="acao" value="consultarRelUser" />
 
                                                                 <div class="form-row align-items-center">
                                                                     <!--Filtro de datas não requerido-->
@@ -63,7 +63,8 @@
                                                                         <input type="text" name="dataFinal" id="dataFinal" value="${dataFinal}" autocomplete="off" class="form-control mb-2" placeholder="Data Nascimento Final">
                                                                     </div>
                                                                     <div class="col-auto">
-                                                                        <button type="submit" id="btnImprimir" class="btn btn-primary mb-2">Imprimir</button>
+                                                                        <button type="button" onclick="consultarUsuario();" id="btnConsultar" class="btn btn-primary mb-2">Consultar</button>
+                                                                        <button type="button" onclick="imprimirPdf();" id="btnImpressao" class="btn btn-primary mb-2">Imprimir</button>
                                                                     </div>
                                                                 </div>
                                                             </form>
@@ -133,6 +134,18 @@
         <jsp:include page="template/javascript-file.jsp" ></jsp:include>
 
         <script type="text/javascript" >
+            function consultarUsuario() {
+                //Altera a ação para consultar em tela e da o submit:
+                document.getElementById("acaoConsultarImprimir").value = "consultarRelUser";
+                $("#formUser").submit();
+            }
+            
+            function imprimirPdf() {
+                //Altera a ação para consultar em tela e da o submit:
+                document.getElementById("acaoConsultarImprimir").value = "imprimirRelUserPdf";
+                $("#formUser").submit();
+            }
+            
             //Função para calendario nas datas
             //Vai traduzir o calendario padrao:
             $(function () {

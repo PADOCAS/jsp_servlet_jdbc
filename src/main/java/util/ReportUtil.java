@@ -6,7 +6,6 @@ package util;
 
 import java.io.File;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.ServletContext;
@@ -33,8 +32,9 @@ public class ReportUtil implements Serializable {
      * @param servletContext Recebe o servlet envolvido, para saber da onde
      *
      * @return Retorno o relatorio impresso em byte[]
+     * @throws java.lang.Exception 
      */
-    public byte[] geraRelatorioPDF(List<ArrayList> listDados, String nomeRelatorio, Map<String, Object> params, ServletContext servletContext) throws Exception {
+    public byte[] geraRelatorioPDF(List listDados, String nomeRelatorio, Map<String, Object> params, ServletContext servletContext) throws Exception {
         //Cria a lista de Dados que vem por parametro:
         JRBeanCollectionDataSource jRBeanCollectionDataSource = new JRBeanCollectionDataSource(listDados);
 

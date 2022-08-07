@@ -24,6 +24,7 @@ import model.Login;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import servlets.util.ServletUtil;
+import util.ReportUtil;
 
 /**
  *
@@ -344,52 +345,11 @@ public class ServletUsuarioController extends HttpServlet {
                 redirecionar.forward(request, response);
             } else if (acao != null
                     && !acao.isEmpty()
-                    && acao.equals("imprimirRelUser")) {
-                //Formulario de impressão relatorio de usuário:
+                    && acao.equals("consultarRelUser")) {
                 String dataInicial = request.getParameter("dataInicial");
                 String dataFinal = request.getParameter("dataFinal");
 
-                //Valida Datas filter:
-                Boolean validDatas = true;
-
-                if (dataInicial != null
-                        && !dataInicial.isEmpty()) {
-                    try {
-                        //Data Inicial:
-                        Date.valueOf(new SimpleDateFormat("yyyy-mm-dd").format(new SimpleDateFormat("dd/mm/yyyy").parse(dataInicial)));
-                    } catch (IllegalArgumentException ex) {
-                        ex.printStackTrace();
-                        validDatas = false;
-                        request.setAttribute("msg", "Data Nascimento Inicial inválida!");
-                    }
-                }
-
-                if (dataFinal != null
-                        && !dataFinal.isEmpty()) {
-                    try {
-                        //Data Final:
-                        Date.valueOf(new SimpleDateFormat("yyyy-mm-dd").format(new SimpleDateFormat("dd/mm/yyyy").parse(dataFinal)));
-                    } catch (IllegalArgumentException ex) {
-                        ex.printStackTrace();
-                        validDatas = false;
-                        request.setAttribute("msg", "Data Nascimento Final inválida!");
-                    }
-                }
-
-                //Valida Período:
-                if (validDatas
-                        && dataInicial != null
-                        && !dataInicial.isEmpty()
-                        && dataFinal != null
-                        && !dataFinal.isEmpty()) {
-                    Date dateIniApur = Date.valueOf(new SimpleDateFormat("yyyy-mm-dd").format(new SimpleDateFormat("dd/mm/yyyy").parse(dataInicial)));
-                    Date dateFimApur = Date.valueOf(new SimpleDateFormat("yyyy-mm-dd").format(new SimpleDateFormat("dd/mm/yyyy").parse(dataFinal)));
-
-                    if (dateIniApur.after(dateFimApur)) {
-                        validDatas = false;
-                        request.setAttribute("msg", "Data Nascimento Final deve ser maior que a Inicial!");
-                    }
-                }
+                Boolean validDatas = validDatasConsultaRelUser(request);
 
                 if (validDatas) {
                     Map<String, Object> param = new HashMap<>();
@@ -407,6 +367,39 @@ public class ServletUsuarioController extends HttpServlet {
                     RequestDispatcher redirecionar = request.getRequestDispatcher("/principal/relatorio-usuario.jsp");
                     redirecionar.forward(request, response);
                     request.setAttribute("msg", null);
+                } else {
+                    request.setAttribute("listModelLoginGeral", null);
+                    request.setAttribute("totalResListaUsuario", "Total de Usuários: 0");
+
+                    //Redireciona para a mesma página de usuário:
+                    request.setAttribute("dataInicial", dataInicial);
+                    request.setAttribute("dataFinal", dataFinal);
+
+                    RequestDispatcher redirecionar = request.getRequestDispatcher("/principal/relatorio-usuario.jsp");
+                    redirecionar.forward(request, response);
+                }
+            } else if (acao != null
+                    && !acao.isEmpty()
+                    && acao.equals("imprimirRelUserPdf")) {
+                String dataInicial = request.getParameter("dataInicial");
+                String dataFinal = request.getParameter("dataFinal");
+
+                Boolean validDatas = validDatasConsultaRelUser(request);
+
+                if (validDatas) {
+                    Map<String, Object> param = new HashMap<>();
+                    param.put("dataInicial", dataInicial);
+                    param.put("dataFinal", dataFinal);
+                    param.put("TITULO_RELATORIO", "Usuários");
+
+                    //Gera o byte[] com o relatorio pdf:
+                    List<Login> listModelLoginGeral = daoUsuarioRepository.consultarTodosUsuariosRel(servletUtil.getUsuarioLogado(request), param);
+                    byte[] relatorioPdf = new ReportUtil().geraRelatorioPDF(listModelLoginGeral, "rel_usuario", param, request.getServletContext());
+
+                    //Enviar como resposta um arquivo para download:
+                    response.setHeader("Content-Disposition", "attachment;filename=rel_usuario.pdf");
+                    //Como resposta vamos enviar o arquivo byte em pdf
+                    response.getOutputStream().write(relatorioPdf);
                 } else {
                     request.setAttribute("listModelLoginGeral", null);
                     request.setAttribute("totalResListaUsuario", "Total de Usuários: 0");
@@ -446,6 +439,56 @@ public class ServletUsuarioController extends HttpServlet {
             request.setAttribute("msg", ex.getMessage());
             redirecionar.forward(request, response);
         }
+    }
+
+    private Boolean validDatasConsultaRelUser(HttpServletRequest request) throws Exception {
+        //Valida Datas filter:
+        Boolean validDatas = true;
+
+        //Formulario de impressão relatorio de usuário:
+        String dataInicial = request.getParameter("dataInicial");
+        String dataFinal = request.getParameter("dataFinal");
+
+        if (dataInicial != null
+                && !dataInicial.isEmpty()) {
+            try {
+                //Data Inicial:
+                Date.valueOf(new SimpleDateFormat("yyyy-mm-dd").format(new SimpleDateFormat("dd/mm/yyyy").parse(dataInicial)));
+            } catch (IllegalArgumentException ex) {
+                ex.printStackTrace();
+                validDatas = false;
+                request.setAttribute("msg", "Data Nascimento Inicial inválida!");
+            }
+        }
+
+        if (dataFinal != null
+                && !dataFinal.isEmpty()) {
+            try {
+                //Data Final:
+                Date.valueOf(new SimpleDateFormat("yyyy-mm-dd").format(new SimpleDateFormat("dd/mm/yyyy").parse(dataFinal)));
+            } catch (IllegalArgumentException ex) {
+                ex.printStackTrace();
+                validDatas = false;
+                request.setAttribute("msg", "Data Nascimento Final inválida!");
+            }
+        }
+
+        //Valida Período:
+        if (validDatas
+                && dataInicial != null
+                && !dataInicial.isEmpty()
+                && dataFinal != null
+                && !dataFinal.isEmpty()) {
+            Date dateIniApur = Date.valueOf(new SimpleDateFormat("yyyy-mm-dd").format(new SimpleDateFormat("dd/mm/yyyy").parse(dataInicial)));
+            Date dateFimApur = Date.valueOf(new SimpleDateFormat("yyyy-mm-dd").format(new SimpleDateFormat("dd/mm/yyyy").parse(dataFinal)));
+
+            if (dateIniApur.after(dateFimApur)) {
+                validDatas = false;
+                request.setAttribute("msg", "Data Nascimento Final deve ser maior que a Inicial!");
+            }
+        }
+
+        return validDatas;
     }
 
     /**
