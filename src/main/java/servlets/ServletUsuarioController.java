@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 import model.Login;
+import modeldto.GraficoSalarioUsuarioDTO;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import servlets.util.ServletUtil;
@@ -350,7 +351,7 @@ public class ServletUsuarioController extends HttpServlet {
                 String dataInicial = request.getParameter("dataInicial");
                 String dataFinal = request.getParameter("dataFinal");
 
-                Boolean validDatas = validDatasConsultaRelUser(request);
+                Boolean validDatas = validDatasConsultaRelUser(request, response, false);
 
                 if (validDatas) {
                     Map<String, Object> param = new HashMap<>();
@@ -385,7 +386,7 @@ public class ServletUsuarioController extends HttpServlet {
                 String dataInicial = request.getParameter("dataInicial");
                 String dataFinal = request.getParameter("dataFinal");
 
-                Boolean validDatas = validDatasConsultaRelUser(request);
+                Boolean validDatas = validDatasConsultaRelUser(request, response, false);
 
                 if (validDatas) {
                     Map<String, Object> param = new HashMap<>();
@@ -428,6 +429,39 @@ public class ServletUsuarioController extends HttpServlet {
                     RequestDispatcher redirecionar = request.getRequestDispatcher("/principal/relatorio-usuario.jsp");
                     redirecionar.forward(request, response);
                 }
+
+            } else if (acao != null
+                    && !acao.isEmpty()
+                    && acao.equals("graficoMediaSalarialUsuario")) {
+                //Grafico Media Salarial Por Tipo Usuario:
+                String dataInicial = request.getParameter("dataInicial");
+                String dataFinal = request.getParameter("dataFinal");
+
+                Boolean validDatas = validDatasConsultaRelUser(request, response, true);
+
+                if (validDatas) {
+                    Map<String, Object> param = new HashMap<>();
+                    param.put("dataInicial", dataInicial);
+                    param.put("dataFinal", dataFinal);
+
+                    GraficoSalarioUsuarioDTO graficoSalarioUsuarioDto = daoUsuarioRepository.getListGraficoMediaSalarioPorTipo(servletUtil.getUsuarioLogado(request), param);
+                    //Resposta para o Ajax em json (Transforma objeto em String json):
+                    ObjectMapper mapper = new ObjectMapper();
+                    String jsonResposta = mapper.writeValueAsString(graficoSalarioUsuarioDto);
+
+                    response.setContentType("text/html; charset=UTF-8");
+                    response.setCharacterEncoding("UTF-8");
+                    //Adiciona um parametro no cabeçario para pegar no evento ajax
+                    response.addHeader("msg", "Grafico gerado com sucesso!");
+                    response.getWriter().write(jsonResposta);
+                } else {
+                    response.setContentType("text/html; charset=UTF-8");
+                    response.setCharacterEncoding("UTF-8");
+                    //Resposta para o Ajax em json (Transforma objeto em String json):
+                    ObjectMapper mapper = new ObjectMapper();
+                    String jsonResposta = mapper.writeValueAsString(new GraficoSalarioUsuarioDTO());
+                    response.getWriter().write(jsonResposta);
+                }
             } else {
                 //Rotina para carregar Lista de Usuarios sempre que abrir a tela de usuario:
                 List<Login> listModelLoginPaginada = daoUsuarioRepository.consultarTodosUsuariosPaginada(servletUtil.getUsuarioLogado(request), 0);
@@ -458,7 +492,7 @@ public class ServletUsuarioController extends HttpServlet {
         }
     }
 
-    private Boolean validDatasConsultaRelUser(HttpServletRequest request) throws Exception {
+    private Boolean validDatasConsultaRelUser(HttpServletRequest request, HttpServletResponse response, Boolean respostaEmAjax) throws Exception {
         //Valida Datas filter:
         Boolean validDatas = true;
 
@@ -474,7 +508,12 @@ public class ServletUsuarioController extends HttpServlet {
             } catch (IllegalArgumentException ex) {
                 ex.printStackTrace();
                 validDatas = false;
-                request.setAttribute("msg", "Data Nascimento Inicial inválida!");
+
+                if (respostaEmAjax) {
+                    response.addHeader("msg", "Data Nascimento Inicial invalida!");
+                } else {
+                    request.setAttribute("msg", "Data Nascimento Inicial invalida!");
+                }
             }
         }
 
@@ -486,7 +525,12 @@ public class ServletUsuarioController extends HttpServlet {
             } catch (IllegalArgumentException ex) {
                 ex.printStackTrace();
                 validDatas = false;
-                request.setAttribute("msg", "Data Nascimento Final inválida!");
+
+                if (respostaEmAjax) {
+                    response.addHeader("msg", "Data Nascimento Final invalida!");
+                } else {
+                    request.setAttribute("msg", "Data Nascimento Final invalida!");
+                }
             }
         }
 
@@ -501,7 +545,12 @@ public class ServletUsuarioController extends HttpServlet {
 
             if (dateIniApur.after(dateFimApur)) {
                 validDatas = false;
-                request.setAttribute("msg", "Data Nascimento Final deve ser maior que a Inicial!");
+
+                if (respostaEmAjax) {
+                    response.addHeader("msg", "Data Nascimento Final deve ser maior que a Inicial!");
+                } else {
+                    request.setAttribute("msg", "Data Nascimento Final deve ser maior que a Inicial!");
+                }
             }
         }
 

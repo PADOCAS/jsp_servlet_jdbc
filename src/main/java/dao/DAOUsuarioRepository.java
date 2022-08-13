@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import model.Login;
 import model.Telefone;
+import modeldto.GraficoSalarioUsuarioDTO;
 
 /**
  *
@@ -583,7 +584,7 @@ public class DAOUsuarioRepository {
         if (usuarioLogado != null) {
             try (PreparedStatement pstaSel = connection.prepareStatement(sql.toString());) {
                 pstaSel.setString(1, usuarioLogado);
-                if(filterDataNasc
+                if (filterDataNasc
                         && param != null) {
                     pstaSel.setDate(2, Date.valueOf(new SimpleDateFormat("yyyy-mm-dd").format(new SimpleDateFormat("dd/mm/yyyy").parse((String) param.get("dataInicial")))));
                     pstaSel.setDate(3, Date.valueOf(new SimpleDateFormat("yyyy-mm-dd").format(new SimpleDateFormat("dd/mm/yyyy").parse((String) param.get("dataFinal")))));
@@ -636,6 +637,68 @@ public class DAOUsuarioRepository {
         }
 
         return listModelLogin;
+    }
+
+    public GraficoSalarioUsuarioDTO getListGraficoMediaSalarioPorTipo(String usuarioLogado, Map<String, Object> param) throws Exception {
+        GraficoSalarioUsuarioDTO graficoSalarioUsuarioDto = new GraficoSalarioUsuarioDTO();
+
+        Boolean filterDataNasc = false;
+
+        if (param != null
+                && param.get("dataInicial") != null
+                && !((String) param.get("dataInicial")).isEmpty()
+                && param.get("dataFinal") != null
+                && !((String) param.get("dataFinal")).isEmpty()) {
+            filterDataNasc = true;
+        }
+
+        StringBuilder sql = new StringBuilder();
+        if (!filterDataNasc) {
+            sql.append("select perfil, ROUND(avg(renda_mensal),2) as media_salarial from public.login where usuario_login = ? group by perfil order by perfil;");
+        } else {
+            sql.append("select perfil, ROUND(avg(renda_mensal),2) as media_salarial from public.login where usuario_login = ? and data_nascimento BETWEEN TO_DATE(?, 'yyyy-mm-dd') AND TO_DATE(?, 'yyyy-mm-dd') group by perfil order by perfil;");
+        }
+
+        if (usuarioLogado != null) {
+            try (PreparedStatement pstaSel = connection.prepareStatement(sql.toString());) {
+                pstaSel.setString(1, usuarioLogado);
+
+                if (filterDataNasc
+                        && param != null) {
+                    pstaSel.setDate(2, Date.valueOf(new SimpleDateFormat("yyyy-mm-dd").format(new SimpleDateFormat("dd/mm/yyyy").parse((String) param.get("dataInicial")))));
+                    pstaSel.setDate(3, Date.valueOf(new SimpleDateFormat("yyyy-mm-dd").format(new SimpleDateFormat("dd/mm/yyyy").parse((String) param.get("dataFinal")))));
+                }
+
+                try (ResultSet rsSel = pstaSel.executeQuery();) {
+                    List<String> listPerfil = new ArrayList<>();
+                    List<Double> listSalario = new ArrayList<>();
+
+                    while (rsSel.next()) {
+                        listPerfil.add(rsSel.getString("perfil"));
+                        listSalario.add(rsSel.getDouble("media_salarial"));
+                    }
+
+                    graficoSalarioUsuarioDto.setListPerfil(listPerfil);
+                    graficoSalarioUsuarioDto.setListSalario(listSalario);
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+
+                if (connection != null) {
+                    try {
+                        connection.rollback();
+                    } catch (SQLException ex1) {
+                        ex1.printStackTrace();
+                    }
+                }
+
+                throw new Exception(ex.getMessage());
+            }
+        } else {
+            throw new Exception("Usuário Logado não foi informado!");
+        }
+
+        return graficoSalarioUsuarioDto;
     }
 
     public List<Telefone> getListConsultaTelefone(Login login) throws Exception {
