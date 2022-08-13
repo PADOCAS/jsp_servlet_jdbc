@@ -381,7 +381,7 @@ public class ServletUsuarioController extends HttpServlet {
                 }
             } else if (acao != null
                     && !acao.isEmpty()
-                    && acao.equals("imprimirRelUserPdf")) {
+                    && ((acao.equals("imprimirRelUserPdf")) || (acao.equals("imprimirRelUserExcel")))) {
                 String dataInicial = request.getParameter("dataInicial");
                 String dataFinal = request.getParameter("dataFinal");
 
@@ -392,18 +392,31 @@ public class ServletUsuarioController extends HttpServlet {
                     param.put("dataInicial", dataInicial);
                     param.put("dataFinal", dataFinal);
                     param.put("TITULO_RELATORIO", "Usuários");
-                    //SubRelatorio:
-                    String caminhoSubRelJasper = request.getServletContext().getRealPath("relatorio") + File.separator + "subrelatorio" + File.separator + "sub_report_user.jasper";
-                    param.put("SUB_REPORT_TELEFONE", caminhoSubRelJasper);
 
                     //Gera o byte[] com o relatorio pdf:
                     List<Login> listModelLoginGeral = daoUsuarioRepository.consultarTodosUsuariosRel(servletUtil.getUsuarioLogado(request), param);
-                    byte[] relatorioPdf = new ReportUtil().geraRelatorioPDF(listModelLoginGeral, "rel_usuario", param, request.getServletContext());
 
-                    //Enviar como resposta um arquivo para download:
-                    response.setHeader("Content-Disposition", "attachment;filename=rel_usuario.pdf");
-                    //Como resposta vamos enviar o arquivo byte em pdf
-                    response.getOutputStream().write(relatorioPdf);
+                    byte[] relatorio = null;
+                    String extensaoRel = null;
+                    if (acao.equals("imprimirRelUserPdf")) {
+                        //SubRelatorio:
+                        String caminhoSubRelJasper = request.getServletContext().getRealPath("relatorio") + File.separator + "subrelatorio" + File.separator + "sub_report_user.jasper";
+                        param.put("SUB_REPORT_TELEFONE", caminhoSubRelJasper);
+
+                        relatorio = new ReportUtil().geraRelatorioPDF(listModelLoginGeral, "rel_usuario", param, request.getServletContext());
+                        extensaoRel = "pdf";
+                        response.setHeader("Content-Disposition", "attachment;filename=rel_usuario." + extensaoRel);
+                    } else if (acao.equals("imprimirRelUserExcel")) {
+                        //SubRelatorio:
+                        String caminhoSubRelJasper = request.getServletContext().getRealPath("relatorio") + File.separator + "subrelatorio" + File.separator + "sub_report_user_excel.jasper";
+                        param.put("SUB_REPORT_TELEFONE", caminhoSubRelJasper);
+
+                        relatorio = new ReportUtil().geraRelatorioExcel(listModelLoginGeral, "rel_usuario_excel", param, request.getServletContext());
+                        extensaoRel = "xls";
+                        response.setHeader("Content-Disposition", "attachment;filename=rel_usuario_excel." + extensaoRel);
+                    }
+                    //Como resposta vamos enviar o arquivo byte em pdf ou excell
+                    response.getOutputStream().write(relatorio);
                 } else {
                     request.setAttribute("listModelLoginGeral", null);
                     request.setAttribute("totalResListaUsuario", "Total de Usuários: 0");

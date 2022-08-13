@@ -64,7 +64,8 @@
                                                                     </div>
                                                                     <div class="col-auto">
                                                                         <button type="button" onclick="consultarUsuario();" id="btnConsultar" class="btn btn-primary mb-2">Consultar</button>
-                                                                        <button type="button" onclick="imprimirPdf();" id="btnImpressao" class="btn btn-primary mb-2">Imprimir</button>
+                                                                        <button type="button" onclick="imprimirPdf();" id="btnImpressaoPdf" class="btn btn-primary mb-2">Imprimir PDF</button>
+                                                                        <button type="button" onclick="imprimirExcel();" id="btnImpressaoExcel" class="btn btn-primary mb-2">Imprimir Excel</button>
                                                                     </div>
                                                                 </div>
                                                             </form>
@@ -139,13 +140,19 @@
                 document.getElementById("acaoConsultarImprimir").value = "consultarRelUser";
                 $("#formUser").submit();
             }
-            
+
             function imprimirPdf() {
                 //Altera a ação para consultar em tela e da o submit:
                 document.getElementById("acaoConsultarImprimir").value = "imprimirRelUserPdf";
                 $("#formUser").submit();
             }
-            
+
+            function imprimirExcel() {
+                //Altera a ação para consultar em tela e da o submit:
+                document.getElementById("acaoConsultarImprimir").value = "imprimirRelUserExcel";
+                $("#formUser").submit();
+            }
+
             //Função para calendario nas datas
             //Vai traduzir o calendario padrao:
             $(function () {
