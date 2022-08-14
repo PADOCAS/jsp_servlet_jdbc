@@ -5,9 +5,14 @@
 package filter;
 
 import connection.SingleConnection;
+import dao.DAOVersionadorBanco;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Scanner;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -103,5 +108,51 @@ public class filterAutenticacao implements Filter {
     @Override
     public void init(FilterConfig filterConfig) {
         connection = SingleConnection.getConnection();
+
+        //Ao subir o projeto, ja verificar o versionador de SQL:
+        try {
+            DAOVersionadorBanco daoVersionadorBanco = new DAOVersionadorBanco();
+            String caminhoPastaSql = filterConfig.getServletContext().getRealPath("versionadorBancoSql") + File.separator;
+
+            //Varre a lista de arquivos para saber o que precisa ser rodado..
+            //Nao gostei.. nao pega uma sequencia de arquivos.. zuado.. pode dar pal em alters que facam alteracoes em mesma tabela e tal.. zuadoo essa forma ai!
+            File[] files = new File(caminhoPastaSql).listFiles();
+
+            for (File file : files) {
+                Boolean alterJaRodado = daoVersionadorBanco.getArquivoSqlRodado(file.getName());
+
+                if (!alterJaRodado) {
+                    FileInputStream fileInputStream = new FileInputStream(file);
+                    Scanner scanner = new Scanner(fileInputStream, "UTF-8");
+
+                    StringBuilder sql = new StringBuilder();
+                    while (scanner.hasNext()) {
+                        sql.append(scanner.nextLine());
+                    }
+
+                    try (PreparedStatement psqlExecute = connection.prepareStatement(sql.toString());) {
+                        psqlExecute.executeUpdate();
+                        
+                        //Atualizar a tabela com o ALTER ja rodado!
+                        daoVersionadorBanco.updateVersaoArquivoRodado(file.getName());
+                        
+                        connection.commit();
+                        System.out.println("Controle Versão - Rodado Alter: " + file.getName());
+                        
+                        scanner.close();
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+
+            if (connection != null) {
+                try {
+                    connection.rollback();
+                } catch (SQLException ex1) {
+                    ex1.printStackTrace();
+                }
+            }
+        }
     }
 }
