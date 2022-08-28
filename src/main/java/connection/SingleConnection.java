@@ -14,11 +14,19 @@ import java.sql.DriverManager;
 public class SingleConnection {
 
     //Apenas 1 conexão com o banco de dados (Singleton) o que tem várias são sessões/transações, o que é aberto e fechado.
+    //Deploy Local:
     private static String banco = "jdbc:postgresql://localhost:5432/curso-jsp?autoReconnect=true";
 
     private static String user = "postgres";
 
-    private static String senha = "postgres";
+    private static String senha = "admin";
+    
+    //Deploy Hospedagem:
+//    private static String banco = "jdbc:postgresql://localhost:5432/jdevlucianocom_curso-jsp?autoReconnect=true";
+//
+//    private static String user = "jdevlucianocom";
+//
+//    private static String senha = "Y13}t5TM(6Mp";
 
     private static Connection connection = null;
 

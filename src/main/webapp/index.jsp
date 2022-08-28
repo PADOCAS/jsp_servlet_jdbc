@@ -60,6 +60,29 @@
                 background-color: #f8d7da;
                 border-color: #f5c2c7;
             }
+
+            @media(max-width: 767px) {
+                form {
+                    top: 35%;
+                    left: 10%;
+                }
+
+                h1 {
+                    top: 25%;
+                    left: 10%;
+                    font-size: 20px;
+                }
+
+                h5 {                   
+                    top: 92%;
+                    left: 10%;
+                    font-size: 12px;                    
+                }
+
+                .txt-info-login{
+                    width: 80%;
+                }
+            }
         </style>
     </head>
 
@@ -69,12 +92,12 @@
         <br/>
         <br/>
 
-        <form action="<%= request.getContextPath() %>/ServletLogin" method="post" class="row g-3 needs-validation" novalidate>
+        <form action="<%= request.getContextPath()%>/ServletLogin" method="post" class="row g-3 needs-validation" novalidate>
             <input type="hidden" value="<%= request.getParameter("url")%>" name="url" />
 
             <div class="col-md-6">
                 <label class="form-label">Login:</label>
-                <input name="login" id="login" type="text" class="form-control" required="required" />
+                <input name="login" id="login" type="text" class="form-control txt-info-login" required="required" />
                 <div class="invalid-feedback">
                     Informe o Login!
                 </div>
@@ -82,7 +105,7 @@
 
             <div class="col-md-6">
                 <label class="form-label">Senha:</label>
-                <input name="senha" id="senha" type="password" class="form-control" required="required" />
+                <input name="senha" id="senha" type="password" class="form-control txt-info-login" required="required" />
                 <div class="invalid-feedback">
                     Informe a Senha!
                 </div>
