@@ -74,8 +74,8 @@
                                                                 <span><code id="msg" style="${msg == null or empty msg ? 'display: none;' : ''}">${msg}</code></span>
                                                             </div>
 
-                                                            <div style="height: 400px; overflow: scroll;">
-                                                                <table class="table" id="tabelaUsuarios">
+                                                            <div class="table-responsive" id="tabelaUsuarios">
+                                                                <table class="table table-striped">
                                                                     <thead class="thead-dark">
                                                                         <tr>
                                                                             <th scope="col">Login</th>
