@@ -239,28 +239,30 @@
                                                         </div>
 
                                                         <!--<div style="height: 500px; overflow: scroll;">-->
-                                                        <table class="table" id="tabelaListarUsuarios">
-                                                            <thead class="thead-dark">
-                                                                <tr>
-                                                                    <th scope="col">Login</th>
-                                                                    <th scope="col">Nome</th>
-                                                                    <th scope="col">Email</th>
-                                                                    <th scope="col">Editar</th>
-                                                                    <th scope="col">Excluir</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                <c:forEach items="${listModelLogin}" var="modelLoginAux">
+                                                        <div class="table-responsive" id="tabelaListarUsuarios">
+                                                            <table class="table table-striped">
+                                                                <thead class="thead-dark">
                                                                     <tr>
-                                                                        <td><c:out value="${modelLoginAux.login}"></c:out></td>
-                                                                        <td><c:out value="${modelLoginAux.nome}"></c:out></td>
-                                                                        <td><c:out value="${modelLoginAux.email}"></c:out></td>
-                                                                        <td><button type="button" class="btn btn-info" onclick="selEditar('${modelLoginAux.login}');">Editar</button></td>
-                                                                        <td><button type="button" class="btn btn-danger" onclick="deletarComAjaxDiretoLista('${modelLoginAux.login}');">Excluir</button></td>
+                                                                        <th scope="col">Login</th>
+                                                                        <th scope="col">Nome</th>
+                                                                        <th scope="col">Email</th>
+                                                                        <th scope="col">Editar</th>
+                                                                        <th scope="col">Excluir</th>
                                                                     </tr>
-                                                                </c:forEach>
-                                                            </tbody>
-                                                        </table>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <c:forEach items="${listModelLogin}" var="modelLoginAux">
+                                                                        <tr>
+                                                                            <td><c:out value="${modelLoginAux.login}"></c:out></td>
+                                                                            <td><c:out value="${modelLoginAux.nome}"></c:out></td>
+                                                                            <td><c:out value="${modelLoginAux.email}"></c:out></td>
+                                                                            <td><button type="button" class="btn btn-info" onclick="selEditar('${modelLoginAux.login}');">Editar</button></td>
+                                                                            <td><button type="button" class="btn btn-danger" onclick="deletarComAjaxDiretoLista('${modelLoginAux.login}');">Excluir</button></td>
+                                                                        </tr>
+                                                                    </c:forEach>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>    
 
                                                         <nav aria-label="Paginação" style="margin-left: 5px;">
                                                             <ul class="pagination">
