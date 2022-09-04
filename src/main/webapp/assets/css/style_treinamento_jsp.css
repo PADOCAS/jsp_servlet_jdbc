@@ -1,3 +1,14 @@
 .button_pagination_selection {
     background-color: #9e9c9e;
 }
+
+.img-logo-princ {
+    display: block !important;
+    visibility: visible;
+}
+
+@media(max-width: 992px) {
+    .img-logo-princ {
+        visibility: hidden;
+    }
+}

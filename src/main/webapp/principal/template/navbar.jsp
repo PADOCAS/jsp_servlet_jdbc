@@ -24,7 +24,7 @@
                 </div>
             </div>
             <a href="<%= request.getContextPath()%>/principal/principal.jsp">
-                <img class="img-fluid" src="<%= request.getContextPath()%>/assets/images/Corinthians_simbolo.png" alt="Theme-Logo" style="height: 48px;"/>
+                <img class="img-fluid img-logo-princ" src="<%= request.getContextPath()%>/assets/images/java.png" alt="Theme-Logo" style="height: 45px;"/>
             </a>
             <a class="mobile-options waves-effect waves-light">
                 <i class="ti-more"></i>
