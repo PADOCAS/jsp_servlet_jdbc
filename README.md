@@ -18,7 +18,7 @@
 <br/>
 - Cadastro de Usuários, com opção de acessar API VIACEP para consulta de CEP por ajax e upload/download de imagens, conversão JSON.
 <br/>
-- Consulta de Usuários com impressão PDF e Excel.
+- Consulta de Usuários com impressão Relatório PDF e Excel (Utilizando também subrelatório).
 <br/>
 - Implementação de gráfico para testes.
 <br/>
