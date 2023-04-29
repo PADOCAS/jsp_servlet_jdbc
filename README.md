@@ -14,9 +14,7 @@
 <br/>
 
 <h3 align="left">Resumo do Projeto:</h3>
-- Formulário com validação de Login/senha.
-<br/>
-- Cadastro de Usuários, com opção de acessar API VIACEP para consulta de CEP por ajax e upload/download de imagens, conversão JSON.
+- Cadastro completo de Usuários, com opção de acessar API VIACEP para consulta de CEP por ajax e upload/download de imagens, conversão JSON.
 <br/>
 - Consulta de Usuários com impressão Relatório PDF e Excel (utilizando também subrelatório).
 <br/>
