@@ -150,7 +150,7 @@
                                 Usuário e Senha padrão: admin/admin
                             </label>
                             <label style="display: flex; flex: 1; justify-content: center;">
-                                <a href="https://github.com/PADOCAS/mod22-curso-jsp" target="blank">Projeto GitHub</a>
+                                <a href="https://github.com/PADOCAS/jsp-servlet-jdbc" target="blank">Projeto GitHub</a>
                             </label>                            
                         </div>
                     </div>
