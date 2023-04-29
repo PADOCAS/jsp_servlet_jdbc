@@ -39,7 +39,7 @@
                                                 <div class="row">
                                                     
                                                     <!--Aqui começam as implementações do que quer fazer-->
-                                                    <h1>Conteudo da página do sistema</h1>
+                                                    <!--<h1>Conteudo da página do sistema</h1>-->
                                                     
                                                 </div>
                                             </div>

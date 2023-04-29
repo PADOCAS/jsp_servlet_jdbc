@@ -45,6 +45,13 @@
                 left: 33%;
             }
 
+            footer {
+                width: 100%;
+                position: absolute;
+                bottom: 0;
+                text-align: center;
+            }
+
             h1 {
                 position: absolute;
                 top: 30%;
@@ -61,7 +68,16 @@
                 border-color: #f5c2c7;
             }
 
+            .rodape {
+                padding-top: 10px;
+                padding-bottom: 10px;
+            }
+
             @media(max-width: 767px) {
+                .rodape {
+                    font-size: 12px;
+                }
+
                 form {
                     top: 35%;
                     left: 10%;
@@ -73,14 +89,20 @@
                     font-size: 20px;
                 }
 
-                h5 {                   
-                    top: 92%;
+                h5 {
+                    top: 81%;
                     left: 10%;
-                    font-size: 12px;                    
+                    font-size: 12px;
                 }
 
                 .txt-info-login{
                     width: 80%;
+                }
+            }
+
+            @media (max-width: 320px) {
+                .rodape {
+                    font-size: 10px;
                 }
             }
         </style>
@@ -117,6 +139,24 @@
         </form>
 
         <h5>${msg}</h5>
+
+        <footer>
+            <!-- RODAPE -->
+            <section class="rodape" >
+                <div>
+                    <div style="display: flex; width: 100%;">
+                        <div style="flex: 1;">
+                            <label style="display: flex; flex: 1; justify-content: center; font-weight: bold;">
+                                Usuário e Senha padrão: admin/admin
+                            </label>
+                            <label style="display: flex; flex: 1; justify-content: center;">
+                                <a href="https://github.com/PADOCAS/mod22-curso-jsp" target="blank">Projeto GitHub</a>
+                            </label>                            
+                        </div>
+                    </div>
+                </div>
+            </section>            
+        </footer>
 
         <!-- Option 1: Bootstrap Bundle with Popper -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
