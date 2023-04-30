@@ -5,12 +5,15 @@
 package dao;
 
 import connection.SingleConnection;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -70,7 +73,7 @@ public class DAOUsuarioRepository {
             if (update == null
                     || !update) {
                 //INSERT:
-                try (PreparedStatement pstaInsert = connection.prepareStatement(sqlInsert.toString());) {
+                try ( PreparedStatement pstaInsert = connection.prepareStatement(sqlInsert.toString());) {
                     pstaInsert.setString(1, modelLogin.getLogin());
                     pstaInsert.setString(2, modelLogin.getSenha());
                     pstaInsert.setString(3, modelLogin.getEmail());
@@ -125,7 +128,7 @@ public class DAOUsuarioRepository {
                 }
             } else {
                 //UPDATE:
-                try (PreparedStatement pstaUpdate = connection.prepareStatement(sqlUpdate.toString());) {
+                try ( PreparedStatement pstaUpdate = connection.prepareStatement(sqlUpdate.toString());) {
                     pstaUpdate.setString(1, modelLogin.getSenha());
                     pstaUpdate.setString(2, modelLogin.getEmail());
                     pstaUpdate.setString(3, modelLogin.getNome());
@@ -193,10 +196,10 @@ public class DAOUsuarioRepository {
 
         if (login != null
                 && usuarioLogado != null) {
-            try (PreparedStatement pstaSel = connection.prepareStatement(sql.toString());) {
+            try ( PreparedStatement pstaSel = connection.prepareStatement(sql.toString());) {
                 pstaSel.setString(1, login);
 
-                try (ResultSet rsSel = pstaSel.executeQuery();) {
+                try ( ResultSet rsSel = pstaSel.executeQuery();) {
                     if (rsSel.next()) {
                         modelLogin = new Login();
                         modelLogin.setLogin(rsSel.getString("login"));
@@ -248,11 +251,11 @@ public class DAOUsuarioRepository {
 
         if (login != null
                 && usuarioLogado != null) {
-            try (PreparedStatement pstaSel = connection.prepareStatement(sql.toString());) {
+            try ( PreparedStatement pstaSel = connection.prepareStatement(sql.toString());) {
                 pstaSel.setString(1, login);
                 pstaSel.setString(2, usuarioLogado);
 
-                try (ResultSet rsSel = pstaSel.executeQuery();) {
+                try ( ResultSet rsSel = pstaSel.executeQuery();) {
                     if (rsSel.next()) {
                         modelLogin = new Login();
                         modelLogin.setLogin(rsSel.getString("login"));
@@ -300,16 +303,16 @@ public class DAOUsuarioRepository {
         List<Login> listModelLogin = new ArrayList<>();
 
         StringBuilder sql = new StringBuilder();
-        sql.append("SELECT * FROM public.login WHERE nome LIKE ? AND admin is false AND usuario_login = ? ORDER BY login LIMIT 5;");
+        sql.append("SELECT * FROM public.login WHERE lower(nome) LIKE ? AND admin is false AND usuario_login = ? ORDER BY login LIMIT 5;");
 
         if (nome != null
                 && !nome.isEmpty()
                 && usuarioLogado != null) {
-            try (PreparedStatement pstaSel = connection.prepareStatement(sql.toString());) {
-                pstaSel.setString(1, nome + "%");
+            try ( PreparedStatement pstaSel = connection.prepareStatement(sql.toString());) {
+                pstaSel.setString(1, "%" + nome.toLowerCase() + "%");
                 pstaSel.setString(2, usuarioLogado);
 
-                try (ResultSet rsSel = pstaSel.executeQuery();) {
+                try ( ResultSet rsSel = pstaSel.executeQuery();) {
                     while (rsSel.next()) {
                         Login modelLogin = new Login();
                         modelLogin.setLogin(rsSel.getString("login"));
@@ -359,16 +362,16 @@ public class DAOUsuarioRepository {
         Long totalReg = 0L;
 
         StringBuilder sql = new StringBuilder();
-        sql.append("SELECT count(*) as total FROM public.login WHERE nome LIKE ? AND admin is false AND usuario_login = ?;");
+        sql.append("SELECT count(*) as total FROM public.login WHERE lower(nome) LIKE ? AND admin is false AND usuario_login = ?;");
 
         if (nome != null
                 && !nome.isEmpty()
                 && usuarioLogado != null) {
-            try (PreparedStatement pstaSel = connection.prepareStatement(sql.toString());) {
-                pstaSel.setString(1, nome + "%");
+            try ( PreparedStatement pstaSel = connection.prepareStatement(sql.toString());) {
+                pstaSel.setString(1, "%" + nome.toLowerCase() + "%");
                 pstaSel.setString(2, usuarioLogado);
 
-                try (ResultSet rsSel = pstaSel.executeQuery();) {
+                try ( ResultSet rsSel = pstaSel.executeQuery();) {
                     if (rsSel.next()) {
                         Long totalSel = rsSel.getLong("total");
                         totalReg = totalSel;
@@ -398,26 +401,27 @@ public class DAOUsuarioRepository {
         Long numPagina = 1L;
 
         StringBuilder sql = new StringBuilder();
-        sql.append("SELECT count(*) as total FROM public.login WHERE nome LIKE ? AND admin is false AND usuario_login = ?;");
+        sql.append("SELECT count(*) as total FROM public.login WHERE lower(nome) LIKE ? AND admin is false AND usuario_login = ?;");
 
         if (nome != null
                 && !nome.isEmpty()
                 && usuarioLogado != null) {
-            try (PreparedStatement pstaSel = connection.prepareStatement(sql.toString());) {
-                pstaSel.setString(1, nome + "%");
+            try ( PreparedStatement pstaSel = connection.prepareStatement(sql.toString());) {
+                pstaSel.setString(1, "%" + nome.toLowerCase() + "%");
                 pstaSel.setString(2, usuarioLogado);
 
-                try (ResultSet rsSel = pstaSel.executeQuery();) {
+                try ( ResultSet rsSel = pstaSel.executeQuery();) {
                     if (rsSel.next()) {
                         Long totalSel = rsSel.getLong("total");
                         //Paginacao de 5 em 5:
                         Double limit = 5D;
                         Double pagina = totalSel.doubleValue() / limit;
-                        Double restoDivisao = pagina % 2;
 
-                        //Se sobrou registros, abre uma nova página
-                        if (restoDivisao > 0) {
-                            pagina++;
+                        BigDecimal paginacaoAprox = BigDecimal.valueOf(pagina).setScale(0, RoundingMode.HALF_UP);
+                        if (paginacaoAprox.compareTo(BigDecimal.valueOf(pagina)) > 0) {
+                            pagina = paginacaoAprox.doubleValue();
+                        } else if (paginacaoAprox.compareTo(BigDecimal.valueOf(pagina)) < 0) {
+                            pagina = (paginacaoAprox.add(BigDecimal.ONE)).doubleValue();
                         }
 
                         numPagina = pagina.longValue();
@@ -447,17 +451,17 @@ public class DAOUsuarioRepository {
         List<Login> listModelLogin = new ArrayList<>();
 
         StringBuilder sql = new StringBuilder();
-        sql.append("SELECT * FROM public.login WHERE nome LIKE ? AND admin is false AND usuario_login = ? ORDER BY login offset ? LIMIT 5;");
+        sql.append("SELECT * FROM public.login WHERE lower(nome) LIKE ? AND admin is false AND usuario_login = ? ORDER BY login offset ? LIMIT 5;");
 
         if (nome != null
                 && !nome.isEmpty()
                 && usuarioLogado != null) {
-            try (PreparedStatement pstaSel = connection.prepareStatement(sql.toString());) {
-                pstaSel.setString(1, nome + "%");
+            try ( PreparedStatement pstaSel = connection.prepareStatement(sql.toString());) {
+                pstaSel.setString(1, "%" + nome.toLowerCase() + "%");
                 pstaSel.setString(2, usuarioLogado);
                 pstaSel.setInt(3, offset == null ? 0 : offset);
 
-                try (ResultSet rsSel = pstaSel.executeQuery();) {
+                try ( ResultSet rsSel = pstaSel.executeQuery();) {
                     while (rsSel.next()) {
                         Login modelLogin = new Login();
                         modelLogin.setLogin(rsSel.getString("login"));
@@ -511,11 +515,11 @@ public class DAOUsuarioRepository {
         sql.append("SELECT * FROM public.login WHERE admin is false AND usuario_login = ? ORDER BY login offset ? LIMIT 5;");
 
         if (usuarioLogado != null) {
-            try (PreparedStatement pstaSel = connection.prepareStatement(sql.toString());) {
+            try ( PreparedStatement pstaSel = connection.prepareStatement(sql.toString());) {
                 pstaSel.setString(1, usuarioLogado);
                 pstaSel.setInt(2, offset == null ? 0 : offset);
 
-                try (ResultSet rsSel = pstaSel.executeQuery();) {
+                try ( ResultSet rsSel = pstaSel.executeQuery();) {
                     while (rsSel.next()) {
                         Login modelLogin = new Login();
                         modelLogin.setLogin(rsSel.getString("login"));
@@ -582,7 +586,7 @@ public class DAOUsuarioRepository {
         }
 
         if (usuarioLogado != null) {
-            try (PreparedStatement pstaSel = connection.prepareStatement(sql.toString());) {
+            try ( PreparedStatement pstaSel = connection.prepareStatement(sql.toString());) {
                 pstaSel.setString(1, usuarioLogado);
                 if (filterDataNasc
                         && param != null) {
@@ -590,7 +594,7 @@ public class DAOUsuarioRepository {
                     pstaSel.setDate(3, Date.valueOf(new SimpleDateFormat("yyyy-mm-dd").format(new SimpleDateFormat("dd/mm/yyyy").parse((String) param.get("dataFinal")))));
                 }
 
-                try (ResultSet rsSel = pstaSel.executeQuery();) {
+                try ( ResultSet rsSel = pstaSel.executeQuery();) {
                     while (rsSel.next()) {
                         Login modelLogin = new Login();
                         modelLogin.setLogin(rsSel.getString("login"));
@@ -660,7 +664,7 @@ public class DAOUsuarioRepository {
         }
 
         if (usuarioLogado != null) {
-            try (PreparedStatement pstaSel = connection.prepareStatement(sql.toString());) {
+            try ( PreparedStatement pstaSel = connection.prepareStatement(sql.toString());) {
                 pstaSel.setString(1, usuarioLogado);
 
                 if (filterDataNasc
@@ -669,7 +673,7 @@ public class DAOUsuarioRepository {
                     pstaSel.setDate(3, Date.valueOf(new SimpleDateFormat("yyyy-mm-dd").format(new SimpleDateFormat("dd/mm/yyyy").parse((String) param.get("dataFinal")))));
                 }
 
-                try (ResultSet rsSel = pstaSel.executeQuery();) {
+                try ( ResultSet rsSel = pstaSel.executeQuery();) {
                     List<String> listPerfil = new ArrayList<>();
                     List<Double> listSalario = new ArrayList<>();
 
@@ -709,10 +713,10 @@ public class DAOUsuarioRepository {
 
         if (login != null
                 && login.getLogin() != null) {
-            try (PreparedStatement pstaConsulta = connection.prepareStatement(sql.toString());) {
+            try ( PreparedStatement pstaConsulta = connection.prepareStatement(sql.toString());) {
                 pstaConsulta.setString(1, login.getLogin());
 
-                try (ResultSet rsConsulta = pstaConsulta.executeQuery();) {
+                try ( ResultSet rsConsulta = pstaConsulta.executeQuery();) {
                     while (rsConsulta.next()) {
                         Telefone telefone = new Telefone();
                         telefone.setId(rsConsulta.getLong("id"));
@@ -751,10 +755,10 @@ public class DAOUsuarioRepository {
         sql.append("SELECT * FROM public.login WHERE admin is false AND usuario_login = ? ORDER BY login;");
 
         if (usuarioLogado != null) {
-            try (PreparedStatement pstaSel = connection.prepareStatement(sql.toString());) {
+            try ( PreparedStatement pstaSel = connection.prepareStatement(sql.toString());) {
                 pstaSel.setString(1, usuarioLogado);
 
-                try (ResultSet rsSel = pstaSel.executeQuery();) {
+                try ( ResultSet rsSel = pstaSel.executeQuery();) {
                     while (rsSel.next()) {
                         Login modelLogin = new Login();
                         modelLogin.setLogin(rsSel.getString("login"));
@@ -804,11 +808,17 @@ public class DAOUsuarioRepository {
         StringBuilder sql = new StringBuilder();
         sql.append("DELETE FROM public.login WHERE login = ? AND admin is false;");
 
-        if (login != null) {
-            try (PreparedStatement pstaDel = connection.prepareStatement(sql.toString());) {
-                pstaDel.setString(1, login);
+        StringBuilder sqlTel = new StringBuilder();
+        sqlTel.append(" DELETE FROM public.telefone WHERE login = ?;");
 
+        if (login != null) {
+            try ( PreparedStatement pstaDelTel = connection.prepareStatement(sqlTel.toString());  PreparedStatement pstaDel = connection.prepareStatement(sql.toString());) {
+                pstaDelTel.setString(1, login);
+                pstaDelTel.executeUpdate();
+
+                pstaDel.setString(1, login);
                 pstaDel.executeUpdate();
+
                 connection.commit();
             } catch (SQLException ex) {
                 ex.printStackTrace();
@@ -834,20 +844,21 @@ public class DAOUsuarioRepository {
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT count(*) as total FROM public.login WHERE admin is false AND usuario_login = ?;");
 
-        try (PreparedStatement pstaSel = connection.prepareStatement(sql.toString());) {
+        try ( PreparedStatement pstaSel = connection.prepareStatement(sql.toString());) {
             pstaSel.setString(1, usuarioLogado);
 
-            try (ResultSet rsSel = pstaSel.executeQuery();) {
+            try ( ResultSet rsSel = pstaSel.executeQuery();) {
                 if (rsSel.next()) {
                     Long totalSel = rsSel.getLong("total");
                     //Paginacao de 5 em 5:
                     Double limit = 5D;
                     Double pagina = totalSel.doubleValue() / limit;
-                    Double restoDivisao = pagina % 2;
 
-                    //Se sobrou registros, abre uma nova página
-                    if (restoDivisao > 0) {
-                        pagina++;
+                    BigDecimal paginacaoAprox = BigDecimal.valueOf(pagina).setScale(0, RoundingMode.HALF_UP);
+                    if (paginacaoAprox.compareTo(BigDecimal.valueOf(pagina)) > 0) {
+                        pagina = paginacaoAprox.doubleValue();
+                    } else if (paginacaoAprox.compareTo(BigDecimal.valueOf(pagina)) < 0) {
+                        pagina = (paginacaoAprox.add(BigDecimal.ONE)).doubleValue();
                     }
 
                     numPagina = pagina.longValue();

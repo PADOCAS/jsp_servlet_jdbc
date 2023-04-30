@@ -120,12 +120,13 @@ public class ServletTelefoneController extends HttpServlet {
                     request.setAttribute("listModelLogin", listModelLoginPaginada);
                     request.setAttribute("totalPagina", daoUsuarioRepository.getTotalPaginasConsultaTodosUsuarios(servletUtil.getUsuarioLogado(request)));
                     request.setAttribute("paginaAtual", 1L); //Adicinando parametro para trabalhar com os botoes anterior e proximo
-                    request.setAttribute("totalResListaUsuario", "Total de Registros: " + (listModelLoginGeral == null ? "0" : listModelLoginGeral.size()));
 
                     if (listModelLoginGeral != null
                             && !listModelLoginGeral.isEmpty()) {
+                        request.setAttribute("totalResListaUsuario", "Total de Registros: " + listModelLoginGeral.size());
                         request.setAttribute("msgListaUser", "Listagem de Usuários");
                     } else {
+                        request.setAttribute("totalResListaUsuario", "Total de Registros: 0");
                         request.setAttribute("msgListaUser", "Nenhum usuário cadastrado");
                     }
 

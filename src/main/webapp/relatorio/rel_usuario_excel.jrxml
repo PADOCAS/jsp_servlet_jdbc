@@ -97,7 +97,7 @@
 	<summary>
 		<band height="18" splitType="Stretch">
 			<textField>
-				<reportElement x="500" y="0" width="200" height="18" uuid="f982b79b-83a3-4711-9c74-866c5f32c786"/>
+				<reportElement x="221" y="0" width="479" height="18" uuid="f982b79b-83a3-4711-9c74-866c5f32c786"/>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<font size="12" isBold="true"/>
 				</textElement>

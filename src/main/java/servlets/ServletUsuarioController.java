@@ -66,12 +66,13 @@ public class ServletUsuarioController extends HttpServlet {
                 request.setAttribute("listModelLogin", listModelLoginPaginada);
                 request.setAttribute("totalPagina", daoUsuarioRepository.getTotalPaginasConsultaTodosUsuarios(servletUtil.getUsuarioLogado(request)));
                 request.setAttribute("paginaAtual", 1L); //Adicinando parametro para trabalhar com os botoes anterior e proximo
-                request.setAttribute("totalResListaUsuario", "Total de Registros: " + (listModelLoginGeral == null ? "0" : listModelLoginGeral.size()));
 
                 if (listModelLoginGeral != null
                         && !listModelLoginGeral.isEmpty()) {
+                    request.setAttribute("totalResListaUsuario", "Total de Registros: " + listModelLoginGeral.size());
                     request.setAttribute("msgListaUser", "Listagem de Usuários");
                 } else {
+                    request.setAttribute("totalResListaUsuario", "Total de Registros: 0");
                     request.setAttribute("msgListaUser", "Nenhum usuário cadastrado");
                 }
 
@@ -136,6 +137,7 @@ public class ServletUsuarioController extends HttpServlet {
 
                 if (login != null
                         && !login.isEmpty()) {
+                    String strWriter = getWriterMsgDelete(login);
                     Login consultaLogin = daoUsuarioRepository.consultarUsuario(login, servletUtil.getUsuarioLogado(request));
 
                     if (consultaLogin != null) {
@@ -144,18 +146,21 @@ public class ServletUsuarioController extends HttpServlet {
                         //Resposta para o Ajax:
                         response.setContentType("text/html; charset=UTF-8");
                         response.setCharacterEncoding("UTF-8");
-                        response.getWriter().write("Usuário " + login + " excluído com sucesso!");
+                        strWriter = strWriter + " excluído com sucesso!";
+                        response.getWriter().write(strWriter);
                     } else {
                         //Resposta para o Ajax:
                         response.setContentType("text/html; charset=UTF-8");
                         response.setCharacterEncoding("UTF-8");
-                        response.getWriter().write("Usuário " + login + " não existe ainda para ser deletado!");
+                        strWriter = strWriter + " não existe ainda para ser deletado!";
+                        response.getWriter().write(strWriter);
                     }
                 }
             } else if (acao != null
                     && !acao.isEmpty()
                     && acao.equals("consultarajax")) {
                 //Consultar Ajax:
+                request.setCharacterEncoding("UTF-8");
                 //Ajax não atualizar o formulário... nao tem redirecionamento!
                 String nomePesquisa = request.getParameter("nomePesquisa");
 
@@ -197,8 +202,17 @@ public class ServletUsuarioController extends HttpServlet {
                 //Consultar Ajax (Paginacao):
                 //Ajax não atualizar o formulário... nao tem redirecionamento!
                 String nomePesquisa = request.getParameter("nomePesquisa");
-                Integer offset = request.getParameter("paginaAjax") == null ? 0 : Integer.valueOf(request.getParameter("paginaAjax"));
-                Long paginaAtualAjax = request.getParameter("paginaAtualAjax") == null ? 0 : Long.valueOf(request.getParameter("paginaAtualAjax"));
+                
+                Integer offset = 0;
+                if(request.getParameter("paginaAjax") != null) {
+                    offset = Integer.valueOf(request.getParameter("paginaAjax"));
+                }
+                
+                Long paginaAtualAjax = 0L;
+                if(request.getParameter("paginaAtualAjax") != null) {
+                    paginaAtualAjax = Long.valueOf(request.getParameter("paginaAtualAjax"));
+                }
+                
                 Long totalRegistrosConsultaNome = daoUsuarioRepository.consultarUsuarioPorNomeTotalRegistros(nomePesquisa, servletUtil.getUsuarioLogado(request));
 
                 if (nomePesquisa != null
@@ -244,12 +258,13 @@ public class ServletUsuarioController extends HttpServlet {
                     request.setAttribute("listModelLogin", listModelLoginPaginada);
                     request.setAttribute("totalPagina", daoUsuarioRepository.getTotalPaginasConsultaTodosUsuarios(servletUtil.getUsuarioLogado(request)));
                     request.setAttribute("paginaAtual", 1L); //Adicinando parametro para trabalhar com os botoes anterior e proximo
-                    request.setAttribute("totalResListaUsuario", "Total de Registros: " + (listModelLoginGeral == null ? "0" : listModelLoginGeral.size()));
 
                     if (listModelLoginGeral != null
                             && !listModelLoginGeral.isEmpty()) {
+                        request.setAttribute("totalResListaUsuario", "Total de Registros: " + listModelLoginGeral.size());
                         request.setAttribute("msgListaUser", "Listagem de Usuários");
                     } else {
+                        request.setAttribute("totalResListaUsuario", "Total de Registros: 0");
                         request.setAttribute("msgListaUser", "Nenhum usuário cadastrado");
                     }
 
@@ -275,12 +290,13 @@ public class ServletUsuarioController extends HttpServlet {
                 request.setAttribute("listModelLogin", listModelLoginPaginada);
                 request.setAttribute("totalPagina", daoUsuarioRepository.getTotalPaginasConsultaTodosUsuarios(servletUtil.getUsuarioLogado(request)));
                 request.setAttribute("paginaAtual", 1L); //Adicinando parametro para trabalhar com os botoes anterior e proximo
-                request.setAttribute("totalResListaUsuario", "Total de Registros: " + (listModelLoginGeral == null ? "0" : listModelLoginGeral.size()));
 
                 if (listModelLoginGeral != null
                         && !listModelLoginGeral.isEmpty()) {
+                    request.setAttribute("totalResListaUsuario", "Total de Registros: " + listModelLoginGeral.size());
                     request.setAttribute("msgListaUser", "Listagem de Usuários");
                 } else {
+                    request.setAttribute("totalResListaUsuario", "Total de Registros: 0");
                     request.setAttribute("msgListaUser", "Nenhum usuário cadastrado");
                 }
 
@@ -317,8 +333,15 @@ public class ServletUsuarioController extends HttpServlet {
             } else if (acao != null
                     && !acao.isEmpty()
                     && acao.equals("paginar")) {
-                Integer offset = request.getParameter("pagina") == null ? 0 : Integer.valueOf(request.getParameter("pagina"));
-                Long paginaAtual = request.getParameter("paginaAtual") == null ? 0 : Long.valueOf(request.getParameter("paginaAtual"));
+                Integer offset = 0;
+                if(request.getParameter("pagina") != null) {
+                    offset = Integer.valueOf(request.getParameter("pagina"));
+                }
+                
+                Long paginaAtual = 0L;
+                if(request.getParameter("paginaAtual") != null) {
+                    paginaAtual = Long.valueOf(request.getParameter("paginaAtual"));
+                }
 
 //                //Rotina para carregar Lista de Usuarios PAGINADA sempre que abrir a tela de usuario:
                 List<Login> listModelLoginPaginada = daoUsuarioRepository.consultarTodosUsuariosPaginada(servletUtil.getUsuarioLogado(request), offset);
@@ -329,12 +352,13 @@ public class ServletUsuarioController extends HttpServlet {
                 request.setAttribute("listModelLogin", listModelLoginPaginada);
                 request.setAttribute("totalPagina", daoUsuarioRepository.getTotalPaginasConsultaTodosUsuarios(servletUtil.getUsuarioLogado(request)));
                 request.setAttribute("paginaAtual", paginaAtual); //Adicinando parametro para trabalhar com os botoes anterior e proximo
-                request.setAttribute("totalResListaUsuario", "Total de Registros: " + (listTotalRegistros == null ? "0" : listTotalRegistros.size()));
 
                 if (listTotalRegistros != null
                         && !listTotalRegistros.isEmpty()) {
+                    request.setAttribute("totalResListaUsuario", "Total de Registros: " + listTotalRegistros.size());
                     request.setAttribute("msgListaUser", "Listagem de Usuários");
                 } else {
+                    request.setAttribute("totalResListaUsuario", "Total de Registros: 0");
                     request.setAttribute("msgListaUser", "Nenhum usuário cadastrado");
                 }
 
@@ -470,12 +494,13 @@ public class ServletUsuarioController extends HttpServlet {
                 request.setAttribute("listModelLogin", listModelLoginPaginada);
                 request.setAttribute("totalPagina", daoUsuarioRepository.getTotalPaginasConsultaTodosUsuarios(servletUtil.getUsuarioLogado(request)));
                 request.setAttribute("paginaAtual", 1L); //Adicinando parametro para trabalhar com os botoes anterior e proximo
-                request.setAttribute("totalResListaUsuario", "Total de Registros: " + (listModelLoginGeral == null ? "0" : listModelLoginGeral.size()));
 
                 if (listModelLoginGeral != null
                         && !listModelLoginGeral.isEmpty()) {
+                    request.setAttribute("totalResListaUsuario", "Total de Registros: " + listModelLoginGeral.size());
                     request.setAttribute("msgListaUser", "Listagem de Usuários");
                 } else {
+                    request.setAttribute("totalResListaUsuario", "Total de Registros: 0");
                     request.setAttribute("msgListaUser", "Nenhum usuário cadastrado");
                 }
 
@@ -490,6 +515,17 @@ public class ServletUsuarioController extends HttpServlet {
             request.setAttribute("msg", ex.getMessage());
             redirecionar.forward(request, response);
         }
+    }
+
+    private String getWriterMsgDelete(String login) {
+        StringBuilder strWriter = new StringBuilder();
+        if (login != null) {
+            strWriter.append("Usuário ");
+            strWriter.append(login);
+            strWriter.append(" ");
+        }
+
+        return strWriter.toString();
     }
 
     private Boolean validDatasConsultaRelUser(HttpServletRequest request, HttpServletResponse response, Boolean respostaEmAjax) throws Exception {
@@ -681,12 +717,13 @@ public class ServletUsuarioController extends HttpServlet {
                 request.setAttribute("listModelLogin", listModelLoginPaginada);
                 request.setAttribute("totalPagina", daoUsuarioRepository.getTotalPaginasConsultaTodosUsuarios(servletUtil.getUsuarioLogado(request)));
                 request.setAttribute("paginaAtual", 1L); //Adicinando parametro para trabalhar com os botoes anterior e proximo
-                request.setAttribute("totalResListaUsuario", "Total de Registros: " + (listModelLoginGeral == null ? "0" : listModelLoginGeral.size()));
 
                 if (listModelLoginGeral != null
                         && !listModelLoginGeral.isEmpty()) {
+                    request.setAttribute("totalResListaUsuario", "Total de Registros: " + listModelLoginGeral.size());
                     request.setAttribute("msgListaUser", "Listagem de Usuários");
                 } else {
+                    request.setAttribute("totalResListaUsuario", "Total de Registros: 0");
                     request.setAttribute("msgListaUser", "Nenhum usuário cadastrado");
                 }
 

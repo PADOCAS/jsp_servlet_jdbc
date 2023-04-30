@@ -5,7 +5,7 @@
 --%>
 
 <%@page import="model.Login"%>
-<%@page language="java" contentType="text/html; charset=ISO-8859-1"%>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="UTF-8"%>
 
 <%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
 
@@ -45,7 +45,7 @@
                                                         <!-- Basic Form Inputs card start -->
                                                         <div class="card">
                                                             <div class="card-block">
-                                                                <h4 class="sub-title">Cadastro de Usu·rio</h4>
+                                                                <h4 class="sub-title">Cadastro de Usu√°rio</h4>
 
                                                                 <form class="form-material" action="<%= request.getContextPath()%>/ServletUsuarioController" method="post" id="formUser" enctype="multipart/form-data">
                                                                 <input type="hidden" name="acao" id="acao" value="" />
@@ -74,7 +74,7 @@
                                                                         </c:if>
                                                                         <c:if test="${modelLogin.fotoUser == null
                                                                                       || modelLogin.fotoUser == ''}">
-                                                                              <!--Se n„o tem imagem:-->
+                                                                              <!--Se n√£o tem imagem:-->
                                                                               <img id="fotoBase64" alt="Imagem User" src="assets/images/User_font_awesome.svg.png" width="100px;" />                                                                        
                                                                         </c:if>
                                                                     </div>
@@ -88,14 +88,14 @@
                                                                     <label class="float-label">Senha</label>
                                                                 </div>
                                                                 <div class="form-group form-default form-static-label">
-                                                                    <input type="password" name="confirmSenha" id="confirmSenha" class="form-control" placeholder="ConfirmaÁ„o da Senha" required="required" maxlength="20" autocomplete="off" value="${modelLogin.confirmSenha}">
+                                                                    <input type="password" name="confirmSenha" id="confirmSenha" class="form-control" placeholder="Confirma√ß√£o da Senha" required="required" maxlength="20" autocomplete="off" value="${modelLogin.confirmSenha}">
                                                                     <span class="form-bar"></span>
-                                                                    <label class="float-label">ConfirmaÁ„o da Senha</label>
+                                                                    <label class="float-label">Confirma√ß√£o da Senha</label>
                                                                 </div>
 
                                                                 <div class="form-group form-default form-static-label">
                                                                     <select class="form-control" aria-label="Default select example" name="perfil" required="required">
-                                                                        <option disabled="disabled">[Selecione o Perfil do Usu·rio]</option>
+                                                                        <option disabled="disabled">[Selecione o Perfil do Usu√°rio]</option>
                                                                         <option value="ADMIN" <%
                                                                             Login loginCheck = (Login) request.getAttribute("modelLogin");
 
@@ -117,7 +117,7 @@
                                                                                 out.print("selected=\"selected\"");
                                                                                 out.print(" ");
                                                                             }
-                                                                                %>>Secret·ria</option>
+                                                                                %>>Secret√°ria</option>
                                                                         <option value="AUXILIAR" <%
                                                                             loginCheck = (Login) request.getAttribute("modelLogin");
 
@@ -215,15 +215,14 @@
                                                                 </div>   
 
                                                                 <div class="form-group form-default form-static-label">
-                                                                    <input type="text" name="numero" id="numero" class="form-control" placeholder="Informe o N˙mero" required="required" maxlength="15" autocomplete="off" value="${modelLogin.numero}">
+                                                                    <input type="text" name="numero" id="numero" class="form-control" placeholder="Informe o N√∫mero" required="required" maxlength="15" autocomplete="off" value="${modelLogin.numero}">
                                                                     <span class="form-bar"></span>
-                                                                    <label class="float-label">N˙mero</label>
+                                                                    <label class="float-label">N√∫mero</label>
                                                                 </div>           
 
                                                                 <button type="submit" class="btn btn-primary waves-effect waves-light">Salvar</button>
-                                                                <button type="submit" class="btn btn-success waves-effect waves-light">Salvar/Novo</button>
                                                                 <button type="button" class="btn btn-danger waves-effect waves-light" onclick="deletarComAjax();">Excluir</button>
-                                                                <!--Vai mandar um Get para a servlet onde ser· feito uma consulta dos telefones do usuario-->
+                                                                <!--Vai mandar um Get para a servlet onde ser√° feito uma consulta dos telefones do usuario-->
                                                                 <a href="<%= request.getContextPath()%>/ServletTelefoneController?login=${modelLogin.login}" class="btn btn-warning waves-effect waves-light">Telefone</a>
                                                                 <button type="button" class="btn btn-inverse waves-effect waves-light" onclick="limpar();">Limpar</button>
                                                                 <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modalPesquisaUsuario" onclick="limpaCamposPesquisa();">Pesquisar</button>
@@ -264,7 +263,7 @@
                                                             </table>
                                                         </div>    
 
-                                                        <nav aria-label="PaginaÁ„o" style="margin-left: 5px;">
+                                                        <nav aria-label="Pagina√ß√£o" style="margin-left: 5px;">
                                                             <ul class="pagination">
                                                                 <li class="page-item"><a class="page-link" style="cursor: pointer;" onclick="paginaAnterior();">Anterior</a></li>
                                                                     <%
@@ -272,13 +271,13 @@
 
                                                                         for (int i = 0; i < totalPagina; i++) {
                                                                             //Acao para servlet paginar passando a pagina que esta visualizando:
-                                                                            //Pega a pagina e multiplica por 5, pois È 5 por pagina para iniciar o offset
+                                                                            //Pega a pagina e multiplica por 5, pois √© 5 por pagina para iniciar o offset
                                                                             String url = request.getContextPath() + "/ServletUsuarioController?acao=paginar&pagina=" + (i * 5) + "&paginaAtual=" + (i + 1);
-                                                                            //Mostra na tela a pagina i + 1, pois o indice comeÁa com zero aqui no teste
+                                                                            //Mostra na tela a pagina i + 1, pois o indice come√ßa com zero aqui no teste
                                                                             out.print("<li class=\"page-item\"><a class=\"page-link button_pagination_treinamento_jsp\" href=\"" + url + "\">" + (i + 1) + "</a></li>");
                                                                         }
                                                                     %>
-                                                                <li class="page-item"><a class="page-link" style="cursor: pointer;" onclick="paginaProxima();">PrÛxima</a></li>
+                                                                <li class="page-item"><a class="page-link" style="cursor: pointer;" onclick="paginaProxima();">Pr√≥xima</a></li>
                                                             </ul>
                                                         </nav>
 
@@ -309,14 +308,14 @@
                 <div class="modal-dialog" role="document" style="max-width: 800px;">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Pesquisa de Usu·rio</h5>
+                            <h5 class="modal-title" id="exampleModalLabel">Pesquisa de Usu√°rio</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
                         <div class="modal-body">
                             <div class="input-group mb-3">
-                                <input type="text" id="nomePesquisa" class="form-control" placeholder="Nome do Usu·rio" aria-label="Nome" aria-describedby="basic-addon2">
+                                <input type="text" id="nomePesquisa" class="form-control" placeholder="Nome do Usu√°rio" aria-label="Nome" aria-describedby="basic-addon2">
                                 <div class="input-group-append">
                                     <button class="btn btn-success" type="button" onclick="buscarUsuario();">Pesquisar</button>
                                 </div>
@@ -332,12 +331,12 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <!--Sera preenchido pelo javascript na m„o sempre as linhas e colunas-->
+                                        <!--Sera preenchido pelo javascript na m√£o sempre as linhas e colunas-->
                                     </tbody>
                                 </table>
                             </div>
 
-                            <nav aria-label="PaginaÁ„o" style="margin-left: 5px;">
+                            <nav aria-label="Pagina√ß√£o" style="margin-left: 5px;">
                                 <ul class="pagination" id="ulPaginacaoUserAjax">
 
                                 </ul>
@@ -355,9 +354,9 @@
             </div>
 
             <script type="text/javascript" >
-                //Renda Mensal - campo monet·rio:
+                //Renda Mensal - campo monet√°rio:
                 $("#rendaMensal").maskMoney({showSymbol: true, symbol: "R$ ", decimal: ",", thousands: ".", precision: 2, allowZero: true});
-                //forÁar a formatacao do campo monetario e dar o foco nele:
+                //for√ßar a formatacao do campo monetario e dar o foco nele:
                 const formatterMoney = new Intl.NumberFormat('pt-BR', {
                     currency: 'BRL',
                     minimumFractionDigits: 2
@@ -366,7 +365,7 @@
                 $("#rendaMensal").val(formatterMoney.format($("#rendaMensal").val()));
                 $("#rendaMensal").focus();
 
-                //forÁar a formatacao do campo data nascimento:
+                //for√ßar a formatacao do campo data nascimento:
                 let dataNasc = $("#dataNascimento").val();
                 if (dataNasc !== null
                         && dataNasc !== "") {
@@ -377,22 +376,22 @@
                 }
                 $("#nome").focus();
 
-                //FunÁ„o para calendario na data Nascimento:
+                //Fun√ß√£o para calendario na data Nascimento:
                 //Vai traduzir o calendario padrao:
                 $(function () {
                     $("#dataNascimento").datepicker({
                         dateFormat: 'dd/mm/yy',
-                        dayNames: ['Domingo', 'Segunda', 'TerÁa', 'Quarta', 'Quinta', 'Sexta', 'S·bado'],
+                        dayNames: ['Domingo', 'Segunda', 'Ter√ßa', 'Quarta', 'Quinta', 'Sexta', 'S√°bado'],
                         dayNamesMin: ['D', 'S', 'T', 'Q', 'Q', 'S', 'S', 'D'],
-                        dayNamesShort: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'S·b', 'Dom'],
-                        monthNames: ['Janeiro', 'Fevereiro', 'MarÁo', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+                        dayNamesShort: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'S√°b', 'Dom'],
+                        monthNames: ['Janeiro', 'Fevereiro', 'Mar√ßo', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
                         monthNamesShort: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
-                        nextText: 'PrÛximo',
+                        nextText: 'Pr√≥ximo',
                         prevText: 'Anterior'
                     });
                 });
 
-                //FunÁıes para validar apenas n˙meros:
+                //Fun√ß√µes para validar apenas n√∫meros:
                 $("#numero").keypress(function (event) {
                     return /\d/.test(String.fromCharCode(event.keyCode));
                 });
@@ -407,7 +406,7 @@
                     //Busca no WebService por jQuery mesmo:
                     if (cep !== null
                             && cep !== '') {
-                        //Express„o regular para validar o CEP.
+                        //Express√£o regular para validar o CEP.
                         var validacep = /^[0-9]{8}$/;
 
                         //Valida o formato do CEP.
@@ -435,21 +434,21 @@
                                         $("#uf").val(dados.uf.toUpperCase());
                                     }
                                 } else {
-                                    //CEP pesquisado n„o foi encontrado.
-                                    limpa_formul·rio_cep();
-                                    alert("CEP n„o encontrado.");
+                                    //CEP pesquisado n√£o foi encontrado.
+                                    limpa_formul√°rio_cep();
+                                    alert("CEP n√£o encontrado.");
                                 }
                             });
                         } else {
-                            //cep È inv·lido.
-                            limpa_formul·rio_cep();
-                            alert("Formato de CEP inv·lido.");
+                            //cep √© inv√°lido.
+                            limpa_formul√°rio_cep();
+                            alert("Formato de CEP inv√°lido.");
                         }
                     }
                 }
 
-                function limpa_formul·rio_cep() {
-                    // Limpa valores do formul·rio de cep.
+                function limpa_formul√°rio_cep() {
+                    // Limpa valores do formul√°rio de cep.
                     $("#logradouro").val("");
                     $("#bairro").val("");
                     $("#localidade").val("");
@@ -481,7 +480,7 @@
                         }
                     }
 
-                    //Limpar a Imagem para a padr„o:
+                    //Limpar a Imagem para a padr√£o:
                     if (document.getElementById("fotoBase64") !== null
                             && document.getElementById("fotoBase64") !== '') {
                         document.getElementById("fotoBase64").src = "assets/images/User_font_awesome.svg.png";
@@ -494,24 +493,26 @@
                     //Remove todos os resultados da tabela (pesquisa anteriores)
                     $('#tabelaUsuarioPesquisa > tbody > td').remove();
                     $('#tabelaUsuarioPesquisa > tbody > tr').remove();
+                    //Limpa a pagina√ß√£o ja realizada antes!
+                    $('#ulPaginacaoUserAjax > li').remove();
                 }
 
                 function deletar() {
                     //Aparecer um dialog para o usuario confirmar a exclusao
-                    if (confirm('Deseja realmente excluir o usu·rio ?')) {
-                        //Trocar para o method get o formul·rio:
+                    if (confirm('Deseja realmente excluir o usu√°rio ?')) {
+                        //Trocar para o method get o formul√°rio:
                         document.getElementById("formUser").method = 'get';
                         //Atributo acao recebe o valor 'deletar' para trabalhar com ele no metodo doGet dentro do Servlet
                         document.getElementById("acao").value = 'deletar';
-                        //Envia o formul·rio
+                        //Envia o formul√°rio
                         document.getElementById("formUser").submit();
                     }
                 }
 
                 function deletarComAjax() {
                     //Aparecer um dialog para o usuario confirmar a exclusao
-                    if (confirm('Deseja realmente excluir o usu·rio ?')) {
-                        //Pega a URLAction do formul·rio para cair no doGet (servlet utilizado)
+                    if (confirm('Deseja realmente excluir o usu√°rio ?')) {
+                        //Pega a URLAction do formul√°rio para cair no doGet (servlet utilizado)
                         var urlAction = document.getElementById("formUser").action;
                         var idLogin = document.getElementById("login").value;
 
@@ -533,13 +534,13 @@
                             }
                         }).fail(function (xhr, status, errorThrow) {
                             document.getElementById("msg").textContent = xhr.responseText;
-//                            alert("Erro ao deletar usu·rio!\n" + xhr.responseText);
+//                            alert("Erro ao deletar usu√°rio!\n" + xhr.responseText);
                         });
                     }
                 }
 
                 function paginaAnterior() {
-                    //Bot„o Anterior:
+                    //Bot√£o Anterior:
                     var urlAction = document.getElementById("formUser").action;
                     var paginaAtual = document.getElementById("paginaAtual").value;
                     var offset;
@@ -570,7 +571,7 @@
                 }
 
                 function paginaProxima() {
-                    //Bot„o Proximo:
+                    //Bot√£o Proximo:
                     var urlAction = document.getElementById("formUser").action;
                     var paginaAtual = document.getElementById("paginaAtual").value;
                     var totalPagina = document.getElementById("totalPagina").value;
@@ -602,7 +603,7 @@
                 }
 
                 function paginaProximaAjax() {
-                    //Bot„o Proximo Consulta por Nome Ajax:
+                    //Bot√£o Proximo Consulta por Nome Ajax:
                     var nomePesquisa = document.getElementById("nomePesquisa").value;
                     var paginaAtualAjaxCampo = document.getElementById("paginaAtualAjax").value;
                     var totalPaginaAjaxCampo = document.getElementById("totalPaginaAjax").value;
@@ -618,12 +619,12 @@
                         paginaNova = (parseInt(paginaAtualAjaxCampo) + 1);
                     }
 
-                    var urlNova = "nomePesquisa=" + nomePesquisa + "&acao=consultarajaxPage&paginaAjax=" + offset + "&paginaAtualAjax=" + paginaNova;
+                    var urlNova = "nomePesquisa=" + encodeURIComponent(nomePesquisa) + "&acao=consultarajaxPage&paginaAjax=" + offset + "&paginaAtualAjax=" + paginaNova;
                     buscarUsuarioPageAjax(urlNova);
                 }
 
                 function paginaAnteriorAjax() {
-                    //Bot„o Anterior:
+                    //Bot√£o Anterior:
                     var nomePesquisa = document.getElementById("nomePesquisa").value;
                     var paginaAtualAjaxCampo = document.getElementById("paginaAtualAjax").value;
                     var offset;
@@ -638,7 +639,7 @@
                         paginaNova = (parseInt(paginaAtualAjaxCampo) - 1);
                     }
 
-                    var urlNova = "nomePesquisa=" + nomePesquisa + "&acao=consultarajaxPage&paginaAjax=" + offset + "&paginaAtualAjax=" + paginaNova;
+                    var urlNova = "nomePesquisa=" + encodeURIComponent(nomePesquisa) + "&acao=consultarajaxPage&paginaAjax=" + offset + "&paginaAtualAjax=" + paginaNova;
                     buscarUsuarioPageAjax(urlNova);
                 }
 
@@ -648,7 +649,7 @@
                 };
 
                 function selectButtonPaginationAjax() {
-//                    Fazer o querySelector pegar todos os elementos da tela que satisfaÁ„o a condiÁ„o de classe (.button_pagination_treinamento_consulta_nome_ajax_jsp):
+//                    Fazer o querySelector pegar todos os elementos da tela que satisfa√ß√£o a condi√ß√£o de classe (.button_pagination_treinamento_consulta_nome_ajax_jsp):
                     let listBtnDispPagination = document.querySelectorAll(".button_pagination_treinamento_consulta_nome_ajax_jsp");
                     let paginaAtual = document.getElementById("paginaAtualAjax").value;
 
@@ -688,7 +689,7 @@
                 }
 
                 function selectButtonPagination() {
-//                    Fazer o querySelector pegar todos os elementos da tela que satisfaÁ„o a condiÁ„o de classe (.button_pagination_treinamento_jsp):
+//                    Fazer o querySelector pegar todos os elementos da tela que satisfa√ß√£o a condi√ß√£o de classe (.button_pagination_treinamento_jsp):
                     let listBtnDispPagination = document.querySelectorAll(".button_pagination_treinamento_jsp");
                     let paginaAtual = document.getElementById("paginaAtual").value;
 
@@ -729,8 +730,8 @@
 
                 function deletarComAjaxDiretoLista(loginSel) {
                     //Aparecer um dialog para o usuario confirmar a exclusao
-                    if (confirm('Deseja realmente excluir o usu·rio ?')) {
-                        //Pega a URLAction do formul·rio para cair no doGet (servlet utilizado)
+                    if (confirm('Deseja realmente excluir o usu√°rio ?')) {
+                        //Pega a URLAction do formul√°rio para cair no doGet (servlet utilizado)
                         var urlAction = document.getElementById("formUser").action;
 
                         $.ajax({
@@ -764,7 +765,7 @@
                 function buscarUsuarioPageAjax(url) {
                     var nomePesquisa = document.getElementById("nomePesquisa").value;
 
-                    //Pega a URLAction do formul·rio para cair no doGet (servlet utilizado)
+                    //Pega a URLAction do formul√°rio para cair no doGet (servlet utilizado)
                     var urlAction = document.getElementById("formUser").action;
 
                     $.ajax({
@@ -776,7 +777,7 @@
                             //Remove todos os resultados da tabela (pesquisa anteriores)
                             $('#tabelaUsuarioPesquisa > tbody > td').remove();
                             $('#tabelaUsuarioPesquisa > tbody > tr').remove();
-                            //Limpa a paginaÁ„o ja realizada antes!
+                            //Limpa a pagina√ß√£o ja realizada antes!
                             $('#ulPaginacaoUserAjax > li').remove();
 
                             if (response !== null
@@ -791,7 +792,7 @@
                                         $('#tabelaUsuarioPesquisa > tbody').append("<td>" + json[i].login + "</td>");
                                         $('#tabelaUsuarioPesquisa > tbody').append("<td>" + json[i].nome + "</td>");
                                         $('#tabelaUsuarioPesquisa > tbody').append("<td>" + json[i].email + "</td>");
-                                        //Na String do button, para passar aspas duplas e n„o dar pal na string, colocar assim \' com isso funciona normalmente?
+                                        //Na String do button, para passar aspas duplas e n√£o dar pal na string, colocar assim \' com isso funciona normalmente?
                                         $('#tabelaUsuarioPesquisa > tbody').append('<td><button type="button" onclick="selEditar(\'' + json[i].login + '\');" class="btn btn-info">Selecionar</button></td>');
                                         $('#tabelaUsuarioPesquisa > tbody').append("</tr>");
                                     }
@@ -806,12 +807,12 @@
                                     $('#ulPaginacaoUserAjax').append("<li class=\"page-item\"><a class=\"page-link\" onclick=\"paginaAnteriorAjax();\" style=\"cursor: pointer;\">Anterior</a></li>");
 
                                     for (var i = 0; i < totalPaginaAjax; i++) {
-                                        var urlNova = "nomePesquisa=" + nomePesquisa + "&acao=consultarajaxPage&paginaAjax=" + (i * 5) + "&paginaAtualAjax=" + (i + 1);
+                                        var urlNova = "nomePesquisa=" + encodeURIComponent(nomePesquisa) + "&acao=consultarajaxPage&paginaAjax=" + (i * 5) + "&paginaAtualAjax=" + (i + 1);
                                         //ulPaginacaoUserAjax (Acrescentar as paginas)
                                         $('#ulPaginacaoUserAjax').append('<li class="page-item"><a class="page-link button_pagination_treinamento_consulta_nome_ajax_jsp" style="cursor: pointer;" onclick="buscarUsuarioPageAjax(\'' + urlNova + '\');">' + (i + 1) + '</a></li>');
                                     }
 
-                                    $("#ulPaginacaoUserAjax").append("<li class=\"page-item\"><a class=\"page-link\" onclick=\"paginaProximaAjax();\" style=\"cursor: pointer;\">PrÛxima</a></li>");
+                                    $("#ulPaginacaoUserAjax").append("<li class=\"page-item\"><a class=\"page-link\" onclick=\"paginaProximaAjax();\" style=\"cursor: pointer;\">Pr√≥xima</a></li>");
 
                                     document.getElementById("paginaAtualAjax").value = paginaAtualAjax;
                                     document.getElementById("totalPaginaAjax").value = totalPaginaAjax;
@@ -821,7 +822,7 @@
                                     //Remove todos os resultados da tabela (pesquisa anteriores)
                                     $('#tabelaUsuarioPesquisa > tbody > td').remove();
                                     $('#tabelaUsuarioPesquisa > tbody > tr').remove();
-                                    //Limpa a paginaÁ„o ja realizada antes!
+                                    //Limpa a pagina√ß√£o ja realizada antes!
                                     $('#ulPaginacaoUserAjax > li').remove();
 
                                     alert(response);
@@ -834,8 +835,10 @@
                         //Remove todos os resultados da tabela (pesquisa anteriores)
                         $('#tabelaUsuarioPesquisa > tbody > td').remove();
                         $('#tabelaUsuarioPesquisa > tbody > tr').remove();
+                        //Limpa a pagina√ß√£o ja realizada antes!
+                        $('#ulPaginacaoUserAjax > li').remove();
 
-                        alert("Erro ao pesquisar usu·rio!\n" + xhr.responseText);
+                        alert("Erro ao pesquisar usu√°rio!\n" + xhr.responseText);
                         selectButtonPaginationAjax();
                     });
                 }
@@ -846,7 +849,7 @@
                     if (nomePesquisa !== null
                             && nomePesquisa !== ""
                             && nomePesquisa.trim() !== "") {
-                        //Pega a URLAction do formul·rio para cair no doGet (servlet utilizado)
+                        //Pega a URLAction do formul√°rio para cair no doGet (servlet utilizado)
                         var urlAction = document.getElementById("formUser").action;
 
                         $.ajax({
@@ -854,12 +857,12 @@
                             url: urlAction,
                             contentType: "application/x-www-form-urlencoded;charset=utf-8",
                             //Parametros fica no data
-                            data: "nomePesquisa=" + nomePesquisa + "&acao=consultarajax",
+                            data: "nomePesquisa=" + encodeURIComponent(nomePesquisa) + "&acao=consultarajax",
                             success: function (response, textStatus, xhr) {
                                 //Remove todos os resultados da tabela (pesquisa anteriores)
                                 $('#tabelaUsuarioPesquisa > tbody > td').remove();
                                 $('#tabelaUsuarioPesquisa > tbody > tr').remove();
-                                //Limpa a paginaÁ„o ja realizada antes!
+                                //Limpa a pagina√ß√£o ja realizada antes!
                                 $('#ulPaginacaoUserAjax > li').remove();
 
                                 if (response !== null
@@ -874,7 +877,7 @@
                                             $('#tabelaUsuarioPesquisa > tbody').append("<td>" + json[i].login + "</td>");
                                             $('#tabelaUsuarioPesquisa > tbody').append("<td>" + json[i].nome + "</td>");
                                             $('#tabelaUsuarioPesquisa > tbody').append("<td>" + json[i].email + "</td>");
-                                            //Na String do button, para passar aspas duplas e n„o dar pal na string, colocar assim \' com isso funciona normalmente?
+                                            //Na String do button, para passar aspas duplas e n√£o dar pal na string, colocar assim \' com isso funciona normalmente?
                                             $('#tabelaUsuarioPesquisa > tbody').append('<td><button type="button" onclick="selEditar(\'' + json[i].login + '\');" class="btn btn-info">Selecionar</button></td>');
                                             $('#tabelaUsuarioPesquisa > tbody').append("</tr>");
                                         }
@@ -889,12 +892,12 @@
                                         $('#ulPaginacaoUserAjax').append("<li class=\"page-item\"><a class=\"page-link\" onclick=\"paginaAnteriorAjax();\" style=\"cursor: pointer;\">Anterior</a></li>");
 
                                         for (var i = 0; i < totalPaginaAjax; i++) {
-                                            var url = "nomePesquisa=" + nomePesquisa + "&acao=consultarajaxPage&paginaAjax=" + (i * 5) + "&paginaAtualAjax=" + (i + 1);
+                                            var url = "nomePesquisa=" + encodeURIComponent(nomePesquisa) + "&acao=consultarajaxPage&paginaAjax=" + (i * 5) + "&paginaAtualAjax=" + (i + 1);
                                             //ulPaginacaoUserAjax (Acrescentar as paginas)
                                             $('#ulPaginacaoUserAjax').append('<li class="page-item"><a class="page-link button_pagination_treinamento_consulta_nome_ajax_jsp" style="cursor: pointer;" onclick="buscarUsuarioPageAjax(\'' + url + '\');">' + (i + 1) + '</a></li>');
                                         }
 
-                                        $("#ulPaginacaoUserAjax").append("<li class=\"page-item\"><a class=\"page-link\" onclick=\"paginaProximaAjax();\" style=\"cursor: pointer;\">PrÛxima</a></li>");
+                                        $("#ulPaginacaoUserAjax").append("<li class=\"page-item\"><a class=\"page-link\" onclick=\"paginaProximaAjax();\" style=\"cursor: pointer;\">Pr√≥xima</a></li>");
 
                                         document.getElementById("paginaAtualAjax").value = paginaAtualAjax;
                                         document.getElementById("totalPaginaAjax").value = totalPaginaAjax;
@@ -905,7 +908,7 @@
                                         //Remove todos os resultados da tabela (pesquisa anteriores)
                                         $('#tabelaUsuarioPesquisa > tbody > td').remove();
                                         $('#tabelaUsuarioPesquisa > tbody > tr').remove();
-                                        //Limpa a paginaÁ„o ja realizada antes!
+                                        //Limpa a pagina√ß√£o ja realizada antes!
                                         $('#ulPaginacaoUserAjax > li').remove();
 
                                         alert(response);
@@ -919,8 +922,10 @@
                             //Remove todos os resultados da tabela (pesquisa anteriores)
                             $('#tabelaUsuarioPesquisa > tbody > td').remove();
                             $('#tabelaUsuarioPesquisa > tbody > tr').remove();
+                            //Limpa a pagina√ß√£o ja realizada antes!
+                            $('#ulPaginacaoUserAjax > li').remove();
 
-                            alert("Erro ao pesquisar usu·rio!\n" + xhr.responseText);
+                            alert("Erro ao pesquisar usu√°rio!\n" + xhr.responseText);
                             selectButtonPaginationAjax();
                         });
                     } else {
@@ -928,13 +933,15 @@
                         //Remove todos os resultados da tabela (pesquisa anteriores)
                         $('#tabelaUsuarioPesquisa > tbody > td').remove();
                         $('#tabelaUsuarioPesquisa > tbody > tr').remove();
+                        //Limpa a pagina√ß√£o ja realizada antes!
+                        $('#ulPaginacaoUserAjax > li').remove();
 
-                        alert("Digite alguma informaÁ„o para habilitar a pesquisa!");
+                        alert("Digite alguma informa√ß√£o para habilitar a pesquisa!");
                     }
                 }
 
                 function selEditar(loginSel) {
-                    //Pega a URLAction do formul·rio para cair no doGet (servlet utilizado)
+                    //Pega a URLAction do formul√°rio para cair no doGet (servlet utilizado)
                     var urlAction = document.getElementById("formUser").action;
 
                     //Redirecionar com ajax:

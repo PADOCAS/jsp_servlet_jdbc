@@ -32,20 +32,24 @@ public class DAOLoginRepository {
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT * FROM public.login WHERE login = ? and senha = ?;");
 
-        try (PreparedStatement pstaSel = connection.prepareStatement(sql.toString());) {
-            pstaSel.setString(1, login.getLogin());
-            pstaSel.setString(2, login.getSenha());
+        if (login != null
+                && login.getLogin() != null
+                && login.getSenha() != null) {
+            try ( PreparedStatement pstaSel = connection.prepareStatement(sql.toString());) {
+                pstaSel.setString(1, login.getLogin());
+                pstaSel.setString(2, login.getSenha());
 
-            try (ResultSet rsSel = pstaSel.executeQuery();) {
-                if (rsSel.next()) {
-                    return true;
+                try ( ResultSet rsSel = pstaSel.executeQuery();) {
+                    if (rsSel.next()) {
+                        return true;
+                    }
                 }
             }
         }
 
         return false;
     }
-    
+
     public Login consultarUsuario(String login) throws Exception {
         Login modelLogin = null;
 
@@ -53,10 +57,10 @@ public class DAOLoginRepository {
         sql.append("SELECT * FROM public.login WHERE login = ?;");
 
         if (login != null) {
-            try (PreparedStatement pstaSel = connection.prepareStatement(sql.toString());) {
+            try ( PreparedStatement pstaSel = connection.prepareStatement(sql.toString());) {
                 pstaSel.setString(1, login);
 
-                try (ResultSet rsSel = pstaSel.executeQuery();) {
+                try ( ResultSet rsSel = pstaSel.executeQuery();) {
                     if (rsSel.next()) {
                         modelLogin = new Login();
                         modelLogin.setLogin(rsSel.getString("login"));
@@ -76,7 +80,7 @@ public class DAOLoginRepository {
                         modelLogin.setLocalidade(rsSel.getString("localidade"));
                         modelLogin.setUf(rsSel.getString("uf"));
                         modelLogin.setNumero(rsSel.getString("numero"));
-                        modelLogin.setDataNascimento(rsSel.getObject("data_nascimento") != null ? rsSel.getDate("data_nascimento") : null);    
+                        modelLogin.setDataNascimento(rsSel.getObject("data_nascimento") != null ? rsSel.getDate("data_nascimento") : null);
                         modelLogin.setRendaMensal(rsSel.getDouble("renda_mensal"));
                     }
                 }
