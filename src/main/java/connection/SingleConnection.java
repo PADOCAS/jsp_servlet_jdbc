@@ -19,14 +19,7 @@ public class SingleConnection {
 
     private static String user = "postgres";
 
-    private static String senha = "admin";
-    
-    //Deploy Hospedagem:
-//    private static String banco = "jdbc:postgresql://localhost:5432/jdevlucianocom_curso-jsp?autoReconnect=true";
-//
-//    private static String user = "jdevlucianocom";
-//
-//    private static String senha = "Y13}t5TM(6Mp";
+    private static String senha = "admin";   
 
     private static Connection connection = null;
 
