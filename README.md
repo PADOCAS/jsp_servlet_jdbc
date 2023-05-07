@@ -21,7 +21,10 @@
 - Implementação de gráfico para testes.
 <br/>
 
+<h3 align="left">Configuração banco de dados para testes:</h3>
+- Atualize a classe 'connection.SingleConnection.java', configurando de acordo com seu banco de dados para rodar a aplicação.
+
 <h3 align="left">Servidor para testes:</h3>
 <p align="left">
-<a href="http://localhost:8080/jsp-servlets" target="blank">Projeto JSP + Servlets + JDBC</a>
+<a href="http://localhost:8080/jsp-servlets" target="blank">JSP/Servlets/JDBC</a>
 </p>
