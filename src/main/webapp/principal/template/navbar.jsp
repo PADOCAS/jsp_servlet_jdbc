@@ -24,7 +24,7 @@
                 </div>
             </div>
             <a href="<%= request.getContextPath()%>/principal/principal.jsp">
-                <img class="img-fluid img-logo-princ" src="<%= request.getContextPath()%>/assets/images/java.png" alt="Theme-Logo" style="height: 45px;"/>
+                <img class="img-fluid img-logo-princ" src="<%= request.getContextPath()%>/assets/images/java_branco.png" alt="Theme-Logo" style="height: 67px;"/>
             </a>
             <a class="mobile-options waves-effect waves-light">
                 <i class="ti-more"></i>

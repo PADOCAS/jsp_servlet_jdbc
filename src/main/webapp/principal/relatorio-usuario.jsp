@@ -62,11 +62,9 @@
                                                                         <label class="sr-only" for="dataFinal">Data Final</label>
                                                                         <input type="text" name="dataFinal" id="dataFinal" value="${dataFinal}" autocomplete="off" class="form-control mb-2" placeholder="Data Nascimento Final">
                                                                     </div>
-                                                                    <div class="col-auto">
-                                                                        <button type="button" onclick="consultarUsuario();" id="btnConsultar" class="btn btn-primary mb-2">Consultar</button>
-                                                                        <button type="button" onclick="imprimirPdf();" id="btnImpressaoPdf" class="btn btn-primary mb-2">Imprimir PDF</button>
-                                                                        <button type="button" onclick="imprimirExcel();" id="btnImpressaoExcel" class="btn btn-primary mb-2">Imprimir Excel</button>
-                                                                    </div>
+                                                                    <button type="button" onclick="consultarUsuario();" id="btnConsultar" class="btn btn-primary mb-2">Consultar</button>
+                                                                    <button type="button" onclick="imprimirPdf();" id="btnImpressaoPdf" class="btn btn-primary mb-2">Imprimir PDF</button>
+                                                                    <button type="button" onclick="imprimirExcel();" id="btnImpressaoExcel" class="btn btn-primary mb-2">Imprimir Excel</button>
                                                                 </div>
                                                             </form>
 
