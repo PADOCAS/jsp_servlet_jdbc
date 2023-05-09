@@ -15,10 +15,9 @@ public class SingleConnection {
 
     //Apenas 1 conexão com o banco de dados (Singleton) o que tem várias são sessões/transações, o que é aberto e fechado.
     //Deploy Local:
-    private static String banco = "jdbc:postgresql://localhost:5432/curso-jsp?autoReconnect=true";   
+    private static String banco = "jdbc:postgresql://localhost:5432/curso-jsp?autoReconnect=true";
     private static String user = "postgres";
-    private static String senha = "admin";   
-    //Deploy Hospedagem: ....
+    private static String senha = "admin";
 
     private static Connection connection = null;
 

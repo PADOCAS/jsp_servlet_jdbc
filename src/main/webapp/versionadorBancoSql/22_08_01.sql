@@ -7,3 +7,5 @@ WITH (
 );
 ALTER TABLE public.marca
   OWNER TO postgres;
+
+DROP TABLE public.marca;
