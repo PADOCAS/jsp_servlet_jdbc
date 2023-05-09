@@ -23,8 +23,10 @@
 
 <h3 align="left">Configuração banco de dados para testes:</h3>
 - Atualize a classe 'connection.SingleConnection.java', configurando de acordo com seu banco de dados para rodar a aplicação.
+<br/>
+- Modelagem de dados está dentro da pasta raiz: modelagem_jspServlets.sql
 
 <h3 align="left">Servidor para testes:</h3>
 <p align="left">
-<a href="http://localhost:8080/jsp-servlets" target="blank">JSP/Servlets/JDBC</a>
+<a href="http://198.38.86.119:8080/jsp-servlets" target="blank">JSP/Servlets/JDBC</a>
 </p>
