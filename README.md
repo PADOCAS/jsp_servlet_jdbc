@@ -28,5 +28,5 @@
 
 <h3 align="left">Servidor para testes:</h3>
 <p align="left">
-<a href="http://198.38.86.119:8080/jsp-servlets" target="blank">Projeto JSP/Servlets/JDBC</a>
+<a href="https://www.ldsystems.com.br/jsp-servlets" target="blank">Projeto JSP/Servlets/JDBC</a>
 </p>
